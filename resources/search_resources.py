@@ -1,5 +1,5 @@
 from flask_restful import Resource
-import request
+from flask import request
 from presenters.search import SearchEngine
 from presenters.union_user_data import union_user_data
 
