@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
-from resources import LogOut, LogIn, Profile, SignUp, Search
+from resources import Search
 
 
 app = Flask(__name__)
