@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from flask import request, make_response
 
 
 class SignUp(Resource):
@@ -7,7 +8,7 @@ class SignUp(Resource):
 
 
 class Profile(Resource):
-    def post(self):
+    def get(self):
         pass
 
     def put(self):
@@ -16,7 +17,12 @@ class Profile(Resource):
 
 class LogIn(Resource):
     def post(self):
-        pass
+        user_id = request.json.get('user_id')
+        if not user_id:
+            return 401
+        response = make_response()
+        response.set_cookie('user_id', )
+        return response
 
 
 class LogOut(Resource):

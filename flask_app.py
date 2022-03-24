@@ -12,3 +12,6 @@ def init_resources():
     api.add_resource(Profile, '/profile')
     api.add_resource(LogIn, '/login')
     api.add_resource(Search, '/')
+
+init_resources()
+app.run(debug=True)
