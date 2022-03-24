@@ -1,2 +1,2 @@
-from .user_resources import LogIn, LogOut, Profile, SignUp
-from .search_resources import Search
+from .user_resources import LogIn, LogOut, Profile, ProfileParams, UserTypes
+from .search_resources import Search, SearchParams
