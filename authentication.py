@@ -21,7 +21,7 @@ def volunteer_authentication(func):
         user_id = request.cookies.get('user_id', None)
         if not is_user_in_db(user_id, TYPE_VOLUNTEER):
             return 401, "This operation requires a volunteer user"
-        func(request, user_id, *args, **kwargs)
+        func(user_id, *args, **kwargs)
     return inner
 
 
@@ -30,7 +30,7 @@ def manager_authentication(func):
         user_id = request.cookies.get('user_id', None)
         if not is_user_in_db(user_id, TYPE_MANAGER):
             return 401, "This operation requires a manager user"
-        func(request, user_id, *args, **kwargs)
+        func(user_id, *args, **kwargs)
     return inner
 
 
