@@ -7,3 +7,9 @@ class Search(Resource):
 
     def post(self, search_object):
         pass
+
+
+# get optional filters for search by user_type
+class SearchParams(Resource):
+    def get(self, user_type):
+        pass
