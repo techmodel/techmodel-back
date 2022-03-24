@@ -1,4 +1,6 @@
 from flask import request
+from daos.db import SQLDao
+import consts
 
 
 IS_USER_EXISTS = """SELECT user_id FROM users WHERE user_id = {}"""
@@ -8,11 +10,13 @@ TYPE_MANAGER = 2
 
 
 def is_user_in_db(user_id, role=None):
+    sql_dao = SQLDao(server_name=consts.SQL_SERVER, db_name=consts.SQL_DB, user_name=consts.SQL_USERNAME,
+                     password=consts.SQL_PASSWORD, driver=consts.SQL_DRIVER)
     if role:
         query = IS_USER_EXISTS.format(user_id) + IS_USER_OF_TYPE.format(role)
     else:
         query = IS_USER_EXISTS.format(user_id)
-    given_user_id = SqlQuerier().query(query)
+    given_user_id = sql_dao.run_query_with_results(query)
     return bool(given_user_id)
 
 
@@ -32,8 +36,3 @@ def manager_authentication(func):
             return 401, "This operation requires a manager user"
         func(user_id, *args, **kwargs)
     return inner
-
-
-@volunteer_authentication
-def a(x, y, z):
-    print(x, y, z)
