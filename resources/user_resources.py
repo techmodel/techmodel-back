@@ -1,6 +1,10 @@
 from flask_restful import Resource
+<<<<<<< HEAD
 from queries_consts import *
 from query_builder import *
+=======
+from flask import request, make_response
+>>>>>>> f5862a6c55c1d9d759cc0b36a9f201feca388746
 
 
 class UserTypes(Resource):
@@ -26,6 +30,7 @@ class ProfileParams(Resource):
 # get/post/update user profile by user_type
 # user_id in headers
 class Profile(Resource):
+<<<<<<< HEAD
     def get(self, user_id, user_type):
         queries = []
         queries += get_all_data_by_user(user_id, GENERIC_USER_NON_ENUM_COLUMNS, GENERIC_USER_ENUM_COLUMNS)
@@ -34,6 +39,9 @@ class Profile(Resource):
 
 
     def post(self, user_type):
+=======
+    def get(self):
+>>>>>>> f5862a6c55c1d9d759cc0b36a9f201feca388746
         pass
 
     def put(self, user_type):
@@ -42,7 +50,12 @@ class Profile(Resource):
 
 class LogIn(Resource):
     def post(self):
-        pass
+        user_id = request.json.get('user_id')
+        if not user_id:
+            return 401
+        response = make_response()
+        response.set_cookie('user_id', )
+        return response
 
 
 class LogOut(Resource):

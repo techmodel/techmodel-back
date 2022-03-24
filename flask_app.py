@@ -16,4 +16,3 @@ def init_resources():
     api.add_resource(Search, '/search_params/<string:user_type>')
     api.add_resource(SearchParams, '/search/<string:user_type>')
 
-
