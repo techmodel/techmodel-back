@@ -1,11 +1,9 @@
 from flask_restful import Resource
 
 
-class SearchParams(Resource):
-    def get(self):
+class Search(Resource):
+    def get(self, search_object):
         pass
 
-
-class SearchUsers(Resource):
-    def post(self):
+    def post(self, search_object):
         pass
