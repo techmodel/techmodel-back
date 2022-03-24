@@ -22,8 +22,7 @@ class QueryBuilder:
                 )
         return FILTERS_QUERY.format(conditions=conditions, user_type=role)
 
-    def build_query_by_body(self, body):
+    def build_query_by_body(self, body, role):
         filters = body["filters"]
-        role = body["role"]
         sql_query = self.generate_query_by_filters(filters, role)
         return sql_query
