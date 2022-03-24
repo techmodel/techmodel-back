@@ -22,4 +22,3 @@ class LogIn(Resource):
 class LogOut(Resource):
     def get(self):
         pass
-    
