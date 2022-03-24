@@ -1,0 +1,33 @@
+
+"""SELECT id, [name] FROM {};"""
+
+
+USER_TYPE_TABLE = "user_types"
+USERS_TABLE = "table"
+
+VOLUNTEER = 1
+MANAGER = 2
+
+GENERIC_USER_NON_ENUM_COLUMNS = ["first_name", "last_name", "email", "phone"]
+GENERIC_USER_ENUM_COLUMNS = {"gender_id": "genders", "user_type": "user_types"}
+GENERIC_USER_ALL_COLUMNS = GENERIC_USER_NON_ENUM_COLUMNS + list(GENERIC_USER_ENUM_COLUMNS.keys())
+
+VOLUNTEER_ENUM_COLUMNS = {}
+MANAGER_ENUM_COLUMNS = {}
+
+VOLUNTEER_ALL_COLUMNS = [] + list(VOLUNTEER_ENUM_COLUMNS.keys())
+MANAGER_ALL_COLUMNS = [] + list(MANAGER_ENUM_COLUMNS.keys())
+
+USER_TYPE_TO_ENUMS = {VOLUNTEER: VOLUNTEER_ENUM_COLUMNS, MANAGER: MANAGER_ENUM_COLUMNS}
+USER_TYPE_TO_ALL_COLUMNS = {VOLUNTEER: VOLUNTEER_ALL_COLUMNS, MANAGER: MANAGER_ALL_COLUMNS}
+
+
+
+
+#dict(zip(ALL_COLUMNS, row))
+
+ENUM_SELECT_QUERY = """SELECT id, [name] from {table}"""
+
+SELECT_ENUM_PARAM = """SELECT [name] from {enum_table} left join  """
+
+GENERIC_USER_SELECT_QUERY = """SELECT {columns} FROM {table} WHERE id = {id}"""
