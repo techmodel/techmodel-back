@@ -27,7 +27,6 @@ class ProfileParams(Resource):
 # get/post/update user profile by user_type
 # user_id in headers
 class Profile(Resource):
-    @volunteer_authentication
     def get(self, user_id, user_type):
         queries = []
         queries += get_all_data_by_user(user_id, GENERIC_USER_NON_ENUM_COLUMNS, GENERIC_USER_ENUM_COLUMNS)

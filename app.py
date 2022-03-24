@@ -1,18 +1,22 @@
-# from flask import Flask, request
-# from presenters.search import SearchEngine
-# from presenters.union_user_data import union_user_data
-#
-# APP = Flask(__name__)
-#
-#
-# @APP.route('/search', methods=['POST'])
-# def search():
-#     body = request.json
-#     search_engine=SearchEngine()
-#     results=search_engine.search(body)
-#     unuion_data=union_user_data(results)
-#     return {"results": unuion_data}
-#
-#
-# if __name__ == '__main__':
-#     APP.run(host="0.0.0.0", port=6200)
+from flask import Flask
+from flask_restful import Api
+from resources import Search, SearchParams, ProfileParams, Profile, LogIn, LogOut, UserTypes
+
+
+app = Flask(__name__)
+api = Api(app)
+
+
+def init_resources():
+    # api.add_resource(UserTypes, '/user_types')
+    # api.add_resource(ProfileParams, '/profile_params/<string:user_type>')
+    # api.add_resource(Profile, '/profile/<string:user_type>')
+    api.add_resource(LogIn, '/login')
+    # api.add_resource(LogOut, '/logout')
+    # api.add_resource(Search, '/search_params/<string:user_type>')
+    api.add_resource(SearchParams, '/search/<string:user_type>')
+
+
+def main():
+    init_resources()
+    app.run()
