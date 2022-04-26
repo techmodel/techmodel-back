@@ -2,7 +2,7 @@
 """SELECT id, [name] FROM {};"""
 
 
-USER_TYPE_TABLE = "user_types"
+USER_TYPE_TABLE = "user_types_enum"
 USERS_TABLE = "table"
 
 VOLUNTEER = 1

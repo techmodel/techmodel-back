@@ -1,4 +1,6 @@
 from flask_restful import Resource
+
+from daos.sql import SqlQueries
 from queries_consts import *
 from query_builder import *
 from presenters.search import SearchEngine
@@ -6,10 +8,12 @@ from flask import request, make_response
 
 
 class UserTypes(Resource):
+    def __init__(self):
+        self.sql_querier = SqlQueries()
+
     # returns all users types from db
     def get(self):
-        query = ENUM_SELECT_QUERY.format(USER_TYPE_TABLE)
-        return query
+        return self.sql_querier.get_user_types()
 
 
 class ProfileParams(Resource):

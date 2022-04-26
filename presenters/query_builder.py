@@ -4,8 +4,8 @@ from presenters.consts import FILTERS_QUERY
 
 
 class QueryBuilder:
-    def __init__(self, sql_conn):
-        self.sql_querier = SqlQueries(sql_conn)
+    def __init__(self):
+        self.sql_querier = SqlQueries()
 
     def generate_query_by_filters(self, filters, role):
         conditions = ""

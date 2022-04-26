@@ -8,12 +8,12 @@ api = Api(app)
 
 
 def init_resources():
-    # api.add_resource(UserTypes, '/user_types')
+    api.add_resource(UserTypes, '/api/user_types')
     # api.add_resource(ProfileParams, '/profile_params/<string:user_type>')
     # api.add_resource(Profile, '/profile/<string:user_type>')
-    api.add_resource(LogIn, '/login')
-    api.add_resource(LogOut, '/logout')
-    api.add_resource(Search, '/search/<string:user_type>')
+    api.add_resource(LogIn, '/api/login')
+    api.add_resource(LogOut, '/api/logout')
+    api.add_resource(Search, '/api/search/<string:user_type>')
     #api.add_resource(Search, '/search')
     # api.add_resource(SearchParams, '/search_params/<string:user_type>')
 
