@@ -1,5 +1,5 @@
 from daos.sql import SqlQueries
-from models.select_choise_enum import FilterType
+from models.enums import FilterType
 from presenters.consts import FILTERS_QUERY
 
 
