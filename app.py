@@ -14,12 +14,13 @@ def init_resources():
     api.add_resource(LogIn, '/login')
     api.add_resource(LogOut, '/logout')
     api.add_resource(Search, '/search/<string:user_type>')
+    #api.add_resource(Search, '/search')
     # api.add_resource(SearchParams, '/search_params/<string:user_type>')
 
 
 def main():
     init_resources()
-    app.run()
+    app.run(host='0.0.0.0', port=8080)
 
 
 if __name__ == "__main__":

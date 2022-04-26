@@ -5,6 +5,7 @@ from presenters.union_user_data import union_user_data
 
 
 class Search(Resource):
+
     def post(self, user_type):
         body = request.json
         search_engine = SearchEngine()
