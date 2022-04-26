@@ -14,9 +14,12 @@ class Sql:
         result = self._connection.run_query_with_results(query)[0]
         if len(result) == 0:
             return None
-        return str(result)
+        return result
 
     def get_many_table_name(self, filter_name):
         query = f"select table_name from filter_to_table where filter='{filter_name}'"
-        return self.query(query)
+        return str(self.query(query))
 
+    def get_types(self, table_name):
+        query = consts.ENUM_SELECT_QUERY.format(table=table_name)
+        return [result[1] for result in self.query(query)]

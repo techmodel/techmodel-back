@@ -16,4 +16,7 @@ def union_user_data(data):
                         users[user_id][key] = [value, current_str]
             else:
                 users[user_id][key] = value
-    return users
+    users_list = []
+    for user_id in users.keys():
+        users_list.append(users[user_id])
+    return users_list

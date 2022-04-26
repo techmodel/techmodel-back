@@ -1,16 +1,10 @@
 from flask_restful import Resource
+
 from queries_consts import *
 from query_builder import *
 from presenters.query_builder import QueryBuilder
 from daos.sql import Sql
 from flask import request, make_response
-
-
-class UserTypes(Resource):
-    # returns all users types from db
-    def get(self):
-        query = ENUM_SELECT_QUERY.format(USER_TYPE_TABLE)
-        return query
 
 
 class ProfileParams(Resource):
@@ -60,7 +54,7 @@ class LogIn(Resource):
         if not result:
             return "user does not exist", 401
         response = make_response()
-        response.set_cookie('user_id', str(user_id), secure=True)
+        response.set_cookie('user_id', str(user_id))
         return response
 
 
