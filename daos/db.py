@@ -1,5 +1,6 @@
 import pyodbc
 import consts
+from models.exceptions import DBError
 
 
 class SQLDao:
@@ -20,16 +21,15 @@ class SQLDao:
             cursor = conn.cursor()
             cursor.execute(query)
             results = cursor.fetchall()
-            columns=[element[0] for element in cursor.description]
+            columns = [element[0] for element in cursor.description]
             return results, columns
         except (pyodbc.Error, Exception) as e:
-            print(e)
-            return []
+            raise DBError(e)
 
     def run_query_without_results(self, query):
         try:
             conn = self.db_connect()
             cursor = conn.cursor()
             cursor.execute(query)
-        except (pyodbc.Error, Exception):
-            return []
+        except (pyodbc.Error, Exception) as e:
+            raise DBError(e)
