@@ -1,7 +1,6 @@
 from flask import request
 from daos.db import SQLDao
-import consts
-
+from daos.sql import Sql
 
 IS_USER_EXISTS = """SELECT user_id FROM users WHERE user_id = {}"""
 IS_USER_OF_TYPE = """ AND user_type_id = {} """
@@ -10,8 +9,7 @@ TYPE_MANAGER = 2
 
 
 def is_user_in_db(user_id, role=None):
-    sql_dao = SQLDao(server_name=consts.SQL_SERVER, db_name=consts.SQL_DB, user_name=consts.SQL_USERNAME,
-                     password=consts.SQL_PASSWORD, driver=consts.SQL_DRIVER)
+    sql = Sql()
     if role:
         query = IS_USER_EXISTS.format(user_id) + IS_USER_OF_TYPE.format(role)
     else:

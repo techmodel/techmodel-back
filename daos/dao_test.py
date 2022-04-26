@@ -1,5 +1,5 @@
 import pyodbc
-import consts
+from daos import consts
 from sql import SQLDao
 
 

@@ -1,36 +1,34 @@
 import pyodbc
-import consts
+from daos import consts
 from models.exceptions import DBError
 
 
-class SQLDao:
-    def __init__(self, server_name, db_name, user_name, password, driver):
-        self.server_name = server_name
-        self.db_name = db_name
-        self.user_name = user_name
-        self.password = password
-        self.driver = driver
-        self.db_connect()
+class DB:
+    _instance = None
 
-    def db_connect(self):
-        conn_string = f"DRIVER={self.driver};SERVER={self.server_name};DATABASE={self.db_name};UID={self.user_name};PWD={self.password};PORT=1433"
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(DB, cls).__new__(cls)
+            cls._instance._conn = DB.connect(*args, **kwargs)
+            cls._instance._cursor = cls._instance._conn.cursor()
+        return cls._instance
+
+    @staticmethod
+    def connect(driver, server_name, db_name, user_name, password):
+        conn_string = f"DRIVER={driver};SERVER={server_name};DATABASE={db_name};UID={user_name};PWD={password};PORT=1433"
         return pyodbc.connect(conn_string, timeout=consts.SQL_TIMEOUT_SEC)
 
     def run_query_with_results(self, query):
         try:
-            conn = self.db_connect()
-            cursor = conn.cursor()
-            cursor.execute(query)
-            results = cursor.fetchall()
-            columns = [element[0] for element in cursor.description]
+            self._cursor.execute(query)
+            results = self._cursor.fetchall()
+            columns = [element[0] for element in self._cursor.description]
             return results, columns
         except (pyodbc.Error, Exception) as e:
             raise DBError(e)
 
     def run_query_without_results(self, query):
         try:
-            conn = self.db_connect()
-            cursor = conn.cursor()
-            cursor.execute(query)
+            self._cursor.execute(query)
         except (pyodbc.Error, Exception) as e:
             raise DBError(e)

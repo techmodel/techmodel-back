@@ -1,13 +1,16 @@
-from daos.sql import SqlQueries
 from models.enums import FilterType
 from presenters.consts import FILTERS_QUERY
 
 
 class QueryBuilder:
-    def __init__(self, sql_conn):
-        self.sql_querier = SqlQueries(sql_conn)
+    _instance = None
 
-    def generate_query_by_filters(self, filters, role):
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(QueryBuilder, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    def build_query_by_filters(self, filters, role):
         conditions = ""
         for filter in filters:
             filter_name = filter["filter_name"]
@@ -24,5 +27,4 @@ class QueryBuilder:
 
     def build_query_by_body(self, body, role):
         filters = body["filters"]
-        sql_query = self.generate_query_by_filters(filters, role)
-        return sql_query
+        return self.build_query_by_filters(filters, role)
