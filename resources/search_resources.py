@@ -1,5 +1,5 @@
 from flask_restful import Resource, ResponseBase
-from flask import request, make_response
+from flask import request
 from models.exceptions import DBError
 from presenters.search import SearchEngine
 from presenters.union_user_data import union_user_data
