@@ -4,6 +4,7 @@ USER_TYPE_TABLE = "user_types_enum"
 LANGUAGE_TYPE_TABLE = "languages_enum"
 EVENT_FOCUS_TABLE = "event_focus_enum"
 GENDER_TABLE = "genders_enum"
+GEO_AREAS_TABLE = "geo_areas_enum"
 
 USERS_TABLE = "table"
 
