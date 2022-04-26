@@ -4,6 +4,8 @@
 
 USER_TYPE_TABLE = "user_types_enum"
 LANGUAGE_TYPE_TABLE="languages_enum"
+EVENT_FOCUS_TABLE="event_focus_enum"
+
 USERS_TABLE = "table"
 
 VOLUNTEER = 1
