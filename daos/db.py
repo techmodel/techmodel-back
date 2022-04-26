@@ -10,6 +10,7 @@ class SQLDao:
         self.user_name = user_name
         self.password = password
         self.driver = driver
+        self.db_connect()
 
     def db_connect(self):
         conn_string = f"DRIVER={self.driver};SERVER={self.server_name};DATABASE={self.db_name};UID={self.user_name};PWD={self.password};PORT=1433"

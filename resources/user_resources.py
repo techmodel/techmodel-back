@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from queries_consts import *
 from query_builder import *
+from presenters.search import SearchEngine
 from flask import request, make_response
 
 
@@ -41,15 +42,28 @@ class Profile(Resource):
 
 
 class LogIn(Resource):
+    @staticmethod
+    def _get_user_id_from_auth_token(auth_token):
+        # TODO: actually integrate with google
+        return auth_token, 1
+
     def post(self):
-        user_id = request.json.get('user_id')
+        auth_token = request.json.get('auth_token')
+        user_id, user_role = self._get_user_id_from_auth_token(auth_token)
         if not user_id:
-            return 401
+            return "no user in the auth token", 401
+        search_engine = SearchEngine()
+        result = search_engine.search(
+            {"filters": [{"filter_name": "user_id", "field_type": "single", "value": user_id}]}, user_role)
+        if not result:
+            return "user does not exist", 401
         response = make_response()
-        response.set_cookie('user_id', )
+        response.set_cookie('user_id', str(user_id), secure=True)
         return response
 
 
 class LogOut(Resource):
     def get(self):
-        pass
+        response = make_response()
+        response.delete_cookie('user_id')
+        return response
