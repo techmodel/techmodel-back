@@ -1,10 +1,9 @@
-
 """SELECT id, [name] FROM {};"""
 
-
 USER_TYPE_TABLE = "user_types_enum"
-LANGUAGE_TYPE_TABLE="languages_enum"
-EVENT_FOCUS_TABLE="event_focus_enum"
+LANGUAGE_TYPE_TABLE = "languages_enum"
+EVENT_FOCUS_TABLE = "event_focus_enum"
+GENDER_TABLE = "genders_enum"
 
 USERS_TABLE = "table"
 
@@ -24,10 +23,7 @@ MANAGER_ALL_COLUMNS = [] + list(MANAGER_ENUM_COLUMNS.keys())
 USER_TYPE_TO_ENUMS = {VOLUNTEER: VOLUNTEER_ENUM_COLUMNS, MANAGER: MANAGER_ENUM_COLUMNS}
 USER_TYPE_TO_ALL_COLUMNS = {VOLUNTEER: VOLUNTEER_ALL_COLUMNS, MANAGER: MANAGER_ALL_COLUMNS}
 
-
-
-
-#dict(zip(ALL_COLUMNS, row))
+# dict(zip(ALL_COLUMNS, row))
 
 ENUM_SELECT_QUERY = """SELECT id, [name] from {table}"""
 
