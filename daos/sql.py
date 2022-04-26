@@ -13,7 +13,7 @@ class SqlQueries:
         result = self.sql.run_query_with_results(query)[0]
         return str(result[0])
 
-    def get_user_types(self):
-        query = ENUM_SELECT_QUERY.format(table=USER_TYPE_TABLE)
+    def get_types(self, table_name):
+        query = ENUM_SELECT_QUERY.format(table=table_name)
         results = self.sql.run_query_with_results(query)[0]
         return [result[1] for result in results]

@@ -7,15 +7,6 @@ from presenters.search import SearchEngine
 from flask import request, make_response
 
 
-class UserTypes(Resource):
-    def __init__(self):
-        self.sql_querier = SqlQueries()
-
-    # returns all users types from db
-    def get(self):
-        return self.sql_querier.get_user_types()
-
-
 class ProfileParams(Resource):
     # return profile params by user_type
     def get(self, user_type):

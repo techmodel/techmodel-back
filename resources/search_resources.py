@@ -10,6 +10,7 @@ class Search(Resource):
     def post(self, user_type):
         try:
             body = request.json
+            print(body)
             search_engine = SearchEngine()
             results = search_engine.search(body, user_type)
             union_data = union_user_data(results)

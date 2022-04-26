@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
-from resources import Search, SearchParams, ProfileParams, Profile, LogIn, LogOut, UserTypes
-
+from resources import Search, SearchParams, ProfileParams, Profile, LogIn, LogOut
+from resources.types_resources import UserTypes, LanguageTypes
 
 app = Flask(__name__)
 api = Api(app)
@@ -9,6 +9,7 @@ api = Api(app)
 
 def init_resources():
     api.add_resource(UserTypes, '/api/user_types')
+    api.add_resource(LanguageTypes, '/api/language_types')
     # api.add_resource(ProfileParams, '/profile_params/<string:user_type>')
     # api.add_resource(Profile, '/profile/<string:user_type>')
     api.add_resource(LogIn, '/api/login')

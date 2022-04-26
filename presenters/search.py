@@ -7,7 +7,7 @@ class SearchEngine:
     def __init__(self):
         self._sql = SQLDao(server_name=consts.SQL_SERVER, db_name=consts.SQL_DB, user_name=consts.SQL_USERNAME,
                           password=consts.SQL_PASSWORD, driver=consts.SQL_DRIVER)
-        self._query_builder = QueryBuilder(self._sql)
+        self._query_builder = QueryBuilder()
 
     def search(self, body, role):
         query = self._query_builder.build_query_by_body(body, role)
