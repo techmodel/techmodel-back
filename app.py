@@ -2,7 +2,8 @@ from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
 from resources import Search, SearchParams, ProfileParams, Profile, LogIn, LogOut
-from resources.types_resources import UserTypes, LanguageTypes, EventFocusTypes, GendersTypes, GeoAreaTypes
+from resources.types_resources import UserTypes, LanguageTypes, EventFocusTypes, GendersTypes, GeoAreaTypes, \
+    PopulationTypes
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -15,6 +16,7 @@ def init_resources():
     api.add_resource(EventFocusTypes, '/api/event_focus_types')
     api.add_resource(GendersTypes, '/api/gender_types')
     api.add_resource(GeoAreaTypes, '/api/geo_areas_types')
+    api.add_resource(PopulationTypes, '/api/population_types')
 
     # api.add_resource(ProfileParams, '/profile_params/<string:user_type>')
     # api.add_resource(Profile, '/profile/<string:user_type>')
