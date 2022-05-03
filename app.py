@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
-from resources import Search, SearchParams, Profile, LogIn, LogOut
+from resources import Search, Profile, LogIn, LogOut
 from resources.types_resources import UserTypes, LanguageTypes, EventFocusTypes, GendersTypes, GeoAreaTypes, \
-    PopulationTypes
+    PopulationTypes, Companies, CompanyRoles, ProfileParams, Schools, SchoolTypes, StudentAmounts
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -17,13 +17,17 @@ def init_resources():
     api.add_resource(GendersTypes, '/api/gender_types')
     api.add_resource(GeoAreaTypes, '/api/geo_areas_types')
     api.add_resource(PopulationTypes, '/api/population_types')
+    api.add_resource(Companies, '/api/companies')
+    api.add_resource(CompanyRoles, '/api/company_roles')
+    api.add_resource(Schools, '/api/schools')
+    api.add_resource(SchoolTypes, '/api/school_types')
+    api.add_resource(StudentAmounts, '/api/student_amounts')
 
-    # api.add_resource(ProfileParams, '/profile_params/<string:user_type>')
+    api.add_resource(ProfileParams, '/api/profile_params/<string:user_type>')
     api.add_resource(Profile, '/api/profile/<string:user_type>')
     api.add_resource(LogIn, '/api/login')
     api.add_resource(LogOut, '/api/logout')
     api.add_resource(Search, '/api/search/<string:user_type>')
-    # api.add_resource(SearchParams, '/search_params/<string:user_type>')
 
 
 def main():

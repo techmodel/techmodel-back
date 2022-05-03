@@ -18,9 +18,3 @@ class Search(Resource):
             return {"results": union_data}
         except (DBError, Exception) as e:
             return ResponseBase(str(e), 503)
-
-
-# get optional filters for search by user_type
-class SearchParams(Resource):
-    def get(self, user_type):
-        pass
