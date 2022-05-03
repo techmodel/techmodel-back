@@ -25,7 +25,6 @@ MANAGER_ALL_COLUMNS = [] + list(MANAGER_ENUM_COLUMNS.keys())
 USER_TYPE_TO_ENUMS = {VOLUNTEER: VOLUNTEER_ENUM_COLUMNS, MANAGER: MANAGER_ENUM_COLUMNS}
 USER_TYPE_TO_ALL_COLUMNS = {VOLUNTEER: VOLUNTEER_ALL_COLUMNS, MANAGER: MANAGER_ALL_COLUMNS}
 
+SELECT_COLUMNS_BY_ID = """SELECT {columns} FROM {table} WHERE id = {id}"""
 
-GENERIC_USER_SELECT_QUERY = """SELECT {columns} FROM {table} WHERE id = {id}"""
-
-SELECT_ENUM_COLUMN = """SELECT [name] as {column} from {enum_table}_enum as enum left join users on enum.id = users.{column} where users.id = {id}"""
+SELECT_ENUM_COLUMN_BY_ID = """SELECT [name] as {column} from {enum_table}_enum as enum left join users on enum.id = users.{column} where users.id = {id}"""
