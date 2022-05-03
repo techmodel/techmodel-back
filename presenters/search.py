@@ -11,9 +11,5 @@ class SearchEngine:
     def search(self, body, role):
         query = self._query_builder.build_query_by_body(body, role)
         print(query)
-        results, columns = self._sql.query_with_columns(query)
-        all_results = []
-        for result in results:
-            dict_results = dict(zip(columns, result))
-            all_results.append(dict_results)
-        return all_results
+        results = self._sql.query_with_columns(query)
+        return results

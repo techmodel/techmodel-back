@@ -1,12 +1,13 @@
 from flask_restful import Resource, ResponseBase
 from flask import request
-from models.exceptions import DBError
 from presenters.search import SearchEngine
 from presenters.union_user_data import union_user_data
+from resources.wrappers import try_get_resource
 
 
 class Search(Resource):
 
+    @try_get_resource
     def post(self, user_type):
         try:
             body = request.json

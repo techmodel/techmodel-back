@@ -7,10 +7,10 @@ GENDER_TABLE = "genders_enum"
 GEO_AREAS_TABLE = "geo_areas_enum"
 POPULATION_TABLE = "population_types_enum"
 
-USERS_TABLE = "table"
+USERS_TABLE = "users"
 
-VOLUNTEER = 1
-MANAGER = 2
+VOLUNTEER = "volunteer"
+MANAGER = "manager"
 
 GENERIC_USER_NON_ENUM_COLUMNS = ["first_name", "last_name", "email", "phone"]
 GENERIC_USER_ENUM_COLUMNS = {"gender_id": "genders", "user_type": "user_types"}
@@ -29,3 +29,5 @@ USER_TYPE_TO_ALL_COLUMNS = {VOLUNTEER: VOLUNTEER_ALL_COLUMNS, MANAGER: MANAGER_A
 SELECT_ENUM_PARAM = """SELECT [name] from {enum_table} left join  """
 
 GENERIC_USER_SELECT_QUERY = """SELECT {columns} FROM {table} WHERE id = {id}"""
+
+SELECT_ENUM_COLUMN = """SELECT [name] from {enum_table}_enum as enum left join users on enum.id = users.{column} where users.id = {id}"""
