@@ -7,27 +7,6 @@ from flask import request, make_response
 from resources.wrappers import try_get_resource
 
 
-"""
-    This doesn't work
-    It uses bad queries, incorrect and bad data,
-    and the frontend doesnt need it
-
-  
-class ProfileParams(Resource):
-    # return profile params by user_type
-    @try_get_resource
-    def get(self, user_type):
-        all_data = {}
-        all_enums = GENERIC_USER_ENUM_COLUMNS
-        all_enums.update(USER_TYPE_TO_ENUMS[user_type])
-
-        for key, value in all_enums.items():
-            query = SELECT_ENUM_PARAM.format(enum_table=USER_TYPE_TABLE)
-            all_data[key] = query
-        return all_data
-"""
-
-
 # get/post/update user profile by user_type
 # user_id in headers
 class Profile(Resource):
