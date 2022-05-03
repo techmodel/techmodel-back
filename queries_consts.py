@@ -26,8 +26,6 @@ USER_TYPE_TO_ENUMS = {VOLUNTEER: VOLUNTEER_ENUM_COLUMNS, MANAGER: MANAGER_ENUM_C
 USER_TYPE_TO_ALL_COLUMNS = {VOLUNTEER: VOLUNTEER_ALL_COLUMNS, MANAGER: MANAGER_ALL_COLUMNS}
 
 
-SELECT_ENUM_PARAM = """SELECT [name] from {enum_table} left join  """
-
 GENERIC_USER_SELECT_QUERY = """SELECT {columns} FROM {table} WHERE id = {id}"""
 
-SELECT_ENUM_COLUMN = """SELECT [name] from {enum_table}_enum as enum left join users on enum.id = users.{column} where users.id = {id}"""
+SELECT_ENUM_COLUMN = """SELECT [name] as {column} from {enum_table}_enum as enum left join users on enum.id = users.{column} where users.id = {id}"""
