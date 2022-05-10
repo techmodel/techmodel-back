@@ -17,12 +17,13 @@ class QueryBuilder:
             conditions += f" AND {filter_name}"
             field_type = filter["field_type"]
             if field_type == FilterType.SINGLE.value:
-                conditions += " = '{}'".format(filter["value"])
+                conditions += " = N'{}'".format(filter["value"])
             elif field_type == FilterType.MULTIPLE.value:
-                with_appo_list = [f"\'{x}\'" for x in filter["value"]]
+                with_appo_list = [f"N\'{x}\'" for x in filter["value"]]
                 conditions += " IN ({})".format(
                     ",".join(with_appo_list)
                 )
+        print(FILTERS_QUERY.format(conditions=conditions, user_type=role))
         return FILTERS_QUERY.format(conditions=conditions, user_type=role)
 
     def build_query_by_body(self, body, role):
