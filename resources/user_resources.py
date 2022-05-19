@@ -5,6 +5,9 @@ from query_builder import *
 from presenters.query_builder import QueryBuilder
 from daos.sql import Sql
 from flask import request, make_response
+import jwt
+import os
+
 
 
 class ProfileParams(Resource):
@@ -40,22 +43,29 @@ class LogIn(Resource):
     @staticmethod
     def _get_user_id_from_auth_token(auth_token):
         # TODO: actually integrate with google
+
         return auth_token, "manager"
 
     def post(self):
-        auth_token = request.json.get('auth_token')
-        user_id, user_role = self._get_user_id_from_auth_token(auth_token)
-        if not user_id:
-            return "no user in the auth token", 401
-        query = QueryBuilder().build_query_by_filters(
-            [{"filter_name": "user_id", "field_type": "single", "value": user_id}], user_role)
-        result = Sql().query(query)
-
-        if not result:
-            return "user does not exist", 401
-        response = make_response()
-        response.set_cookie('user_id', str(user_id))
-        return response
+        user_id = request.json.get('userId')
+        result = Sql().query_with_columns(f"SELECT * FROM USERS WHERE id='{user_id}'")
+        keys, values = result[1], list(result[0][0])
+        dictionary = dict(zip(keys, values))
+        token = jwt.encode(dictionary, os.getenv("JWT_SECRET"))
+        print(token)
+        # auth_token = request.json.get('userId')
+        # user_id, user_role = self._get_user_id_from_auth_token(auth_token)
+        # if not user_id:
+        #     return "no user in the auth token", 401
+        # query = QueryBuilder().build_query_by_filters(
+        #     [{"filter_name": "user_id", "field_type": "single", "value": user_id}], user_role)
+        # result = Sql().query(query)
+        #
+        # if not result:
+        #     return "user does not exist", 401
+        # response = make_response()
+        # response.set_cookie('user_id', str(user_id))
+        # return response
 
 
 class LogOut(Resource):
