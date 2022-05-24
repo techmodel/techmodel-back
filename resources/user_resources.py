@@ -44,18 +44,14 @@ class LogIn(Resource):
 
     def post(self):
         user_id = request.json.get('userId')
-        result = Sql().query_with_columns(f"SELECT * FROM USERS WHERE id='{user_id}'")
-        keys, values = result[1], list(result[0][0])
-        dictionary = dict(zip(keys, values))
-        token = jwt.encode(dictionary, os.getenv("JWT_SECRET"))
-        print(token)
+        query = QueryBuilder().get_all_data_by_user(user_id, ["id", "user_type"], {})[0]
+        result = Sql().query_with_columns(query)[0]
+        if not result:
+            return "user does not exist", 401
+        result["exp"] = 86400000
+        token = jwt.encode(result, os.getenv("JWT_SECRET"))
         response = make_response()
-        response.set_cookie('user_id', str(user_id))
-        query = QueryBuilder().get_all_data_by_user(user_id, )
-        result = Sql().query(query)
-        #
-        # if not result:
-        #     return "user does not exist", 401
+        response.set_cookie('token', token)
         return response
 
 

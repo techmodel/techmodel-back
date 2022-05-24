@@ -35,9 +35,6 @@ class QueryBuilder:
         return ", ".join(list)
 
     def get_all_data_by_user(self, user_id, columns, enum_columns):
-        if not columns and not enum_columns:
-            columns = ["*"]
-            enum_columns= ["*"]
         queries = [SELECT_COLUMNS_BY_ID.format(columns=self._prettify_list(columns),
                                                         table=USERS_TABLE, id=user_id)]
         for column, enum_table in enum_columns.items():
