@@ -1,33 +1,30 @@
 from flask_restful import Resource
 
 from queries_consts import *
-from query_builder import *
 from presenters.query_builder import QueryBuilder
 from daos.sql import Sql
 from flask import request, make_response
-
-
-class ProfileParams(Resource):
-    # return profile params by user_type
-    def get(self, user_type):
-        all_data = {}
-        all_enums = GENERIC_USER_ENUM_COLUMNS
-        all_enums.update(USER_TYPE_TO_ENUMS[user_type])
-
-        for key, value in all_enums:
-            query = ENUM_SELECT_QUERY.format(USER_TYPE_TABLE)
-            all_data[key] = query
-        return all_data
+from resources.wrappers import try_get_resource
 
 
 # get/post/update user profile by user_type
 # user_id in headers
 class Profile(Resource):
-    def get(self, user_id, user_type):
-        queries = []
-        queries += get_all_data_by_user(user_id, GENERIC_USER_NON_ENUM_COLUMNS, GENERIC_USER_ENUM_COLUMNS)
-        queries += get_all_data_by_user(user_id, USER_TYPE_TO_ALL_COLUMNS[user_type], USER_TYPE_TO_ENUMS[user_type])
-        return queries
+
+    @try_get_resource
+    def get(self, user_type):
+        user_id = request.cookies.get("user_id")
+        if not user_id:
+            return ResponseBase("log in to view this page", 401)
+
+        enum_columns = {}
+        enum_columns.update(GENERIC_USER_ENUM_COLUMNS)
+        enum_columns.update(USER_TYPE_TO_ENUMS[user_type])
+        queries = QueryBuilder().get_all_data_by_user(user_id, GENERIC_USER_NON_ENUM_COLUMNS + USER_TYPE_TO_ALL_COLUMNS[user_type], enum_columns)
+        results = {}
+        for query in queries:
+            results.update(*Sql().query_with_columns(query))
+        return results
 
     def post(self, user_type):
         pass
