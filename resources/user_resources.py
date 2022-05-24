@@ -58,5 +58,5 @@ class LogIn(Resource):
 class LogOut(Resource):
     def get(self):
         response = make_response()
-        response.delete_cookie('user_id')
+        response.delete_cookie('token')
         return response
