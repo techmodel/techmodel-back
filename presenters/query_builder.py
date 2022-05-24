@@ -1,5 +1,6 @@
 from models.enums import FilterType
 from presenters.consts import FILTERS_QUERY
+from queries_consts import *
 
 
 class QueryBuilder:
@@ -29,3 +30,16 @@ class QueryBuilder:
     def build_query_by_body(self, body, role):
         filters = body["filters"]
         return self.build_query_by_filters(filters, role)
+
+    def _prettify_list(self, list):
+        return ", ".join(list)
+
+    def get_all_data_by_user(self, user_id, columns, enum_columns):
+        if not columns and not enum_columns:
+            columns = ["*"]
+            enum_columns= ["*"]
+        queries = [SELECT_COLUMNS_BY_ID.format(columns=self._prettify_list(columns),
+                                                        table=USERS_TABLE, id=user_id)]
+        for column, enum_table in enum_columns.items():
+            queries.append(SELECT_ENUM_COLUMN_BY_ID.format(id=user_id, enum_table=enum_table, column=column))
+        return queries
