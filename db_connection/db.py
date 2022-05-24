@@ -1,6 +1,9 @@
 import pyodbc
-from daos import consts
-from models.exceptions import DBError
+from db_connection import consts
+from db_connection.exceptions import DBError
+
+
+#TODO: REMOVE THIS AND UNITE IT WITH THE SQL CLASS
 
 
 class DB:
@@ -24,11 +27,5 @@ class DB:
             results = self._cursor.fetchall()
             columns = [element[0] for element in self._cursor.description]
             return results, columns
-        except (pyodbc.Error, Exception) as e:
-            raise DBError(e)
-
-    def run_query_without_results(self, query):
-        try:
-            self._cursor.execute(query)
         except (pyodbc.Error, Exception) as e:
             raise DBError(e)

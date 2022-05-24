@@ -1,7 +1,7 @@
 from flask_restful import Resource, ResponseBase
 
 from queries_consts import *
-from presenters.query_builder import QueryBuilder
+from query_builder.query_builder import QueryBuilder
 from daos.sql import Sql
 from flask import request, make_response
 import jwt

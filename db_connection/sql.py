@@ -23,12 +23,3 @@ class Sql:
         if len(result) == 0:
             return None
         return result
-
-    def get_many_table_name(self, filter_name):
-        query = f"select table_name from filter_to_table where filter='{filter_name}'"
-        return str(self.query(query))
-
-    def get_types(self, table_name):
-        query = consts.ENUM_SELECT_QUERY.format(table=table_name)
-        return [result[1] for result in self.query(query)]
-

@@ -1,3 +1,7 @@
+# THIS FILE IS PROBABLY DEPRECATED
+# IT IS CURRENTLY HERE BECAUSE SOME DATA HERE MIGHT STILL BE USED SOMEWHERE
+
+
 from flask import request
 from daos.db import SQLDao
 from daos.sql import Sql
