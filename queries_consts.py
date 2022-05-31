@@ -12,7 +12,6 @@ SCHOOLS_TABLE = "schools"
 SCHOOL_TYPES_TABLE = "school_types_enum"
 STUDENT_AMOUNTS_TABLE = "student_amount_enum"
 
-
 USERS_TABLE = "users"
 
 VOLUNTEER = "volunteer"
@@ -31,6 +30,16 @@ MANAGER_ALL_COLUMNS = [] + list(MANAGER_ENUM_COLUMNS.keys())
 USER_TYPE_TO_ENUMS = {VOLUNTEER: VOLUNTEER_ENUM_COLUMNS, MANAGER: MANAGER_ENUM_COLUMNS}
 USER_TYPE_TO_ALL_COLUMNS = {VOLUNTEER: VOLUNTEER_ALL_COLUMNS, MANAGER: MANAGER_ALL_COLUMNS}
 
+VOLUNTEER_PROFILE_PARAMS = ["genders", "geo_areas", "languages", "companies", "company_positions", "population_type",
+                            "lecture_type"]
+MANAGER_PROFILE_PARAMS = ["genders", "geo_areas", "school_types", "schools", "students_amount"]
+USER_TYPE_TO_PROFILE_PARAMS = {VOLUNTEER: VOLUNTEER_PROFILE_PARAMS, MANAGER: MANAGER_PROFILE_PARAMS}
+
+PARAM_NAMES_TO_TABLES = {"genders": GENDER_TABLE, "languages": LANGUAGE_TYPE_TABLE, "event_focuses": EVENT_FOCUS_TABLE,
+                       "users": USER_TYPE_TABLE, "geo_areas": GEO_AREAS_TABLE, "population": POPULATION_TABLE,
+                       "companies": COMPANIES_TABLE, "company_roles": ROLES_TABLE, "schools": SCHOOLS_TABLE,
+                       "school_types": SCHOOL_TYPES_TABLE, "student_amounts": STUDENT_AMOUNTS_TABLE}
+
 SELECT_COLUMNS_BY_ID = """SELECT {columns} FROM {table} WHERE id = '{id}'"""
 
-SELECT_ENUM_COLUMN_BY_ID = """SELECT [name] as {column} from {enum_table}_enum as enum left join users on enum.id = users.{column} where users.id = {id}"""
+SELECT_ENUM_COLUMN_BY_ID = """SELECT [name] as {column} from {enum_table}_enum as enum left join users on enum.id = users.{column} where users.id = '{id}'"""

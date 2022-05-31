@@ -8,4 +8,3 @@ SQL_PASSWORD = os.getenv("SQL_PASSWORD")
 
 SQL_TIMEOUT_SEC = 5
 
-ENUM_SELECT_QUERY = """SELECT id, [name] from {table}"""

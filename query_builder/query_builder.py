@@ -1,5 +1,4 @@
-from models.enums import FilterType
-from presenters.consts import FILTERS_QUERY
+from query_builder.consts import FILTERS_QUERY, ENUM_SELECT_QUERY, FilterType
 from queries_consts import *
 
 
@@ -40,3 +39,11 @@ class QueryBuilder:
         for column, enum_table in enum_columns.items():
             queries.append(SELECT_ENUM_COLUMN_BY_ID.format(id=user_id, enum_table=enum_table, column=column))
         return queries
+
+    def get_many_table_name(self, filter_name):
+        return f"select table_name from filter_to_table where filter='{filter_name}'"
+
+    def get_types(self, table_name):
+        return ENUM_SELECT_QUERY.format(table=table_name)
+
+
