@@ -3,9 +3,6 @@ from db_connection import consts
 from db_connection.exceptions import DBError
 
 
-#TODO: REMOVE THIS AND UNITE IT WITH THE SQL CLASS
-
-
 class DB:
     _instance = None
 
