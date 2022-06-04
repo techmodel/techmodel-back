@@ -38,16 +38,16 @@ class Profile(Resource):
 class LogIn(Resource):
     def post(self):
         user_id = request.json.get('userId')
-        query = QueryBuilder().get_all_data_by_user(user_id, ["id", "user_type"], {})[0]
+        query = QueryBuilder().get_all_data_by_user(user_id, ["id", "user_type", ""], {})[0]
         result = Sql().query_with_columns(query)
         if not result:
-            return "user does not exist", 401
+            return {"userDetails": None, "isFound": False, "userToken": None, "userTypeId   ": None}
         result = result[0]
         result["exp"] = datetime.now() + timedelta(hours=JWT_NUM_HOURS_FOR_COOKIE)
         token = jwt.encode(result, JWT_SECRET, JWT_ALGORITHM)
         response = make_response()
         response.set_cookie('token', token)
-        return response
+        return {"userDetails": "", "isFound": True, "userToken": token, "userTypeId": 1}
 
 
 class LogOut(Resource):
