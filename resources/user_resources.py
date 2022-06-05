@@ -38,7 +38,7 @@ class Profile(Resource):
 class LogIn(Resource):
     def post(self):
         user_id = request.json.get('userId')
-        query = QueryBuilder().get_all_data_by_user(user_id, ["id", "user_type", ""], {})[0]
+        query = QueryBuilder().get_all_data_by_user(user_id, ["id", "user_type"], {})[0]
         result = Sql().query_with_columns(query)
         if not result:
             return {"userDetails": None, "isFound": False, "userToken": None, "userTypeId   ": None}
