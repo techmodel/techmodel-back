@@ -19,19 +19,6 @@ MANAGER = "manager"
 
 INT_TO_ROLE = {2: VOLUNTEER, 1: MANAGER}
 
-GENERIC_USER_NON_ENUM_COLUMNS = ["first_name", "last_name", "email", "phone"]
-GENERIC_USER_ENUM_COLUMNS = {"gender_id": "genders", "user_type": "user_types"}
-GENERIC_USER_ALL_COLUMNS = GENERIC_USER_NON_ENUM_COLUMNS + list(GENERIC_USER_ENUM_COLUMNS.keys())
-
-VOLUNTEER_ENUM_COLUMNS = {}
-MANAGER_ENUM_COLUMNS = {}
-
-VOLUNTEER_ALL_COLUMNS = [] + list(VOLUNTEER_ENUM_COLUMNS.keys())
-MANAGER_ALL_COLUMNS = [] + list(MANAGER_ENUM_COLUMNS.keys())
-
-USER_TYPE_TO_ENUMS = {VOLUNTEER: VOLUNTEER_ENUM_COLUMNS, MANAGER: MANAGER_ENUM_COLUMNS}
-USER_TYPE_TO_ALL_COLUMNS = {VOLUNTEER: VOLUNTEER_ALL_COLUMNS, MANAGER: MANAGER_ALL_COLUMNS}
-
 VOLUNTEER_PROFILE_PARAMS = ["genders", "geo_areas", "languages", "companies", "company_positions", "population_type",
                             "lecture_type"]
 MANAGER_PROFILE_PARAMS = ["genders", "geo_areas", "school_types", "schools", "students_amount"]
