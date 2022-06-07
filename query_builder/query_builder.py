@@ -41,13 +41,8 @@ class QueryBuilder:
         return queries
 
     @staticmethod
-    def get_all_data_by_user(user_id, user_type):
-        enum_columns = {}
-        enum_columns.update(GENERIC_USER_ENUM_COLUMNS)
-        enum_columns.update(USER_TYPE_TO_ENUMS[user_type])
-        return QueryBuilder().get_data_by_user(user_id,
-                                               GENERIC_USER_NON_ENUM_COLUMNS + USER_TYPE_TO_ALL_COLUMNS[
-                                                   user_type], enum_columns)
+    def get_all_data_by_user(user_id):
+        return SELECT_ALL_COLUMNS_BY_ID.format(id=user_id, table=USERS_TABLE)
 
     @staticmethod
     def get_many_table_name(filter_name):

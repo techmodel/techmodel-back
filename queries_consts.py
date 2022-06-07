@@ -12,7 +12,7 @@ SCHOOLS_TABLE = "schools"
 SCHOOL_TYPES_TABLE = "school_types_enum"
 STUDENT_AMOUNTS_TABLE = "student_amount_enum"
 
-USERS_TABLE = "users"
+USERS_TABLE = "dbo.users_info"
 
 VOLUNTEER = "volunteer"
 MANAGER = "manager"
@@ -42,6 +42,7 @@ PARAM_NAMES_TO_TABLES = {"genders": GENDER_TABLE, "languages": LANGUAGE_TYPE_TAB
                        "companies": COMPANIES_TABLE, "company_roles": ROLES_TABLE, "schools": SCHOOLS_TABLE,
                        "school_types": SCHOOL_TYPES_TABLE, "student_amounts": STUDENT_AMOUNTS_TABLE}
 
-SELECT_COLUMNS_BY_ID = """SELECT {columns} FROM {table} WHERE id = '{id}'"""
+SELECT_COLUMNS_BY_ID = """SELECT {columns} FROM {table} WHERE user_id = '{id}'"""
+SELECT_ALL_COLUMNS_BY_ID = """SELECT * FROM {table} WHERE user_id = '{id}'"""
 
 SELECT_ENUM_COLUMN_BY_ID = """SELECT [name] as {column} from {enum_table}_enum as enum left join users on enum.id = users.{column} where users.id = '{id}'"""
