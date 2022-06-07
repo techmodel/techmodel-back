@@ -17,6 +17,8 @@ USERS_TABLE = "users"
 VOLUNTEER = "volunteer"
 MANAGER = "manager"
 
+INT_TO_ROLE = {2: VOLUNTEER, 1: MANAGER}
+
 GENERIC_USER_NON_ENUM_COLUMNS = ["first_name", "last_name", "email", "phone"]
 GENERIC_USER_ENUM_COLUMNS = {"gender_id": "genders", "user_type": "user_types"}
 GENERIC_USER_ALL_COLUMNS = GENERIC_USER_NON_ENUM_COLUMNS + list(GENERIC_USER_ENUM_COLUMNS.keys())

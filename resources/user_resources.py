@@ -17,12 +17,7 @@ class Profile(Resource):
     @authenticate
     def get(self, user_type):
         user_info = get_user_info_from_token(request.cookies.get("token"))
-
-        enum_columns = {}
-        enum_columns.update(GENERIC_USER_ENUM_COLUMNS)
-        enum_columns.update(USER_TYPE_TO_ENUMS[user_type])
-        queries = QueryBuilder().get_all_data_by_user(user_info.id, GENERIC_USER_NON_ENUM_COLUMNS + USER_TYPE_TO_ALL_COLUMNS[
-            user_type], enum_columns)
+        queries = QueryBuilder().get_all_data_by_user(user_info.id, user_type)
         results = {}
         for query in queries:
             results.update(*Sql().query_with_columns(query))
@@ -32,21 +27,25 @@ class Profile(Resource):
         pass
 
     def put(self, user_type):
-        pass
+        pass    
 
 
 class LogIn(Resource):
     def post(self):
         user_id = request.json.get('userId')
-        #TODO: Get entire userDetails object from db (select * where id) and make a new object for jwt that only includes [id, user_type, exp]
-        query = QueryBuilder().get_all_data_by_user(user_id, ["id", "user_type"], {})[0]
-        result = Sql().query_with_columns(query)
-        if not result:
+        query = QueryBuilder().get_data_by_user(user_id, ["id", "user_type"], {})[0]
+        user_data = Sql().query_with_columns(query)
+        if not user_data:
             return {"userDetails": None, "isFound": False, "userToken": None, "userTypeId": None}
-        result = result[0]
-        result["exp"] = datetime.now() + timedelta(hours=JWT_NUM_HOURS_FOR_COOKIE)
-        token = jwt.encode(result, JWT_SECRET, JWT_ALGORITHM)
-        return {"userDetails": "", "isFound": True, "userToken": token, "userTypeId": result.user_type}
+        user_data = user_data[0]
+        user_data["exp"] = datetime.now() + timedelta(hours=JWT_NUM_HOURS_FOR_COOKIE)
+        token = jwt.encode(user_data, JWT_SECRET, JWT_ALGORITHM)
+
+        queries = QueryBuilder().get_all_data_by_user(user_id, INT_TO_ROLE[user_data["user_type"]])
+        results = {}
+        for query in queries:
+            results.update(*Sql().query_with_columns(query))
+        return {"userDetails": results, "isFound": True, "userToken": token, "userTypeId": user_data["user_type"]}
 
 
 class LogOut(Resource):

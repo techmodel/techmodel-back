@@ -33,17 +33,26 @@ class QueryBuilder:
     def _prettify_list(self, list):
         return ", ".join(list)
 
-    def get_all_data_by_user(self, user_id, columns, enum_columns):
+    def get_data_by_user(self, user_id, columns, enum_columns):
         queries = [SELECT_COLUMNS_BY_ID.format(columns=self._prettify_list(columns),
-                                                        table=USERS_TABLE, id=user_id)]
+                                               table=USERS_TABLE, id=user_id)]
         for column, enum_table in enum_columns.items():
             queries.append(SELECT_ENUM_COLUMN_BY_ID.format(id=user_id, enum_table=enum_table, column=column))
         return queries
 
-    def get_many_table_name(self, filter_name):
+    @staticmethod
+    def get_all_data_by_user(user_id, user_type):
+        enum_columns = {}
+        enum_columns.update(GENERIC_USER_ENUM_COLUMNS)
+        enum_columns.update(USER_TYPE_TO_ENUMS[user_type])
+        return QueryBuilder().get_data_by_user(user_id,
+                                               GENERIC_USER_NON_ENUM_COLUMNS + USER_TYPE_TO_ALL_COLUMNS[
+                                                   user_type], enum_columns)
+
+    @staticmethod
+    def get_many_table_name(filter_name):
         return f"select table_name from filter_to_table where filter='{filter_name}'"
 
-    def get_types(self, table_name):
+    @staticmethod
+    def get_types(table_name):
         return ENUM_SELECT_QUERY.format(table=table_name)
-
-
