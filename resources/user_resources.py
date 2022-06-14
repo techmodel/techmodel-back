@@ -58,10 +58,9 @@ class LogIn(Resource):
         if not user_data:
             return {"userDetails": None, "isFound": False, "userToken": None, "userType": None}
 
-        token_data = {"user_type": user_data["user_type"], "user_id": user_data["user_id"]}
-        token_data["exp"] = datetime.now() + timedelta(hours=JWT_NUM_HOURS_FOR_COOKIE)
+        token_data = {"user_type": user_data["user_type"], "user_id": user_data["user_id"],
+                      "exp": datetime.now() + timedelta(hours=JWT_NUM_HOURS_FOR_COOKIE)}
         token = jwt.encode(token_data, JWT_SECRET, JWT_ALGORITHM)
-
         return {"userDetails": user_data, "isFound": True, "userToken": token, "userType": user_data["user_type"]}
 
 
