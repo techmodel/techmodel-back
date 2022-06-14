@@ -12,7 +12,7 @@ def get_user_info_from_token(token):
 
 def verify_user():
     try:
-        user = get_user_info_from_token(flask.request.cookies["token"])
+        user = get_user_info_from_token(flask.request.headers["token"])
         return bool(user)
     except:
         return False
