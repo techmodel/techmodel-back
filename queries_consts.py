@@ -12,25 +12,12 @@ SCHOOLS_TABLE = "schools"
 SCHOOL_TYPES_TABLE = "school_types_enum"
 STUDENT_AMOUNTS_TABLE = "student_amount_enum"
 
-USERS_TABLE = "users"
+USERS_TABLE = "dbo.users_info"
 
 VOLUNTEER = "volunteer"
 MANAGER = "manager"
 
 INT_TO_ROLE = {2: VOLUNTEER, 1: MANAGER}
-
-GENERIC_USER_NON_ENUM_COLUMNS = ["first_name", "last_name", "email", "phone"]
-GENERIC_USER_ENUM_COLUMNS = {"gender_id": "genders", "user_type": "user_types"}
-GENERIC_USER_ALL_COLUMNS = GENERIC_USER_NON_ENUM_COLUMNS + list(GENERIC_USER_ENUM_COLUMNS.keys())
-
-VOLUNTEER_ENUM_COLUMNS = {}
-MANAGER_ENUM_COLUMNS = {}
-
-VOLUNTEER_ALL_COLUMNS = [] + list(VOLUNTEER_ENUM_COLUMNS.keys())
-MANAGER_ALL_COLUMNS = [] + list(MANAGER_ENUM_COLUMNS.keys())
-
-USER_TYPE_TO_ENUMS = {VOLUNTEER: VOLUNTEER_ENUM_COLUMNS, MANAGER: MANAGER_ENUM_COLUMNS}
-USER_TYPE_TO_ALL_COLUMNS = {VOLUNTEER: VOLUNTEER_ALL_COLUMNS, MANAGER: MANAGER_ALL_COLUMNS}
 
 VOLUNTEER_PROFILE_PARAMS = ["genders", "geo_areas", "languages", "companies", "company_positions", "population_type",
                             "lecture_type"]
@@ -42,6 +29,7 @@ PARAM_NAMES_TO_TABLES = {"genders": GENDER_TABLE, "languages": LANGUAGE_TYPE_TAB
                        "companies": COMPANIES_TABLE, "company_roles": ROLES_TABLE, "schools": SCHOOLS_TABLE,
                        "school_types": SCHOOL_TYPES_TABLE, "student_amounts": STUDENT_AMOUNTS_TABLE}
 
-SELECT_COLUMNS_BY_ID = """SELECT {columns} FROM {table} WHERE id = '{id}'"""
+SELECT_COLUMNS_BY_ID = """SELECT {columns} FROM {table} WHERE user_id = '{id}'"""
+SELECT_ALL_COLUMNS_BY_ID = """SELECT * FROM {table} WHERE user_id = '{id}'"""
 
 SELECT_ENUM_COLUMN_BY_ID = """SELECT [name] as {column} from {enum_table}_enum as enum left join users on enum.id = users.{column} where users.id = '{id}'"""
