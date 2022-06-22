@@ -1,6 +1,0 @@
-Flask-RESTful
-Flask
-Flask-Cors
-pyodbc 
-python-dotenv
-PyJWT
