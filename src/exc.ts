@@ -7,3 +7,11 @@ export class AppError extends Error {
     Object.setPrototypeOf(this, AppError.prototype);
   }
 }
+
+export class SqlRetryableError extends AppError {
+  constructor(m: string, status: number) {
+    super(m, status);
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, SqlRetryableError.prototype);
+  }
+}

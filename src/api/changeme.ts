@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { AppError } from '../app/exc';
+import { AppError } from '../exc';
 
 const router = Router();
 
