@@ -1,4 +1,3 @@
-import { SqlRetryableError } from '../src/infrastructure/exc';
 require('dotenv/config');
 import logger from '../src/logger';
 import { Response } from 'superagent';
@@ -7,7 +6,6 @@ import { expect } from 'chai';
 import request from 'supertest';
 import app, { API_PREFIX_V1 } from '../src/server/server';
 import * as core from 'express-serve-static-core';
-import { AppError } from '../src/core/exc';
 
 function getToApp(app: core.Express, path: string): Promise<Response> {
   return request(app).get(`${API_PREFIX_V1}${path}`);
