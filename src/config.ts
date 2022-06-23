@@ -20,15 +20,8 @@ export function getEnv(name: string, defaultValue?: string): string {
   return env;
 }
 
-export const HENRY_LOG_LEVEL = getEnv('HENRY_LOG_LEVEL', 'info');
-export const HENRY_PORT = parseInt(getEnv('HENRY_PORT', '4000'));
-
-export const KAFKA_ALERT_CONN = getEnv('KAFKA_ALERT_CONN');
-export const KAFKA_ALERT_TOPIC = getEnv('KAFKA_ALERT_TOPIC');
-export const KAFKA_ALERT_GROUP_ID = getEnv('KAFKA_ALERT_GROUP_ID');
-export const KAFKA_INFO_CONN = getEnv('KAFKA_INFO_CONN');
-export const KAFKA_INFO_TOPIC = getEnv('KAFKA_INFO_TOPIC');
-export const KAFKA_INFO_GROUP_ID = getEnv('KAFKA_INFO_GROUP_ID');
+export const APP_LOG_LEVEL = getEnv('APP_LOG_LEVEL', 'info');
+export const APP_PORT = parseInt(getEnv('APP_PORT', '4000'));
 
 export const SQL_DB_HOST = getEnv('SQL_DB_HOST');
 export const SQL_DB_PORT = parseInt(getEnv('SQL_DB_PORT'));

@@ -11,9 +11,8 @@ const swaggerRouter = Router();
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
-    title: 'Henry',
-    version: '1.0.0',
-    description: 'Service to handle all current enrichment data'
+    title: 'Techmodel Backend',
+    version: '1.0.0'
   },
   basepath: '/'
 };

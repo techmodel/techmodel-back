@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import swaggerui from '../swaggerRouter';
-import exampleApi from '../api/getEnrichments';
+import exampleApi from '../api/changeme';
 
 export const API_PREFIX_V1 = '/api/v1';
 

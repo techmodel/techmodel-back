@@ -1,4 +1,4 @@
-import { AppError } from '../../core/exc';
+import { AppError } from '../app/exc';
 
 export class SqlRetryableError extends AppError {
   constructor(m: string, status: number) {
