@@ -1,4 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import { City } from './city';
+import { InstitutionType } from './institutionType';
+import { Location } from './location';
+import { PopulationType } from './populationType';
 
 @Entity()
 export class Institution {
@@ -11,22 +15,22 @@ export class Institution {
   @Column()
   name: string;
 
-  // TODO: add foreign key
-  @Column()
-  location: number;
-
-  // TODO: add foreign key
-  @Column()
-  type: number;
-
-  // TODO: add foreign
-  @Column()
-  populationType: number;
-
-  // TODO: add foreign
-  @Column()
-  city: number;
-
   @Column()
   address: string;
+
+  @OneToOne(() => Location)
+  @JoinColumn()
+  location: Location;
+
+  @OneToOne(() => City)
+  @JoinColumn()
+  city: City;
+
+  @OneToOne(() => PopulationType)
+  @JoinColumn()
+  populationType: PopulationType;
+
+  @OneToOne(() => InstitutionType)
+  @JoinColumn()
+  institutionType: InstitutionType;
 }

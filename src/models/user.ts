@@ -1,5 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Company } from './company';
+import { Institution } from './institution';
+import { Program } from './program';
 import { UserType } from './userType';
+import { VolunteerRequest } from './volunteerRequest';
+import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
 
 @Entity({ name: 'users' })
 export class User {
@@ -26,17 +31,23 @@ export class User {
     enum: UserType,
     default: UserType.VOLUNTEER
   })
-  userType: string;
+  userType: UserType;
 
-  // TODO: add foreign key
-  @Column()
-  institution: string;
+  @OneToOne(() => Institution)
+  @JoinColumn()
+  institution: Institution;
 
-  // TODO: add foreign key
-  @Column()
-  program: string;
+  @OneToOne(() => Program)
+  @JoinColumn()
+  program: Program;
 
-  // TODO: add foreign key
-  @Column()
-  company: string;
+  @OneToOne(() => Company)
+  @JoinColumn()
+  company: Company;
+
+  @OneToMany(
+    () => VolunteerRequestToVolunteer,
+    volunteerRequestToVolunteer => volunteerRequestToVolunteer.volunteer
+  )
+  volunteerRequestToVolunteer!: VolunteerRequestToVolunteer[];
 }

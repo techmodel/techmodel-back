@@ -1,16 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { Language } from './language';
+import { RequestStatus } from './volunteerRequestStatus';
+import { SkillToVolunteerRequest } from './skillToVolunteerRequest';
+import { User } from './user';
+import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
 
 @Entity()
-export class Language {
+export class VolunteerRequest {
   @PrimaryGeneratedColumn()
   id: number;
 
   @CreateDateColumn()
   createdAt!: Date;
-
-  // TODO: add foreign key
-  @Column()
-  creator: number;
 
   @Column()
   name: string;
@@ -39,6 +40,30 @@ export class Language {
   @Column()
   volunteerAmount: string; // TODO: think about a better name, maybe attendees? participants?
 
-  @Column()
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: RequestStatus,
+    default: RequestStatus.SENT
+  })
+  status: RequestStatus;
+
+  @OneToOne(() => User)
+  @JoinColumn()
+  creator: User;
+
+  @OneToOne(() => Language)
+  @JoinColumn()
+  language: Language;
+
+  @OneToMany(
+    () => VolunteerRequestToVolunteer,
+    volunteerRequestToVolunteer => volunteerRequestToVolunteer.volunteerRequest
+  )
+  volunteerRequestToVolunteer!: VolunteerRequestToVolunteer[];
+
+  @OneToMany(
+    () => SkillToVolunteerRequest,
+    skillToVolunteerRequest => skillToVolunteerRequest.volunteerRequest
+  )
+  skillToVolunteerRequest: SkillToVolunteerRequest[];
 }
