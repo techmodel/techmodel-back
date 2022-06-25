@@ -1,9 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Company } from './company';
 import { Institution } from './institution';
 import { Program } from './program';
 import { UserType } from './userType';
-import { VolunteerRequest } from './volunteerRequest';
 import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
 
 @Entity({ name: 'users' })
