@@ -26,11 +26,17 @@ export class Institution {
   @JoinColumn()
   city: City;
 
-  @OneToOne(() => PopulationType)
-  @JoinColumn()
+  @Column({
+    type: 'enum',
+    enum: PopulationType,
+    default: PopulationType.JEWISH_SECULAR
+  })
   populationType: PopulationType;
 
-  @OneToOne(() => InstitutionType)
-  @JoinColumn()
+  @Column({
+    type: 'enum',
+    enum: InstitutionType,
+    default: InstitutionType.ELEMENTARY
+  })
   institutionType: InstitutionType;
 }

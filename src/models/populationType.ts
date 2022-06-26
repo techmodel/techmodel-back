@@ -1,13 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
-
-@Entity()
-export class PopulationType {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @Column()
-  name: string;
+export enum PopulationType {
+  JEWISH_SECULAR = 'jewish_secular'
+  // TODO: add the rest of the values
+  // 'יהודית-חילונית',
+  // 'יהודית-דתית',
+  // 'יהודית-חרדית',
+  // 'ערבית',
+  // 'דרוזית'
 }

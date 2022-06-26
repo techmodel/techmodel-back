@@ -1,13 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
-
-@Entity()
-export class InstitutionType {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @Column()
-  name: string;
+export enum InstitutionType {
+  ELEMENTARY = 'elementary',
+  HGIH = 'high'
+  // TODO: add the rest of the options
+  // 'יסודי',
+  // 'ביניים',
+  // 'תיכון',
+  // 'תנועת נוער',
 }

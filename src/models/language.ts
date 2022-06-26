@@ -1,10 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-
-@Entity()
-export class Language {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  name: string;
+export enum Language {
+  HEBREW = 'hebrew',
+  ENGLISH = 'english',
+  ARABIC = 'arabic',
+  RUSSIAN = 'russian'
 }

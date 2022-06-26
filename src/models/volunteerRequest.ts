@@ -51,8 +51,11 @@ export class VolunteerRequest {
   @JoinColumn()
   creator: User;
 
-  @OneToOne(() => Language)
-  @JoinColumn()
+  @Column({
+    type: 'enum',
+    enum: Language,
+    default: Language.HEBREW
+  })
   language: Language;
 
   @OneToMany(

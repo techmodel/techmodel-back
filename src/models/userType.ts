@@ -1,5 +1,5 @@
 export enum UserType {
-  VOLUNTEER = 'מתנדב',
-  PROGRAM_MANAGER = 'מנהל תוכנית',
-  PROGRAM_COORDINATOR = 'מרכז תוכנית'
+  VOLUNTEER = 'volunteer',
+  PROGRAM_MANAGER = 'program_manager',
+  PROGRAM_COORDINATOR = 'program_coordinator'
 }
