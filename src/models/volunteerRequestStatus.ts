@@ -1,3 +1,3 @@
 export enum RequestStatus {
-  SENT = 'הוגשה בקשה'
+  SENT = 'sent'
 }
