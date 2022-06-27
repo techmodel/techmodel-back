@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { AppError } from '../exc';
 
 const router = Router();
@@ -12,7 +12,7 @@ const router = Router();
  *       200:
  *         description: Returns a mysterious string.
  */
-router.get('/changeme', async (req, res) => {
+router.get('/login', async (req: Request, res: Response) => {
   try {
     console.log('delete me');
   } catch (e) {
