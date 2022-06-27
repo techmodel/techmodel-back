@@ -13,4 +13,3 @@ export { UserType } from './userType';
 export { VolunteerRequest } from './volunteerRequest';
 export { RequestStatus } from './volunteerRequestStatus';
 export { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
-export { userDecoded } from './userDecoded';

@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { AuthorizationError } from '../exc';
 import { JWT_SECRET } from '../config';
-import { userDecoded, UserType } from '../models';
+import { UserType } from '../models';
+import { userDecoded } from '../app/user';
 
 const tokenValidation = (token: string) => jwt.verify(token, JWT_SECRET) as userDecoded;
 
