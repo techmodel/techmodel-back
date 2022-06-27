@@ -15,3 +15,11 @@ export class SqlRetryableError extends AppError {
     Object.setPrototypeOf(this, SqlRetryableError.prototype);
   }
 }
+
+export class AuthorizationError extends AppError {
+  constructor(m: string, status = 401) {
+    super(m, status);
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, AuthorizationError.prototype);
+  }
+}

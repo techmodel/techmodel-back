@@ -1,8 +1,8 @@
 import { getCustomRepository } from 'typeorm';
 import { UserRepository } from '../repos';
-import { sign } from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config';
-import { User, UserType } from '../models';
+import { User, UserType, userDecoded } from '../models';
 
 type loginResponse = {
   userDetails: User | null;
@@ -17,7 +17,7 @@ export const login = async (userId: number): Promise<loginResponse> => {
   if (!user) {
     return { userDetails: null, isFound: false, userToken: '', userType: null };
   }
-  const tokenData = { userType: user.userType, userId };
-  const token = sign(tokenData, JWT_SECRET, { expiresIn: '1d' });
+  const tokenData: Partial<userDecoded> = { userType: user.userType, userId };
+  const token = jwt.sign(tokenData, JWT_SECRET, { expiresIn: '1d' });
   return { userDetails: user, isFound: true, userToken: token, userType: user.userType };
 };
