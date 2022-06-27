@@ -1,7 +1,6 @@
 import { DataSource } from 'typeorm';
 import { SQL_DB_DATABASE, SQL_DB_HOST, SQL_DB_PASSWORD, SQL_DB_PORT, SQL_DB_USERNAME } from './config';
 
-// connect and create connection pool
 export const appDataSource = new DataSource({
   type: 'mssql',
   host: SQL_DB_HOST,
