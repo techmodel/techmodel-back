@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+    # Database instance
+    mssql:
+      image: mcr.microsoft.com/azure-sql-edge:latest
+      ports:
+        - 1433:1433
+      environment:
+        - ACCEPT_EULA=1
+        - MSSQL_SA_PASSWORD=Passw@rd
+# You will be able to connect to this DB using username: sa, password: Passw@rd and database: master

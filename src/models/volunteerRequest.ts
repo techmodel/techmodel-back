@@ -25,37 +25,29 @@ export class VolunteerRequest {
   @Column()
   description: string;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'datetime' })
   startDate: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'datetime' })
   endDate: Date;
 
   @Column()
   duration: string; // TODO: decide on the type of the column
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'datetime' })
   startTime: Date;
 
   @Column()
   volunteerAmount: string; // TODO: think about a better name, maybe attendees? participants?
 
-  @Column({
-    type: 'enum',
-    enum: RequestStatus,
-    default: RequestStatus.SENT
-  })
+  @Column({ type: 'varchar' })
   status: RequestStatus;
 
   @OneToOne(() => User)
   @JoinColumn()
   creator: User;
 
-  @Column({
-    type: 'enum',
-    enum: Language,
-    default: Language.HEBREW
-  })
+  @Column({ type: 'varchar' })
   language: Language;
 
   @OneToMany(

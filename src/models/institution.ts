@@ -26,17 +26,9 @@ export class Institution {
   @JoinColumn()
   city: City;
 
-  @Column({
-    type: 'enum',
-    enum: PopulationType,
-    default: PopulationType.JEWISH_SECULAR
-  })
+  @Column({ type: 'varchar' })
   populationType: PopulationType;
 
-  @Column({
-    type: 'enum',
-    enum: InstitutionType,
-    default: InstitutionType.ELEMENTARY
-  })
+  @Column({ type: 'varchar' })
   institutionType: InstitutionType;
 }

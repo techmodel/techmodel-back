@@ -25,11 +25,7 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({
-    type: 'enum',
-    enum: UserType,
-    default: UserType.VOLUNTEER
-  })
+  @Column({ type: 'varchar' })
   userType: UserType;
 
   @OneToOne(() => Institution)
