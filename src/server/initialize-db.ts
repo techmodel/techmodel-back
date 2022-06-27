@@ -1,10 +1,7 @@
-require('dotenv/config');
-
-import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { SQL_DB_DATABASE, SQL_DB_HOST, SQL_DB_PASSWORD, SQL_DB_PORT, SQL_DB_USERNAME } from '../config';
 
-const AppDataSource = new DataSource({
+export const dataSource = new DataSource({
   type: 'mssql',
   host: SQL_DB_HOST,
   port: SQL_DB_PORT,
@@ -16,12 +13,11 @@ const AppDataSource = new DataSource({
   logging: false
 });
 
-// to initialize initial connection with the database, register all entities
-// and "synchronize" database schema, call "initialize()" method of a newly created database
-// once in your application bootstrap
-AppDataSource.initialize()
-  .then(() => {
-    console.log('initialized');
-    process.exit();
-  })
-  .catch(error => console.log(error));
+export const connectToDb = async (dataSource: DataSource) => {
+  try {
+    await dataSource.initialize();
+    console.log(`Connection to db established successfully`);
+  } catch (err) {
+    throw new Error("Couldn't connect to db");
+  }
+};

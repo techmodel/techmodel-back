@@ -8,9 +8,9 @@
     "build": "tsc",
     "dev": "ts-node-dev --respawn src/server/dev-server.ts",
     "init-db": "ts-node-dev --respawn src/server/initialize-db.ts",
-    "dc-m1-up": "docker-compose -f docker-compose-mac-m1.yml up -d",
-    "dc-m1-stop": "docker-compose -f docker-compose-mac-m1.yml stop",
-    "dc-m1-ps": "docker-compose -f docker-compose-mac-m1.yml ps",
+    "dc-up": "docker-compose up -d",
+    "dc-stop": "docker-compose stop",
+    "dc-ps": "docker-compose ps",
     "prod": "tsc && node ./build/server/run-server.js",
     "serve": "node ./build/server/run-server.js",
     "testcov": "nyc mocha -r ts-node/register tests/**/*.test.ts --exit",
@@ -61,7 +61,7 @@
     "prettier": "^1.19.1",
     "sinon": "^7.5.0",
     "supertest": "^4.0.2",
-    "ts-node": "^8.1.0",
+    "ts-node": "^10.7.0",
     "ts-node-dev": "^2.0.0"
   },
   "husky": {
