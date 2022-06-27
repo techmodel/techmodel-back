@@ -1,9 +1,8 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { appDataSource } from '../dataSource';
 import { User } from '../models';
 
-@EntityRepository(User)
-export class UserRepository extends Repository<User> {
-  findByEmail(email: string): Promise<User | undefined> {
-    return this.findOne({ email });
+export const userRepository = appDataSource.getRepository(User).extend({
+  findByEmail(email: string): Promise<User | null> {
+    return this.findOne({ where: { email } });
   }
-}
+});
