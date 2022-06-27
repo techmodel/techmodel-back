@@ -6,20 +6,22 @@ import { userDecoded, UserType } from '../models';
 
 const tokenValidation = (token: string) => jwt.verify(token, JWT_SECRET) as userDecoded;
 
-export const authMiddleware = (userType: UserType) => (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = (userTypes: UserType | UserType[]) => (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!Array.isArray(userTypes)) userTypes = [userTypes];
   const token = req.headers['authorization'];
   try {
     if (!token) {
       throw new AuthorizationError('No token found');
     }
-
     const decoded = tokenValidation(token);
-
     if (!decoded) {
       throw new AuthorizationError("Couldn't verify token");
     }
-
-    if (userType != decoded.userType) {
+    if (!userTypes.includes(decoded.userType)) {
       throw new AuthorizationError('You are not authorized to perform this action');
     }
   } catch (err) {
