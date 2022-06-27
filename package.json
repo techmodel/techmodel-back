@@ -7,7 +7,7 @@
     "tsc": "tsc",
     "build": "tsc",
     "dev": "ts-node-dev --respawn src/server/dev-server.ts",
-    "init-db": "ts-node-dev --respawn src/server/initialize-db.ts",
+    "init-db": "ts-node-dev --respawn initialize-db.ts",
     "dc-up": "docker-compose up -d",
     "dc-stop": "docker-compose stop",
     "dc-ps": "docker-compose ps",
