@@ -4,6 +4,12 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { SQL_DB_DATABASE, SQL_DB_HOST, SQL_DB_PASSWORD, SQL_DB_PORT, SQL_DB_USERNAME } from './src/config';
 
+if (SQL_DB_HOST != 'localhost') {
+  throw Error(
+    '\n*** Are you sure you want to run this not on your localhost?\nIt will DELETE the current schema including the data in the tables and create a new one'
+  );
+}
+
 const AppDataSource = new DataSource({
   type: 'mssql',
   host: SQL_DB_HOST,

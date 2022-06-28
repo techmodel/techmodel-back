@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { AuthorizationError } from '../exc';
+import { AuthenticationError, AuthorizationError } from '../exc';
 import { JWT_SECRET } from '../config';
 import { UserType } from '../models';
 import { userDecoded } from '../app/user';
@@ -17,11 +17,11 @@ export const authMiddleware = (userTypes: UserType | UserType[]) => (
   const token = req.headers['authorization'];
   try {
     if (!token) {
-      throw new AuthorizationError('No token found');
+      throw new AuthenticationError('No token found');
     }
     const decoded = tokenValidation(token);
     if (!decoded) {
-      throw new AuthorizationError("Couldn't verify token");
+      throw new AuthenticationError("Couldn't verify token");
     }
     if (!userTypes.includes(decoded.userType)) {
       throw new AuthorizationError('You are not authorized to perform this action');
