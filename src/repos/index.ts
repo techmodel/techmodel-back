@@ -1,5 +1,11 @@
 import { appDataSource } from '../dataSource';
-import { Company } from '../models';
+import { City, Company, Institution, Location, Program } from '../models';
 
 export { userRepository } from './userRepo';
+export { volunteerRequestRepository } from './volunteerRequestRepo';
 export const companyRepository = appDataSource.getRepository(Company);
+export const cityRepository = appDataSource.getRepository(City);
+export const locationRepository = appDataSource.getRepository(Location);
+export const institutionRepository = appDataSource.getRepository(Institution);
+export const programRepository = appDataSource.getRepository(Program);
+export const Repository = appDataSource.getRepository(City);

@@ -6,9 +6,6 @@ export class Skill {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @CreateDateColumn()
-  createdAt!: Date;
-
   @Column()
   name: string;
 

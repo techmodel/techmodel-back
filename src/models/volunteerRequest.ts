@@ -38,13 +38,16 @@ export class VolunteerRequest {
   startTime: Date;
 
   @Column()
-  volunteerAmount: string; // TODO: think about a better name, maybe attendees? participants?
+  totalVolunteers: number;
+
+  @Column()
+  currentVolunteers!: number;
 
   @Column({ type: 'varchar' })
   status: RequestStatus;
 
   @Column({ nullable: true })
-  creatorId!: number;
+  creatorId!: string;
 
   @OneToOne(() => User)
   @JoinColumn()

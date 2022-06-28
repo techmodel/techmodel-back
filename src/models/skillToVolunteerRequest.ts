@@ -7,14 +7,11 @@ export class SkillToVolunteerRequest {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  @Column()
+  skillId!: number;
 
   @Column()
-  skillId: number;
-
-  @Column()
-  requestId: number;
+  requestId!: number;
 
   @ManyToOne(
     () => Skill,
