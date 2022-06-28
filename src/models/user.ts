@@ -8,7 +8,7 @@ import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
 @Entity({ name: 'users' })
 export class User {
   @PrimaryColumn()
-  id: number;
+  id: string;
 
   @CreateDateColumn()
   createdAt!: Date;
