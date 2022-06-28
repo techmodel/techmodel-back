@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import { Company } from './company';
 import { Institution } from './institution';
 import { Program } from './program';
@@ -7,7 +7,7 @@ import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
 
 @Entity({ name: 'users' })
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
 
   @CreateDateColumn()
@@ -27,6 +27,15 @@ export class User {
 
   @Column({ type: 'varchar' })
   userType: UserType;
+
+  @Column({ nullable: true })
+  institutionId!: number;
+
+  @Column({ nullable: true })
+  programId!: number;
+
+  @Column({ nullable: true })
+  companyId!: number;
 
   @OneToOne(() => Institution)
   @JoinColumn()

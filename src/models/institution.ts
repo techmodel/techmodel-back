@@ -18,6 +18,12 @@ export class Institution {
   @Column()
   address: string;
 
+  @Column({ nullable: true })
+  locationId!: number;
+
+  @Column({ nullable: true })
+  cityId!: number;
+
   @OneToOne(() => Location)
   @JoinColumn()
   location: Location;

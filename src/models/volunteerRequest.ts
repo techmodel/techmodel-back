@@ -43,6 +43,9 @@ export class VolunteerRequest {
   @Column({ type: 'varchar' })
   status: RequestStatus;
 
+  @Column({ nullable: true })
+  creatorId!: number;
+
   @OneToOne(() => User)
   @JoinColumn()
   creator: User;

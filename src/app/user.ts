@@ -26,3 +26,9 @@ export const login = async (userId: number): Promise<loginResponse> => {
   const token = jwt.sign(tokenData, JWT_SECRET, { expiresIn: '1d' });
   return { userDetails: user, isFound: true, userToken: token, userType: user.userType };
 };
+
+export const register = async (user: Partial<User>): Promise<loginResponse> => {
+  if (!user.id) throw new Error('Missing userId');
+  await userRepository.save(user);
+  return login(user.id);
+};
