@@ -1,7 +1,7 @@
-import { userRepository } from '../repos';
 import * as jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config';
 import { User, UserType } from '../models';
+import { userRepository } from '../repos';
 
 type loginResponse = {
   userDetails: User | null;
@@ -11,13 +11,13 @@ type loginResponse = {
 };
 
 export type userDecoded = {
-  userId: number;
+  userId: string;
   userType: UserType;
   iat: number;
   exp: number;
 };
 
-export const login = async (userId: number): Promise<loginResponse> => {
+export const login = async (userId: string): Promise<loginResponse> => {
   const user = await userRepository.findOne({ where: { id: userId } });
   if (!user) {
     return { userDetails: null, isFound: false, userToken: '', userType: null };
