@@ -1,16 +1,13 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { Skill } from './skill';
 import { VolunteerRequest } from './volunteerRequest';
 
 @Entity()
 export class SkillToVolunteerRequest {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
+  @PrimaryColumn()
   skillId!: number;
 
-  @Column()
+  @PrimaryColumn()
   requestId!: number;
 
   @ManyToOne(

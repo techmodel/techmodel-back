@@ -40,7 +40,7 @@ export class VolunteerRequest {
   @Column()
   totalVolunteers: number;
 
-  @Column()
+  @Column({ nullable: true })
   currentVolunteers!: number;
 
   @Column({ type: 'varchar' })

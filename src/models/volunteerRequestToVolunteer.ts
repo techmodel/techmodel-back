@@ -1,19 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from './user';
 import { VolunteerRequest } from './volunteerRequest';
 
 @Entity()
 export class VolunteerRequestToVolunteer {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  volunteerId: string;
 
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @Column()
-  volunteerId: number;
-
-  @Column()
+  @PrimaryColumn()
   volunteerRequestId: number;
 
   @ManyToOne(

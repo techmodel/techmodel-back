@@ -8,4 +8,3 @@ export const cityRepository = appDataSource.getRepository(City);
 export const locationRepository = appDataSource.getRepository(Location);
 export const institutionRepository = appDataSource.getRepository(Institution);
 export const programRepository = appDataSource.getRepository(Program);
-export const Repository = appDataSource.getRepository(City);
