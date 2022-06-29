@@ -5,6 +5,8 @@ import {
   Institution,
   Location,
   Program,
+  Skill,
+  SkillToVolunteerRequest,
   User,
   VolunteerRequest,
   VolunteerRequestToVolunteer
@@ -15,6 +17,7 @@ import {
   institutionRepository,
   locationRepository,
   programRepository,
+  skillRepository,
   userRepository,
   volunteerRequestRepository
 } from '../src/repos';
@@ -28,12 +31,14 @@ type seedOptions = {
   users?: User[];
   volunteerRequests?: VolunteerRequest[];
   volunteerRequestToVolunteers?: VolunteerRequestToVolunteer[];
+  skills?: Skill[];
+  skillToVolunteerRequests?: SkillToVolunteerRequest[];
 };
 
 export const volunteerRequestToVolunteerRepository = appDataSource.getRepository(VolunteerRequestToVolunteer);
+export const SkillToVolunteerRequestRepository = appDataSource.getRepository(SkillToVolunteerRequest);
 
 export const seed = async (options: seedOptions): Promise<void> => {
-  await appDataSource.initialize();
   if (options.cities) {
     for (const city of options.cities) {
       await cityRepository.save(city);
@@ -72,6 +77,16 @@ export const seed = async (options: seedOptions): Promise<void> => {
   if (options.volunteerRequestToVolunteers) {
     for (const volunteerRequestToVolunteer of options.volunteerRequestToVolunteers) {
       await volunteerRequestToVolunteerRepository.save(volunteerRequestToVolunteer);
+    }
+  }
+  if (options.skills) {
+    for (const skill of options.skills) {
+      await skillRepository.save(skill);
+    }
+  }
+  if (options.skillToVolunteerRequests) {
+    for (const skillToVolunteerRequest of options.skillToVolunteerRequests) {
+      await SkillToVolunteerRequestRepository.save(skillToVolunteerRequest);
     }
   }
 };

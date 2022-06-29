@@ -8,6 +8,8 @@ import {
   PopulationType,
   Program,
   RequestStatus,
+  Skill,
+  SkillToVolunteerRequest,
   User,
   UserType,
   VolunteerRequest,
@@ -121,3 +123,25 @@ export const volunteerRequest1ToVolunteer2 = {
   volunteerId: volunteer2.id,
   volunteerRequestId: volunteerRequest1.id
 } as VolunteerRequestToVolunteer;
+
+export const skill1 = {
+  id: 1,
+  name: 'skill1',
+  type: 'type1'
+} as Skill;
+
+export const skill2 = {
+  id: 2,
+  name: 'skill2',
+  type: 'type1'
+} as Skill;
+
+export const skill1ToVolunteerRequest1 = {
+  skillId: skill1.id,
+  requestId: volunteerRequest1.id
+} as SkillToVolunteerRequest;
+
+export const skill2ToVolunteerRequest1 = {
+  skillId: skill2.id,
+  requestId: volunteerRequest1.id
+} as SkillToVolunteerRequest;
