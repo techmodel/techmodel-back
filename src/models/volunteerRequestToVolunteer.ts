@@ -1,14 +1,18 @@
-import { Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user';
 import { VolunteerRequest } from './volunteerRequest';
 
 @Entity()
+@Index(['volunteerId', 'volunteerRequestId'], { unique: true })
 export class VolunteerRequestToVolunteer {
-  @PrimaryColumn()
-  volunteerId: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @PrimaryColumn()
-  volunteerRequestId: number;
+  @Column()
+  volunteerId!: string;
+
+  @Column()
+  volunteerRequestId!: number;
 
   @ManyToOne(
     () => User,

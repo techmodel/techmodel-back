@@ -90,3 +90,16 @@ export const seed = async (options: seedOptions): Promise<void> => {
     }
   }
 };
+
+export const removeSeed = async (): Promise<void> => {
+  await SkillToVolunteerRequestRepository.delete({});
+  await skillRepository.delete({});
+  await volunteerRequestToVolunteerRepository.delete({});
+  await volunteerRequestRepository.delete({});
+  await userRepository.delete({});
+  await companyRepository.delete({});
+  await programRepository.delete({});
+  await institutionRepository.delete({});
+  await locationRepository.delete({});
+  await cityRepository.delete({});
+};

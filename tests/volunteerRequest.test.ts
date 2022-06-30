@@ -2,7 +2,7 @@ require('dotenv/config');
 import sinon, { SinonSandbox } from 'sinon';
 import { appDataSource } from '../src/dataSource';
 import logger from '../src/logger';
-import { seed } from './seed';
+import { removeSeed, seed } from './seed';
 import {
   city1,
   company1,
@@ -22,6 +22,7 @@ import {
   volunteerRequest1ToVolunteer2
 } from './mock';
 import { volunteerRequestRepository } from '../src/repos';
+import { VolunteerRequest } from '../src/models';
 
 describe('app', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
@@ -49,9 +50,35 @@ describe('app', function() {
     });
   });
 
-  it('test', async function() {
-    const res = await volunteerRequestRepository.find();
+  it.skip('test', async function() {
+    const res = await volunteerRequestRepository.find({ relations: { skillToVolunteerRequest: { skill: true } } });
     console.log(res);
+    console.log(res[0].skillToVolunteerRequest);
+  });
+
+  it('test', async function() {
+    const res = await volunteerRequestRepository
+      .createQueryBuilder('vr')
+      .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
+      .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
+      .leftJoinAndSelect('stvr.skill', 'skill')
+      .where('vr.id = :vrId', { vrId: volunteerRequest1.id })
+      .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('vr.id')
+          .from(VolunteerRequest, 'vr')
+          .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
+          // join users and recipies
+          .groupBy('vr.id, vr.totalVolunteers')
+          .having('COUNT(*) < vr.totalVolunteers')
+          .getQuery();
+        return 'vr.id IN ' + subQuery;
+      })
+      .getMany();
+    console.log(res);
+    console.log(res[0].skillToVolunteerRequest);
   });
 
   this.afterEach(function() {
@@ -59,6 +86,7 @@ describe('app', function() {
   });
 
   this.afterAll(async function() {
+    await removeSeed();
     appDataSource.destroy();
   });
 });

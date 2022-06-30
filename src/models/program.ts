@@ -8,7 +8,7 @@ export class Program {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Column()

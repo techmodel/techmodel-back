@@ -19,6 +19,7 @@ import {
 export const TEST_DATE_28_06_2022 = new Date('2022-06-28T15:20:21.470Z');
 export const TEST_DATE_20_06_2022 = new Date('2022-06-20T15:20:21.470Z');
 export const TEST_DATE_NOW = new Date();
+export const TEST_DATE_NOW_MINUS_TWO_DAYS = new Date(new Date().getTime() - 2 * 24 * 60 * 60 * 1000);
 export const TEST_DATE_NOW_PLUS_TWO_DAYS = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
 export const TEST_DATE_NOW_PLUS_FIVE_DAYS = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000);
 
@@ -137,11 +138,13 @@ export const skill2 = {
 } as Skill;
 
 export const skill1ToVolunteerRequest1 = {
+  id: 1,
   skillId: skill1.id,
-  requestId: volunteerRequest1.id
+  volunteerRequestId: volunteerRequest1.id
 } as SkillToVolunteerRequest;
 
 export const skill2ToVolunteerRequest1 = {
+  id: 2,
   skillId: skill2.id,
-  requestId: volunteerRequest1.id
+  volunteerRequestId: volunteerRequest1.id
 } as SkillToVolunteerRequest;
