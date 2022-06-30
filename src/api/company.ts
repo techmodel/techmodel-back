@@ -19,15 +19,6 @@ const router = Router();
  *                 type: array
  *                 items:
  *                   $ref: '#/components/schemas/company'
- * components:
- *   schemas:
- *     company:
- *       type: object
- *       properties:
- *         id:
- *           type: number
- *         name:
- *           type: string
  */
 router.get('/companies', async (req: Request, res: Response) => {
   try {

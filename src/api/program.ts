@@ -19,20 +19,6 @@ const router = Router();
  *                 type: array
  *                 items:
  *                   $ref: '#/components/schemas/program'
- * components:
- *   schemas:
- *     program:
- *       type: object
- *       properties:
- *         id:
- *           type: number
- *         name:
- *           type: string
- *         description:
- *           type: string
- *         createdAt:
- *           type: string
- *           format: date-time
  */
 router.get('/programs', async (req: Request, res: Response) => {
   try {

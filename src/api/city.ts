@@ -19,15 +19,6 @@ const router = Router();
  *                 type: array
  *                 items:
  *                   $ref: '#/components/schemas/city'
- * components:
- *   schemas:
- *     city:
- *       type: object
- *       properties:
- *         id:
- *           type: number
- *         name:
- *           type: string
  */
 router.get('/cities', async (req: Request, res: Response) => {
   try {

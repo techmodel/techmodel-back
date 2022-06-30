@@ -1,10 +1,9 @@
-import { LessThan } from 'typeorm';
 import { appDataSource } from '../dataSource';
-import { VolunteerRequest } from '../models';
+import { VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
 
 export const volunteerRequestRepository = appDataSource.getRepository(VolunteerRequest).extend({
   async relevantAndOpen(): Promise<VolunteerRequest[]> {
-    return await volunteerRequestRepository
+    return await this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
       // populate vr.currentVolunteers
@@ -25,5 +24,11 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
         return 'vr.id IN ' + subQuery;
       })
       .getMany();
+  },
+
+  async assignVolunteerToRequest(requestId: number, volunteerId: string): Promise<void> {
+    await appDataSource
+      .getRepository(VolunteerRequestToVolunteer)
+      .insert({ volunteerId, volunteerRequestId: requestId });
   }
 });

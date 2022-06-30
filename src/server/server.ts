@@ -30,4 +30,7 @@ app.use('/swagger', swaggerui);
 
 export default app;
 
-// TODO: add a location route to get all locations
+// TODO: do we want to enable people to add any skill they want or do we want them to pick it from a predefined list?
+// TODO: who should be able to add a company?
+// TODO: who should be able to add an institution?
+// TODO: trying to use bearer in swagger results in error when validating the token, check why

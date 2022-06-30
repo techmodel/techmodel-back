@@ -19,17 +19,6 @@ const router = Router();
  *                 type: array
  *                 items:
  *                   $ref: '#/components/schemas/skill'
- * components:
- *   schemas:
- *     skill:
- *       type: object
- *       properties:
- *         id:
- *           type: number
- *         name:
- *           type: string
- *         type:
- *           type: string
  */
 router.get('/skills', async (req: Request, res: Response) => {
   try {
