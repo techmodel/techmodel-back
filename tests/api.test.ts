@@ -5,11 +5,11 @@ import sinon, { SinonSandbox } from 'sinon';
 import { expect } from 'chai';
 import request from 'supertest';
 import app from '../src/server/server';
-import { API_PREFIX_V1 } from '../src/config';
+import { API_PREFIX } from '../src/config';
 import * as core from 'express-serve-static-core';
 
 function getToApp(app: core.Express, path: string): Promise<Response> {
-  return request(app).get(`${API_PREFIX_V1}${path}`);
+  return request(app).get(`${API_PREFIX}${path}`);
 }
 
 describe('api', function() {

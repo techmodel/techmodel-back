@@ -1,9 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import swaggerui from '../swaggerRouter';
-import exampleApi from '../api/changeme';
 import volunteerRequestRouter from '../api/volunteerRequest';
-import { API_PREFIX_V1 } from '../config';
+import companyRouter from '../api/company';
+import skillRouter from '../api/skill';
+import programRouter from '../api/program';
+import institutionRouter from '../api/institution';
+import cityRouter from '../api/city';
+import { API_PREFIX } from '../config';
 
 const app = express();
 
@@ -12,10 +16,16 @@ app.disable('x-powered-by');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(API_PREFIX_V1, exampleApi);
-app.use(API_PREFIX_V1, volunteerRequestRouter);
+app.use(API_PREFIX, volunteerRequestRouter);
+app.use(API_PREFIX, companyRouter);
+app.use(API_PREFIX, skillRouter);
+app.use(API_PREFIX, programRouter);
+app.use(API_PREFIX, institutionRouter);
+app.use(API_PREFIX, cityRouter);
 
 app.get('/', (req, res) => res.redirect('/swagger'));
 app.use('/swagger', swaggerui);
 
 export default app;
+
+// TODO: add a location route to get all locations
