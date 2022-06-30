@@ -30,3 +30,4 @@ export const SQL_DB_PASSWORD = getEnv('SQL_DB_PASSWORD');
 export const SQL_DB_DATABASE = getEnv('SQL_DB_DATABASE');
 export const SQL_INSERT_RETRY_INTERVAL_MS = parseInt(getEnv('SQL_INSERT_RETRY_INTERVAL_MS', '1000'));
 export const JWT_SECRET = getEnv('JWT_SECRET');
+export const API_PREFIX_V1 = '/api/v1';

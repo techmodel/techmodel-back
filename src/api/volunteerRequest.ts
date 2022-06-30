@@ -6,7 +6,7 @@ const router = Router();
 
 /**
  * @openapi
- * /:
+ * /api/v1/volunteer-request:
  *   get:
  *     description: filter volunteer requests
  *     responses:
@@ -15,7 +15,7 @@ const router = Router();
  */
 router.get('/volunteer-request', async (req: Request, res: Response) => {
   try {
-    res.json(allRelevantAndOpenVolunteerRequests());
+    res.json(await allRelevantAndOpenVolunteerRequests());
   } catch (e) {
     if (e instanceof AppError) {
       res.status(e.status).send(e);
