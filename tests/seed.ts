@@ -36,7 +36,7 @@ type seedOptions = {
 };
 
 export const volunteerRequestToVolunteerRepository = appDataSource.getRepository(VolunteerRequestToVolunteer);
-export const SkillToVolunteerRequestRepository = appDataSource.getRepository(SkillToVolunteerRequest);
+export const skillToVolunteerRequestRepository = appDataSource.getRepository(SkillToVolunteerRequest);
 
 export const seed = async (options: seedOptions): Promise<void> => {
   if (options.cities) {
@@ -86,13 +86,13 @@ export const seed = async (options: seedOptions): Promise<void> => {
   }
   if (options.skillToVolunteerRequests) {
     for (const skillToVolunteerRequest of options.skillToVolunteerRequests) {
-      await SkillToVolunteerRequestRepository.save(skillToVolunteerRequest);
+      await skillToVolunteerRequestRepository.save(skillToVolunteerRequest);
     }
   }
 };
 
 export const removeSeed = async (): Promise<void> => {
-  await SkillToVolunteerRequestRepository.delete({});
+  await skillToVolunteerRequestRepository.delete({});
   await skillRepository.delete({});
   await volunteerRequestToVolunteerRepository.delete({});
   await volunteerRequestRepository.delete({});

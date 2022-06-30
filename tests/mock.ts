@@ -82,7 +82,7 @@ export const volunteer2 = {
   lastName: 'volunteer2',
   createdAt: TEST_DATE_20_06_2022,
   email: 'volunteer2@gmail.com',
-  phone: '22222222',
+  phone: '213213',
   userType: UserType.VOLUNTEER,
   companyId: company2.id
 } as User;
@@ -93,7 +93,7 @@ export const programManager1 = {
   lastName: 'prgoramManager1',
   createdAt: TEST_DATE_20_06_2022,
   email: 'prgoramManager1@gmail.com',
-  phone: '22222222',
+  phone: '5342',
   userType: UserType.PROGRAM_MANAGER,
   programId: program1.id
 } as User;

@@ -7,6 +7,8 @@ import { API_PREFIX_V1 } from '../config';
 
 const app = express();
 
+app.disable('x-powered-by');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
