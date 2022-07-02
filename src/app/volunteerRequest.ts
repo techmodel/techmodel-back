@@ -8,3 +8,7 @@ export const getRelevantAndOpenVolunteerRequests = async (): Promise<VolunteerRe
 export const assignVolunteerToRequest = async (userId: string, volunteerRequestId: number): Promise<void> => {
   await volunteerRequestRepository.assignVolunteerToRequest(volunteerRequestId, userId);
 };
+
+export const getVolunteeRequestsByUser = async (userId: string): Promise<void> => {
+  await volunteerRequestRepository.volunteerRequestsByVolunteerId(userId);
+};

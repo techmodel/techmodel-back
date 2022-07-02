@@ -30,5 +30,18 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
     await appDataSource
       .getRepository(VolunteerRequestToVolunteer)
       .insert({ volunteerId, volunteerRequestId: requestId });
+  },
+
+  async volunteerRequestsByVolunteerId(volunteerId: string): Promise<VolunteerRequest[]> {
+    return await this
+      // alias to VolunteerRequest
+      .createQueryBuilder('vr')
+      // populate vr.currentVolunteers
+      .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
+      .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
+      .leftJoinAndSelect('stvr.skill', 'skill')
+      .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
+      .andWhere('vrtv.volunteerId = :volunteerId', { volunteerId })
+      .getMany();
   }
 });
