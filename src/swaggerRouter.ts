@@ -1,5 +1,7 @@
 /**
  * Responsible for managing the swagger middleware.
+ *
+ * A great example proj - https://editor.swagger.io/#/
  */
 
 import swaggerJSDoc from 'swagger-jsdoc';
@@ -19,7 +21,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition: swaggerDefinition,
-  apis: [__dirname + '/api/*.ts', __dirname + '/../api/*.ts']
+  apis: [__dirname + '/api/*.ts', __dirname + '/../api/*.ts', __dirname + '/api/swagger/*.ts']
 };
 const swaggerSpec = swaggerJSDoc(options);
 

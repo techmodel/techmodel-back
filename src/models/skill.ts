@@ -1,13 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, Index } from 'typeorm';
 import { SkillToVolunteerRequest } from './skillToVolunteerRequest';
 
 @Entity()
+@Index(['name', 'type'], { unique: true })
 export class Skill {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @CreateDateColumn()
-  createdAt!: Date;
 
   @Column()
   name: string;
