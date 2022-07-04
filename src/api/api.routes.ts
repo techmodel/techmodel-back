@@ -14,11 +14,11 @@ router.use(preLogApi);
 
 router.use('volunteer-requests', volunteerRequestRouter);
 router.use('companies', companyRouter);
-router.use('institutions', institutionRouter);
-router.use('locations', locationRouter);
-router.use('programs', programRouter);
-router.use('cities', cityRouter);
 router.use('skills', skillRouter);
+router.use('programs', programRouter);
+router.use('institutions', institutionRouter);
+router.use('cities', cityRouter);
+router.use('locations', locationRouter);
 router.use('users', userRouter);
 
 router.use(clientErrorHandler);
