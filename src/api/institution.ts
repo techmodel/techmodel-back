@@ -23,7 +23,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.json(await getInstitutions());
   } catch (e) {
-    next();
+    next(e);
   }
 });
 

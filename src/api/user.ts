@@ -20,7 +20,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     const userId = req.body.userId as string;
     res.json(await login(userId));
   } catch (e) {
-    next();
+    next(e);
   }
 });
 
@@ -40,7 +40,7 @@ router.post('/register', async (req: Request, res: Response, next: NextFunction)
     const user = req.body.user as Partial<User>;
     res.json(await register(user));
   } catch (e) {
-    next();
+    next(e);
   }
 });
 

@@ -32,7 +32,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.json(await getLocations());
   } catch (e) {
-    next();
+    next(e);
   }
 });
 

@@ -31,7 +31,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.json(await getRelevantAndOpenVolunteerRequests());
   } catch (e) {
-    next();
+    next(e);
   }
 });
 
@@ -65,7 +65,7 @@ router.post(
       await assignVolunteerToRequest((req as DecodedRequest).userDecoded.userId, requestId);
       res.sendStatus(200);
     } catch (e) {
-      next();
+      next(e);
     }
   }
 );
