@@ -1,6 +1,5 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { getLocations } from '../app/location';
-import { AppError } from '../exc';
 
 const router = Router();
 
@@ -29,15 +28,11 @@ const router = Router();
  *         name:
  *           type: string
  */
-router.get('/locations', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.json(await getLocations());
   } catch (e) {
-    if (e instanceof AppError) {
-      res.status(e.status).send(e);
-    } else {
-      res.status(500).send(e);
-    }
+    next();
   }
 });
 

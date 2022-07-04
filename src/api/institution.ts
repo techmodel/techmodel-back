@@ -1,6 +1,5 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { getInstitutions } from '../app/institution';
-import { AppError } from '../exc';
 
 const router = Router();
 
@@ -20,15 +19,11 @@ const router = Router();
  *                 items:
  *                   $ref: '#/components/schemas/institution'
  */
-router.get('/institutions', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.json(await getInstitutions());
   } catch (e) {
-    if (e instanceof AppError) {
-      res.status(e.status).send(e);
-    } else {
-      res.status(500).send(e);
-    }
+    next();
   }
 });
 

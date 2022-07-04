@@ -1,6 +1,5 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { login, register } from '../app/user';
-import { AppError } from '../exc';
 import { User } from '../models';
 
 const router = Router();
@@ -8,7 +7,7 @@ const router = Router();
 /**
  * @openapi
  * paths:
- *   /api/v1/login:
+ *   /api/v1/users/login:
  *     post:
  *       operationId: login
  *       responses:
@@ -16,23 +15,19 @@ const router = Router();
  *           description: Log user in by userId, returns type loginResponse:
  *             application/json:'
  */
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.body.userId as string;
     res.json(await login(userId));
   } catch (e) {
-    if (e instanceof AppError) {
-      res.status(e.status).send(e);
-    } else {
-      res.status(500).send(e);
-    }
+    next();
   }
 });
 
 /**
  * @openapi
  * paths:
- *   /api/v1/register:
+ *   /api/v1/users/register:
  *     post:
  *       operationId: register
  *       responses:
@@ -40,15 +35,13 @@ router.post('/login', async (req: Request, res: Response) => {
  *           description: inserts user to db and logs in by userId, returns type loginResponse:
  *             application/json:'
  */
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.body.user as Partial<User>;
     res.json(await register(user));
   } catch (e) {
-    if (e instanceof AppError) {
-      res.status(e.status).send(e);
-    } else {
-      res.status(500).send(e);
-    }
+    next();
   }
 });
+
+export default router;

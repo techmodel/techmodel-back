@@ -1,10 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { AuthenticationError, AuthorizationError } from '../exc';
+import { AppError, AuthenticationError, AuthorizationError, SqlRetryableError } from '../exc';
 import { JWT_SECRET } from '../config';
 import { UserType } from '../models';
 import { userDecoded } from '../app/user';
 import { DecodedRequest } from './decodedRequest';
+import logger from '../logger';
 
 const tokenValidation = (token: string) => jwt.verify(token, JWT_SECRET) as userDecoded;
 
@@ -31,5 +32,33 @@ export const authMiddleware = (userTypes: UserType | UserType[]) => (
     next(err);
   } finally {
     next();
+  }
+};
+
+export const preLogApi = (req: Request, res: Response, next: NextFunction) => {
+  logger.info(`${req.method.padEnd(4)} | ${req.ip} | ${req.originalUrl}`, {
+    method: req.method,
+    ip: req.ip,
+    endpoint: req.originalUrl
+  });
+  next();
+};
+
+export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof AuthorizationError || err instanceof AuthenticationError) {
+    res.status(401).json(err.message);
+    logger.warn(err.message);
+    // } else if (err instanceof DataOverridingError ||
+    //     err instanceof errors.InvalidRequestQueryError ||
+    //     err instanceof errors.ObjectValidationError ||
+    //     err instanceof errors.ObjectNotFoundError) {
+    //     res.status(400).json(err.message);
+    //     logger.warn(err.message);
+  } else if (err instanceof AppError || err instanceof SqlRetryableError) {
+    res.status(500).json('Internal server error');
+    logger.error(err);
+  } else {
+    res.status(500).json('Unknown Error');
+    logger.error(err);
   }
 };

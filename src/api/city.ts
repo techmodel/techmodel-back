@@ -1,6 +1,5 @@
-import { Router, Request, Response } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import { getCities } from '../app/city';
-import { AppError } from '../exc';
 
 const router = Router();
 
@@ -20,15 +19,11 @@ const router = Router();
  *                 items:
  *                   $ref: '#/components/schemas/city'
  */
-router.get('/cities', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.json(await getCities());
   } catch (e) {
-    if (e instanceof AppError) {
-      res.status(e.status).send(e);
-    } else {
-      res.status(500).send(e);
-    }
+    next();
   }
 });
 
