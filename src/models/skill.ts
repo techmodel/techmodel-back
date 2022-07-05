@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, Index } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, Index } from 'typeorm';
 import { SkillToVolunteerRequest } from './skillToVolunteerRequest';
 
 @Entity()

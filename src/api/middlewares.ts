@@ -13,7 +13,7 @@ export const authMiddleware = (userTypes: UserType | UserType[]) => (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   if (!Array.isArray(userTypes)) userTypes = [userTypes];
   const token = req.headers['authorization'];
   try {
@@ -35,7 +35,7 @@ export const authMiddleware = (userTypes: UserType | UserType[]) => (
   }
 };
 
-export const preLogApi = (req: Request, res: Response, next: NextFunction) => {
+export const preLogApi = (req: Request, res: Response, next: NextFunction): void => {
   logger.info(`${req.method.padEnd(4)} | ${req.ip} | ${req.originalUrl}`, {
     method: req.method,
     ip: req.ip,
@@ -44,7 +44,7 @@ export const preLogApi = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
+export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: Response): void => {
   if (err instanceof AuthenticationError) {
     res.status(401).json(err.message);
     logger.warn(err.message);
