@@ -11,7 +11,7 @@ import { Router } from 'express';
 import { clientErrorHandler, preLogApi } from './middlewares';
 
 const router = Router();
-// router.use(preLogApi);
+router.use(preLogApi);
 
 router.use('/volunteer-requests', volunteerRequestRouter);
 router.use('/companies', companyRouter);

@@ -34,18 +34,22 @@ const router = Router();
  *           required: true
  *           description: user id
  */
-router.get('/:userId/volunteer-request', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId;
-    // if (userId != (req as DecodedRequest).userDecoded.userId) {
-    //     throw new AuthorizationError('Trying to access different user info');
-    // }
-    res.send(getVolunteeRequestsByUser(userId));
-  } catch (e) {
-    console.log(e);
+router.get(
+  '/:userId/volunteer-request',
+  authMiddleware(UserType.VOLUNTEER),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.params.userId;
+      if (userId != (req as DecodedRequest).userDecoded.userId) {
+        throw new AuthorizationError('Trying to access different user info');
+      }
+      res.send(getVolunteeRequestsByUser(userId));
+    } catch (e) {
+      console.log(e);
 
-    next(e);
+      next(e);
+    }
   }
-});
+);
 
 export default router;
