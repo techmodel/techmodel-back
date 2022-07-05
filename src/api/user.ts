@@ -1,45 +1,49 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { login, register } from '../app/user';
-import { User } from '../models';
+import { NextFunction, Request, Response, Router } from 'express';
+import { getVolunteeRequestsByUser } from '../app/volunteerRequest';
+import { AuthorizationError } from '../exc';
+import { UserType } from '../models';
+import { DecodedRequest } from './decodedRequest';
+import { authMiddleware } from './middlewares';
 
 const router = Router();
 
 /**
  * @openapi
  * paths:
- *   /api/v1/users/login:
- *     post:
- *       operationId: login
+ *   /api/v1/user/{userId}/volunteer-request:
+ *     get:
+ *       summary: Returns list of volunteer requests the user is assigned to
+ *       security:
+ *         - bearerAuth: []
  *       responses:
  *         '200':
- *           description: Log user in by userId, returns type loginResponse:
- *             application/json:'
+ *           description: Respresentation of volunteer requests
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/components/schemas/volunteerRequest'
+ *         '401':
+ *           $ref: '#/components/responses/UnauthorizedError'
+ *       parameters:
+ *         - in: path
+ *           name: userId
+ *           schema:
+ *             type: text
+ *           required: true
+ *           description: user id
  */
-router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/:userId/volunteer-request', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.body.userId as string;
-    res.json(await login(userId));
+    const userId = req.params.userId;
+    // if (userId != (req as DecodedRequest).userDecoded.userId) {
+    //     throw new AuthorizationError('Trying to access different user info');
+    // }
+    res.send(getVolunteeRequestsByUser(userId));
   } catch (e) {
-    next(e);
-  }
-});
+    console.log(e);
 
-/**
- * @openapi
- * paths:
- *   /api/v1/users/register:
- *     post:
- *       operationId: register
- *       responses:
- *         '200':
- *           description: inserts user to db and logs in by userId, returns type loginResponse:
- *             application/json:'
- */
-router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const user = req.body.user as Partial<User>;
-    res.json(await register(user));
-  } catch (e) {
     next(e);
   }
 });

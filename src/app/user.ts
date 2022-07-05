@@ -18,8 +18,8 @@ export type userDecoded = {
 };
 
 export const login = async (userId: string): Promise<loginResponse> => {
-  const user = await userRepository.findOne({ where: { id: userId } });
-  if (!user) {
+  const user = await userRepository.findOneBy({ id: userId });
+  if (!userId || !user) {
     return { userDetails: null, isFound: false, userToken: '', userType: null };
   }
   const tokenData: Partial<userDecoded> = { userType: user.userType, userId };

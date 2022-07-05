@@ -45,7 +45,7 @@ export const preLogApi = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof AuthorizationError || err instanceof AuthenticationError) {
+  if (err instanceof AuthenticationError) {
     res.status(401).json(err.message);
     logger.warn(err.message);
     // } else if (err instanceof DataOverridingError ||
@@ -54,6 +54,9 @@ export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: 
     //     err instanceof errors.ObjectNotFoundError) {
     //     res.status(400).json(err.message);
     //     logger.warn(err.message);
+  } else if (err instanceof AuthorizationError) {
+    res.status(403).json(err.message);
+    logger.warn(err.message);
   } else if (err instanceof AppError || err instanceof SqlRetryableError) {
     res.status(500).json('Internal server error');
     logger.error(err);
