@@ -9,6 +9,6 @@ export const assignVolunteerToRequest = async (userId: string, volunteerRequestI
   await volunteerRequestRepository.assignVolunteerToRequest(volunteerRequestId, userId);
 };
 
-export const getVolunteeRequestsByUser = async (userId: string): Promise<void> => {
-  await volunteerRequestRepository.volunteerRequestsByVolunteerId(userId);
+export const getVolunteeRequestsByUser = async (userId: string): Promise<VolunteerRequest[]> => {
+  return volunteerRequestRepository.volunteerRequestsByVolunteerId(userId);
 };
