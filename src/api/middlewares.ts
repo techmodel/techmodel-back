@@ -36,7 +36,8 @@ export const authMiddleware = (userTypes: UserType | UserType[]) => (
 };
 
 export const preLogApi = (req: Request, res: Response, next: NextFunction): void => {
-  logger.info(`${req.method.padEnd(4)} | ${req.ip} | ${req.originalUrl}`, {
+  logger.info({
+    message: 'request to backend',
     method: req.method,
     ip: req.ip,
     endpoint: req.originalUrl
