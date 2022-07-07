@@ -1,8 +1,4 @@
-require('dotenv/config');
-import chai from 'chai';
-import chaiPromised from 'chai-as-promised';
-const expect = chai.expect;
-chai.use(chaiPromised);
+import { expect } from 'chai';
 import sinon, { SinonSandbox } from 'sinon';
 import { appDataSource } from '../src/dataSource';
 import logger from '../src/logger';
