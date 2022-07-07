@@ -1,4 +1,8 @@
 require('dotenv/config');
+import chai from 'chai';
+import chaiPromised from 'chai-as-promised';
+const expect = chai.expect;
+chai.use(chaiPromised);
 import sinon, { SinonSandbox } from 'sinon';
 import { appDataSource } from '../src/dataSource';
 import logger from '../src/logger';
@@ -9,6 +13,8 @@ import {
   company2,
   institution1,
   location1,
+  oldVolunteerRequest1,
+  oldVolunteerRequest1ToVolunteer1,
   program1,
   programManager1,
   skill1,
@@ -17,12 +23,13 @@ import {
   skill2ToVolunteerRequest1,
   volunteer1,
   volunteer2,
+  volunteer3,
   volunteerRequest1,
   volunteerRequest1ToVolunteer1,
   volunteerRequest1ToVolunteer2
 } from './mock';
 import { volunteerRequestRepository } from '../src/repos';
-import { VolunteerRequest } from '../src/models';
+import { CannotPerformOperationError, NotFoundError } from '../src/exc';
 
 describe('app', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
@@ -42,43 +49,48 @@ describe('app', function() {
       institutions: [institution1],
       programs: [program1],
       companies: [company1, company2],
-      users: [volunteer1, volunteer2, programManager1],
-      volunteerRequests: [volunteerRequest1],
-      volunteerRequestToVolunteers: [volunteerRequest1ToVolunteer1, volunteerRequest1ToVolunteer2],
+      users: [volunteer1, volunteer2, programManager1, volunteer3],
+      volunteerRequests: [volunteerRequest1, oldVolunteerRequest1],
+      volunteerRequestToVolunteers: [
+        volunteerRequest1ToVolunteer1,
+        volunteerRequest1ToVolunteer2,
+        oldVolunteerRequest1ToVolunteer1
+      ],
       skills: [skill1, skill2],
       skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
     });
   });
 
-  it.skip('test', async function() {
-    const res = await volunteerRequestRepository.find({ relations: { skillToVolunteerRequest: { skill: true } } });
-    console.log(res);
-    console.log(res[0].skillToVolunteerRequest);
-  });
+  describe('deleteVolunteerFromRequest', function() {
+    it('must delete the mapped volunteer to the request', async function() {
+      const initialVolunteer1MappedRequests = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
+        volunteer1.id
+      );
+      await volunteerRequestRepository.deleteVolunteerFromRequest(volunteerRequest1.id, volunteer1.id);
+      await volunteerRequestRepository.volunteerRequestsByVolunteerId(volunteer1.id);
+      const currentVolunteer1MappedRequests = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
+        volunteer1.id
+      );
+      expect(currentVolunteer1MappedRequests.length).to.be.eq(initialVolunteer1MappedRequests.length - 1);
+    });
 
-  it('test', async function() {
-    const res = await volunteerRequestRepository
-      .createQueryBuilder('vr')
-      .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
-      .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
-      .leftJoinAndSelect('stvr.skill', 'skill')
-      .where('vr.id = :vrId', { vrId: volunteerRequest1.id })
-      .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
-      .andWhere(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('vr.id')
-          .from(VolunteerRequest, 'vr')
-          .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
-          // join users and recipies
-          .groupBy('vr.id, vr.totalVolunteers')
-          .having('COUNT(*) < vr.totalVolunteers')
-          .getQuery();
-        return 'vr.id IN ' + subQuery;
-      })
-      .getMany();
-    console.log(res);
-    console.log(res[0].skillToVolunteerRequest);
+    it('throws error when trying to delete mapping to older request', async function() {
+      await expect(
+        volunteerRequestRepository.deleteVolunteerFromRequest(oldVolunteerRequest1.id, volunteer1.id)
+      ).to.be.rejectedWith(CannotPerformOperationError);
+    });
+
+    it('throws error when trying to delete mapping to not found request', async function() {
+      await expect(volunteerRequestRepository.deleteVolunteerFromRequest(453453, volunteer1.id)).to.be.rejectedWith(
+        NotFoundError
+      );
+    });
+
+    it('throws error when trying to delete mapping that doesnt exist', async function() {
+      await expect(
+        volunteerRequestRepository.deleteVolunteerFromRequest(volunteerRequest1.id, volunteer3.id)
+      ).to.be.rejectedWith(NotFoundError);
+    });
   });
 
   this.afterEach(function() {

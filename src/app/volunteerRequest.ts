@@ -12,3 +12,7 @@ export const assignVolunteerToRequest = async (userId: string, volunteerRequestI
 export const getVolunteeRequestsByUser = async (userId: string): Promise<VolunteerRequest[]> => {
   return volunteerRequestRepository.volunteerRequestsByVolunteerId(userId);
 };
+
+export const deleteVolunteerFromRequest = async (volunteerId: string, volunteerRequestId: number): Promise<void> => {
+  await volunteerRequestRepository.deleteVolunteerFromRequest(volunteerRequestId, volunteerId);
+};

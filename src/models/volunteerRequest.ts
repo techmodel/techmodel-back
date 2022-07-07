@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne } from 'typeorm';
 import { Language } from './language';
 import { RequestStatus } from './volunteerRequestStatus';
 import { SkillToVolunteerRequest } from './skillToVolunteerRequest';
@@ -49,8 +49,10 @@ export class VolunteerRequest {
   @Column({ nullable: true })
   creatorId!: string;
 
-  @OneToOne(() => User)
-  @JoinColumn()
+  @ManyToOne(
+    () => User,
+    user => user.createdVolunteerRequests
+  )
   creator: User;
 
   @Column({ type: 'varchar' })

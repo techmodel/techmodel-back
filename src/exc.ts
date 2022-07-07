@@ -31,3 +31,21 @@ export class AuthorizationError extends AppError {
     Object.setPrototypeOf(this, AuthorizationError.prototype);
   }
 }
+
+export class NotFoundError extends AppError {
+  constructor(m: string, status = 404) {
+    super(m, status);
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, NotFoundError.prototype);
+  }
+}
+
+// throw this error when the request was performed with the right syntax and content
+// but the operation cannot be performed.
+export class CannotPerformOperationError extends AppError {
+  constructor(m: string, status = 422) {
+    super(m, status);
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, CannotPerformOperationError.prototype);
+  }
+}

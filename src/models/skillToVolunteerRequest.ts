@@ -9,10 +9,10 @@ export class SkillToVolunteerRequest {
   id: number;
 
   @Column()
-  skillId!: number;
+  skillId?: number;
 
   @Column()
-  volunteerRequestId!: number;
+  volunteerRequestId?: number;
 
   @ManyToOne(
     () => Skill,

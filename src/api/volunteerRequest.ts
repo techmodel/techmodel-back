@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
   assignVolunteerToRequest,
-  getRelevantAndOpenVolunteerRequests,
-  getVolunteeRequestsByUser
+  deleteVolunteerFromRequest,
+  getRelevantAndOpenVolunteerRequests
 } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
@@ -63,6 +63,24 @@ router.post(
     try {
       const requestId = parseInt(req.params.requestId, 10);
       await assignVolunteerToRequest((req as DecodedRequest).userDecoded.userId, requestId);
+      res.sendStatus(200);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+router.delete(
+  '/:requestId/volunteers/:volunteerId',
+  authMiddleware(UserType.VOLUNTEER),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const requestId = parseInt(req.params.requestId, 10);
+      const volunteerId = req.params.volunteerId;
+      if ((req as DecodedRequest).userDecoded.userId !== volunteerId) {
+        throw new AuthorizationError('You are not allowed to delete this volunteer');
+      }
+      await deleteVolunteerFromRequest(volunteerId, requestId);
       res.sendStatus(200);
     } catch (e) {
       next(e);

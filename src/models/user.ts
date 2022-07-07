@@ -1,8 +1,9 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import { Company } from './company';
 import { Institution } from './institution';
 import { Program } from './program';
 import { UserType } from './userType';
+import { VolunteerRequest } from './volunteerRequest';
 import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
 
 @Entity({ name: 'users' })
@@ -45,13 +46,21 @@ export class User {
   @JoinColumn()
   program: Program;
 
-  @OneToOne(() => Company)
-  @JoinColumn()
+  @ManyToOne(
+    () => Company,
+    company => company.users
+  )
   company: Company;
 
   @OneToMany(
     () => VolunteerRequestToVolunteer,
     volunteerRequestToVolunteer => volunteerRequestToVolunteer.volunteer
   )
-  volunteerRequestToVolunteer!: VolunteerRequestToVolunteer[];
+  volunteerRequestToVolunteer?: VolunteerRequestToVolunteer[];
+
+  @OneToMany(
+    () => VolunteerRequest,
+    volunteerRequest => volunteerRequest.creator
+  )
+  createdVolunteerRequests?: VolunteerRequest[];
 }
