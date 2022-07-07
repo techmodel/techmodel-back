@@ -108,10 +108,7 @@ router.delete(
     try {
       const requestId = parseInt(req.params.requestId, 10);
       const volunteerId = req.params.volunteerId;
-      if ((req as DecodedRequest).userDecoded.userId !== volunteerId) {
-        throw new AuthorizationError('You are not allowed to delete this volunteer');
-      }
-      await deleteVolunteerFromRequest(volunteerId, requestId);
+      await deleteVolunteerFromRequest((req as DecodedRequest).userDecoded, volunteerId, requestId);
       res.sendStatus(200);
     } catch (e) {
       next(e);

@@ -30,13 +30,13 @@ export class User {
   userType: UserType;
 
   @Column({ nullable: true })
-  institutionId!: number;
+  institutionId?: number | null;
 
   @Column({ nullable: true })
-  programId!: number;
+  programId?: number | null;
 
   @Column({ nullable: true })
-  companyId!: number;
+  companyId?: number | null;
 
   @OneToOne(() => Institution)
   @JoinColumn()

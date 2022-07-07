@@ -15,7 +15,8 @@ export const authMiddleware = (userTypes: UserType | UserType[]) => (
   next: NextFunction
 ): void => {
   if (!Array.isArray(userTypes)) userTypes = [userTypes];
-  const token = req.headers['authorization'];
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
   try {
     if (!token) {
       throw new AuthenticationError('No token found');
@@ -45,22 +46,17 @@ export const preLogApi = (req: Request, res: Response, next: NextFunction): void
   next();
 };
 
-export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: Response): void => {
-  if (err instanceof AuthenticationError) {
-    res.status(401).json(err.message);
+export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction): void => {
+  // delegates the request to express's default error handler
+  if (res.headersSent) {
+    return next(err);
+  }
+  if (err instanceof AuthenticationError || err instanceof AuthorizationError) {
+    res.status(err.status).send(err.message);
     logger.warn(err.message);
-    // } else if (err instanceof DataOverridingError ||
-    //     err instanceof errors.InvalidRequestQueryError ||
-    //     err instanceof errors.ObjectValidationError ||
-    //     err instanceof errors.ObjectNotFoundError) {
-    //     res.status(400).json(err.message);
-    //     logger.warn(err.message);
-  } else if (err instanceof AuthorizationError) {
-    res.status(403).json(err.message);
-    logger.warn(err.message);
-  } else if (err instanceof AppError || err instanceof SqlRetryableError) {
-    res.status(500).json('Internal server error');
-    logger.error(err);
+  } else if (err instanceof AppError) {
+    res.status(err.status).send(err.message);
+    logger.error(err.message);
   } else {
     res.status(500).json('Unknown Error');
     logger.error(err);

@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import sinon, { SinonSandbox } from 'sinon';
+import request from 'supertest';
 import { appDataSource } from '../src/dataSource';
 import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
@@ -22,8 +23,10 @@ import {
   volunteerRequest1,
   volunteerRequestToVolunteers
 } from './mock';
-import { volunteerRequestRepository } from '../src/repos';
+import app from '../src/server/server';
+import { userRepository, volunteerRequestRepository } from '../src/repos';
 import { CannotPerformOperationError, NotFoundError } from '../src/exc';
+import { createTestJwt } from './setup';
 
 describe('volunteerRequest', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
@@ -75,11 +78,16 @@ describe('volunteerRequest', function() {
   });
 
   describe('deleteVolunteerFromRequest', function() {
-    it('deletes the mapped volunteer to the request', async function() {
+    const volunteer1Jwt = createTestJwt(volunteer1);
+
+    it('deletes the mapped volunteer to the request if the volunteer is trying to delete himself', async function() {
       const initialVolunteer1MappedRequests = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
         volunteer1.id
       );
-      await volunteerRequestRepository.deleteVolunteerFromRequest(volunteerRequest1.id, volunteer1.id);
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
+        .set('Authorization', `Bearer ${volunteer1Jwt}`);
+      expect(res.status).to.eq(200);
       await volunteerRequestRepository.volunteerRequestsByVolunteerId(volunteer1.id);
       const currentVolunteer1MappedRequests = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
         volunteer1.id
@@ -88,9 +96,11 @@ describe('volunteerRequest', function() {
     });
 
     it('throws error when trying to delete mapping to older request', async function() {
-      await expect(
-        volunteerRequestRepository.deleteVolunteerFromRequest(oldVolunteerRequest1.id, volunteer1.id)
-      ).to.be.rejectedWith(CannotPerformOperationError);
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${oldVolunteerRequest1.id}/volunteers/${volunteer1.id}`)
+        .set('Authorization', `Bearer ${volunteer1Jwt}`);
+      expect(res.status).to.eq(422);
+      expect((res.error as any).text).to.eq('Cannot delete mapped volunteers from old request');
     });
 
     it('throws error when trying to delete mapping to not found request', async function() {

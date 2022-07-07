@@ -13,6 +13,9 @@ type loginResponse = {
 export type userDecoded = {
   userId: string;
   userType: UserType;
+  institutionId: number | undefined;
+  programId: number | undefined;
+  companyId: number | undefined;
   iat: number;
   exp: number;
 };
@@ -22,7 +25,14 @@ export const login = async (userId: string): Promise<loginResponse> => {
   if (!userId || !user) {
     return { userDetails: null, isFound: false, userToken: '', userType: null };
   }
-  const tokenData: Partial<userDecoded> = { userType: user.userType, userId };
+  const tokenData: Partial<userDecoded> = {
+    userType: user.userType,
+    userId,
+    // institutionId, programId and companyId might be null when returned from the database
+    institutionId: user.institutionId || undefined,
+    programId: user.programId || undefined,
+    companyId: user.companyId || undefined
+  };
   const token = jwt.sign(tokenData, JWT_SECRET, { expiresIn: '1d' });
   return { userDetails: user, isFound: true, userToken: token, userType: user.userType };
 };
