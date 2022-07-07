@@ -29,6 +29,11 @@ export const city1 = {
   name: 'haifa'
 } as City;
 
+export const city2 = {
+  id: 2,
+  name: 'tel-aviv'
+} as City;
+
 export const location1 = {
   id: 1,
   name: 'north'

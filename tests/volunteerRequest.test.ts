@@ -25,12 +25,8 @@ import {
 import { volunteerRequestRepository } from '../src/repos';
 import { CannotPerformOperationError, NotFoundError } from '../src/exc';
 
-describe('app', function() {
+describe('volunteerRequest', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
-
-  this.beforeAll(async function() {
-    await appDataSource.initialize();
-  });
 
   this.beforeEach(async function() {
     sandbox = sinon.createSandbox();
@@ -116,6 +112,5 @@ describe('app', function() {
 
   this.afterAll(async function() {
     await removeSeed();
-    appDataSource.destroy();
   });
 });
