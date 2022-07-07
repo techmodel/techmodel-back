@@ -88,12 +88,12 @@ export const volunteer2 = {
   companyId: company2.id
 } as User;
 
-export const volunteer3 = {
+export const volunteer3WithoutMappings = {
   id: 'volunteerid3',
-  firstName: 'volunteer3',
-  lastName: 'volunteer3',
+  firstName: 'volunteer3WithoutMappings',
+  lastName: 'volunteer3WithoutMappings',
   createdAt: TEST_DATE_20_06_2022,
-  email: 'volunteer3@gmail.com',
+  email: 'volunteer3WithoutMappings@gmail.com',
   phone: '213213452',
   userType: UserType.VOLUNTEER,
   companyId: company1.id
@@ -182,3 +182,9 @@ export const skill2ToVolunteerRequest1 = {
   skillId: skill2.id,
   volunteerRequestId: volunteerRequest1.id
 } as SkillToVolunteerRequest;
+
+export const volunteerRequestToVolunteers = [
+  volunteerRequest1ToVolunteer1,
+  volunteerRequest1ToVolunteer2,
+  oldVolunteerRequest1ToVolunteer1
+];

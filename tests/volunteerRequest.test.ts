@@ -14,7 +14,6 @@ import {
   institution1,
   location1,
   oldVolunteerRequest1,
-  oldVolunteerRequest1ToVolunteer1,
   program1,
   programManager1,
   skill1,
@@ -23,10 +22,9 @@ import {
   skill2ToVolunteerRequest1,
   volunteer1,
   volunteer2,
-  volunteer3,
+  volunteer3WithoutMappings,
   volunteerRequest1,
-  volunteerRequest1ToVolunteer1,
-  volunteerRequest1ToVolunteer2
+  volunteerRequestToVolunteers
 } from './mock';
 import { volunteerRequestRepository } from '../src/repos';
 import { CannotPerformOperationError, NotFoundError } from '../src/exc';
@@ -49,20 +47,43 @@ describe('app', function() {
       institutions: [institution1],
       programs: [program1],
       companies: [company1, company2],
-      users: [volunteer1, volunteer2, programManager1, volunteer3],
+      users: [volunteer1, volunteer2, programManager1, volunteer3WithoutMappings],
       volunteerRequests: [volunteerRequest1, oldVolunteerRequest1],
-      volunteerRequestToVolunteers: [
-        volunteerRequest1ToVolunteer1,
-        volunteerRequest1ToVolunteer2,
-        oldVolunteerRequest1ToVolunteer1
-      ],
+      volunteerRequestToVolunteers: volunteerRequestToVolunteers,
       skills: [skill1, skill2],
       skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
     });
   });
 
+  describe('volunteerRequestsByVolunteerId', function() {
+    it('returns the volunteer requests relevant for the volunteer', async function() {
+      const volunteer1MappedRequestIds = volunteerRequestToVolunteers
+        .filter(mapping => mapping.volunteerId === volunteer1.id)
+        .map(mapping => ({ id: mapping.volunteerRequestId }));
+      const dbVolunteer1MappedRequestIds = await (
+        await volunteerRequestRepository.volunteerRequestsByVolunteerId(volunteer1.id)
+      ).map(request => ({ id: request.id }));
+      expect(volunteer1MappedRequestIds).to.eql(dbVolunteer1MappedRequestIds);
+    });
+    it('returns the right count of mapped volunteers to the request', async function() {
+      const dbVolunteerRequest1 = await (
+        await volunteerRequestRepository.volunteerRequestsByVolunteerId(volunteer1.id)
+      ).filter(vr => vr.id === volunteerRequest1.id)[0];
+      const mappedVolunteersToVolunteerRequest1 = volunteerRequestToVolunteers.filter(
+        mapping => mapping.volunteerRequestId === volunteerRequest1.id
+      ).length;
+      expect(dbVolunteerRequest1.currentVolunteers).to.eq(mappedVolunteersToVolunteerRequest1);
+    });
+    it('returns empty list if no requests are found for the volunteer', async function() {
+      const requestForVolunteer3 = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
+        volunteer3WithoutMappings.id
+      );
+      expect(requestForVolunteer3.length).to.eq(0);
+    });
+  });
+
   describe('deleteVolunteerFromRequest', function() {
-    it('must delete the mapped volunteer to the request', async function() {
+    it('deletes the mapped volunteer to the request', async function() {
       const initialVolunteer1MappedRequests = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
         volunteer1.id
       );
@@ -88,7 +109,7 @@ describe('app', function() {
 
     it('throws error when trying to delete mapping that doesnt exist', async function() {
       await expect(
-        volunteerRequestRepository.deleteVolunteerFromRequest(volunteerRequest1.id, volunteer3.id)
+        volunteerRequestRepository.deleteVolunteerFromRequest(volunteerRequest1.id, volunteer3WithoutMappings.id)
       ).to.be.rejectedWith(NotFoundError);
     });
   });
