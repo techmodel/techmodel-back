@@ -13,9 +13,9 @@ type loginResponse = {
 export type userDecoded = {
   userId: string;
   userType: UserType;
-  institutionId: number | undefined;
-  programId: number | undefined;
-  companyId: number | undefined;
+  institutionId?: number;
+  programId?: number;
+  companyId?: number;
   iat: number;
   exp: number;
 };
