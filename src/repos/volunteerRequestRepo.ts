@@ -46,19 +46,16 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .getMany();
   },
 
+  async findOneWithCreator(id: number): Promise<VolunteerRequest | null> {
+    return await this.findOne({ where: { id }, relations: ['creator'] });
+  },
+
   async deleteVolunteerFromRequest(requestId: number, volunteerId: string): Promise<void> {
-    const targetVolunteerRequest = await this.findOne({ where: { id: requestId } });
-    if (!targetVolunteerRequest) {
-      throw new NotFoundError('Volunteer request not found');
-    }
-    if (targetVolunteerRequest.startDate < new Date()) {
-      throw new CannotPerformOperationError('Cannot delete mapped volunteers from old request');
-    }
     const deleteRes = await appDataSource
       .getRepository(VolunteerRequestToVolunteer)
       .delete({ volunteerId, volunteerRequestId: requestId });
     if (deleteRes.affected === 0) {
-      throw new NotFoundError('volunteer is not mapped to the request');
+      throw new NotFoundError('Volunteer is not mapped to the request');
     }
   }
 });

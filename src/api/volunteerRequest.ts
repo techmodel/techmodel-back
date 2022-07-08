@@ -4,7 +4,6 @@ import {
   deleteVolunteerFromRequest,
   getRelevantAndOpenVolunteerRequests
 } from '../app/volunteerRequest';
-import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
@@ -103,15 +102,12 @@ router.post(
  */
 router.delete(
   '/:requestId/volunteers/:volunteerId',
-  authMiddleware(UserType.VOLUNTEER),
+  authMiddleware([UserType.VOLUNTEER, UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const requestId = parseInt(req.params.requestId, 10);
       const volunteerId = req.params.volunteerId;
-      if ((req as DecodedRequest).userDecoded.userId !== volunteerId) {
-        throw new AuthorizationError('You are not allowed to delete this volunteer');
-      }
-      await deleteVolunteerFromRequest(volunteerId, requestId);
+      await deleteVolunteerFromRequest((req as DecodedRequest).userDecoded, volunteerId, requestId);
       res.sendStatus(200);
     } catch (e) {
       next(e);
