@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build the Docker image
-        run: docker build -t techmodel.azurecr.io/techmodel-backend:latest
+        run: docker build -t techmodel.azurecr.io/techmodel-backend:latest .
 
       - name: Login to ACR
         uses: docker/login-action@v2
