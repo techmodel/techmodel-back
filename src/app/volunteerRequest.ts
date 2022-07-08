@@ -20,10 +20,6 @@ const sameProgram = (userA: Partial<User>, userB: Partial<User>): boolean => {
   return userA.programId === userB.programId;
 };
 
-const sameInstitutionAndProgram = (userA: Partial<User>, userB: Partial<User>): boolean => {
-  return userA.institutionId === userB.institutionId && sameProgram(userA, userB);
-};
-
 export const deleteVolunteerFromRequest = async (
   caller: userDecoded,
   volunteerId: string,
@@ -40,7 +36,7 @@ export const deleteVolunteerFromRequest = async (
   if (caller.userType === UserType.PROGRAM_MANAGER && !sameProgram(caller, requestCreator)) {
     throw new AuthorizationError('As a program manager, you are not allowed to delete this volunteer');
   }
-  if (caller.userType === UserType.PROGRAM_COORDINATOR && !sameInstitutionAndProgram(caller, requestCreator)) {
+  if (caller.userType === UserType.PROGRAM_COORDINATOR && caller.userId !== requestCreator.id) {
     throw new AuthorizationError('As a program coordinator, you are not allowed to delete this volunteer');
   }
   if (targetVolunteerRequest.startDate < new Date()) {
