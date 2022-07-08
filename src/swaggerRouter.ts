@@ -21,7 +21,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition: swaggerDefinition,
-  apis: [__dirname + '/api/*.ts', __dirname + '/../api/*.ts', __dirname + '/api/swagger/*.ts']
+  apis: [__dirname + '/api/*.{js,ts}', __dirname + '/../api/*.{js,ts}', __dirname + '/api/swagger/*.{js,ts}']
 };
 const swaggerSpec = swaggerJSDoc(options);
 

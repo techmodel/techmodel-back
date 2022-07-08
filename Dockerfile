@@ -1,0 +1,22 @@
+FROM node:14 AS builder
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+RUN NG_CLI_ANALYTICS=ci npm install
+RUN npm audit fix --force
+
+COPY . .
+RUN ./node_modules/.bin/tsc -p .
+# RUN npx copyfiles src/**/*.json build/
+
+# Clean container, without uncompiled files:
+FROM node:14
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+RUN NG_CLI_ANALYTICS=ci npm install
+RUN npm audit fix --force
+
+COPY --from=builder /usr/src/app/build ./build
+EXPOSE 8080
+CMD node ./build/src/server/run-server.js
