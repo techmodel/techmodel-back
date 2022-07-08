@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { City } from './city';
 import { InstitutionType } from './institutionType';
 import { Location } from './location';
 import { PopulationType } from './populationType';
+import { User } from './user';
 
 @Entity()
 export class Institution {
@@ -37,4 +38,10 @@ export class Institution {
 
   @Column({ type: 'varchar' })
   institutionType: InstitutionType;
+
+  @OneToMany(
+    () => User,
+    user => user.company
+  )
+  users?: User[];
 }

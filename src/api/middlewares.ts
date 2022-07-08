@@ -7,7 +7,13 @@ import { userDecoded } from '../app/user';
 import { DecodedRequest } from './decodedRequest';
 import logger from '../logger';
 
-const tokenValidation = (token: string) => jwt.verify(token, JWT_SECRET) as userDecoded;
+const tokenValidation = (token: string): userDecoded | null => {
+  try {
+    return jwt.verify(token, JWT_SECRET) as userDecoded;
+  } catch (e) {
+    return null;
+  }
+};
 
 export const authMiddleware = (userTypes: UserType | UserType[]) => (
   req: Request,
@@ -23,7 +29,7 @@ export const authMiddleware = (userTypes: UserType | UserType[]) => (
     }
     const decoded = tokenValidation(token);
     if (!decoded) {
-      throw new AuthenticationError("Couldn't verify token");
+      throw new AuthenticationError('Couldnt verify token');
     }
     if (!userTypes.includes(decoded.userType)) {
       throw new AuthorizationError('You are not authorized to perform this action');

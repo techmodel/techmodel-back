@@ -12,7 +12,10 @@ import {
   location1,
   oldVolunteerRequest1,
   program1,
+  program2,
+  programCoordinator1,
   programManager1,
+  programManager2,
   skill1,
   skill1ToVolunteerRequest1,
   skill2,
@@ -24,9 +27,8 @@ import {
   volunteerRequestToVolunteers
 } from './mock';
 import app from '../src/server/server';
-import { userRepository, volunteerRequestRepository } from '../src/repos';
-import { CannotPerformOperationError, NotFoundError } from '../src/exc';
-import { createTestJwt } from './setup';
+import { volunteerRequestRepository } from '../src/repos';
+import { createTestJwt, HTTPError } from './setup';
 
 describe('volunteerRequest', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
@@ -40,9 +42,9 @@ describe('volunteerRequest', function() {
       cities: [city1],
       locations: [location1],
       institutions: [institution1],
-      programs: [program1],
+      programs: [program1, program2],
       companies: [company1, company2],
-      users: [volunteer1, volunteer2, programManager1, volunteer3WithoutMappings],
+      users: [volunteer1, volunteer2, programManager1, volunteer3WithoutMappings, programCoordinator1, programManager2],
       volunteerRequests: [volunteerRequest1, oldVolunteerRequest1],
       volunteerRequestToVolunteers: volunteerRequestToVolunteers,
       skills: [skill1, skill2],
@@ -79,6 +81,9 @@ describe('volunteerRequest', function() {
 
   describe('deleteVolunteerFromRequest', function() {
     const volunteer1Jwt = createTestJwt(volunteer1);
+    const volunteer3WithoutMappingsJwt = createTestJwt(volunteer3WithoutMappings);
+    const programCoordinator1Jwt = createTestJwt(programCoordinator1);
+    const programManager2Jwt = createTestJwt(programManager2);
 
     it('deletes the mapped volunteer to the request if the volunteer is trying to delete himself', async function() {
       const initialVolunteer1MappedRequests = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
@@ -95,7 +100,7 @@ describe('volunteerRequest', function() {
       expect(currentVolunteer1MappedRequests.length).to.be.eq(initialVolunteer1MappedRequests.length - 1);
     });
 
-    it('throws error when trying to delete mapping to older request', async function() {
+    it('returns 422 when trying to delete mapping to older request', async function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${oldVolunteerRequest1.id}/volunteers/${volunteer1.id}`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`);
@@ -103,16 +108,54 @@ describe('volunteerRequest', function() {
       expect((res.error as any).text).to.eq('Cannot delete mapped volunteers from old request');
     });
 
-    it('throws error when trying to delete mapping to not found request', async function() {
-      await expect(volunteerRequestRepository.deleteVolunteerFromRequest(453453, volunteer1.id)).to.be.rejectedWith(
-        NotFoundError
-      );
+    it('returns 404 when trying to delete mapping to not found request', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${453453}/volunteers/${volunteer1.id}`)
+        .set('Authorization', `Bearer ${volunteer1Jwt}`);
+      expect((res.error as any).text).to.eq('Volunteer request not found');
+      expect(res.status).to.eq(404);
     });
 
-    it('throws error when trying to delete mapping that doesnt exist', async function() {
-      await expect(
-        volunteerRequestRepository.deleteVolunteerFromRequest(volunteerRequest1.id, volunteer3WithoutMappings.id)
-      ).to.be.rejectedWith(NotFoundError);
+    it('returns 404 when trying to delete mapping that doesnt exist', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer3WithoutMappings.id}`)
+        .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
+      expect((res.error as any).text).to.eq('Volunteer is not mapped to the request');
+      expect(res.status).to.eq(404);
+    });
+
+    it('returns 403 when as a volunteer trying to delete mapping not related to him', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
+        .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
+      expect((res.error as any).text).to.eq('As a volunteer, you are not allowed to delete this volunteer');
+      expect(res.status).to.eq(403);
+    });
+
+    it('returns 403 when as a program coordinator trying to delete mapping not related to a volunteer request he created', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq(
+        'As a program coordinator, you are not allowed to delete this volunteer'
+      );
+      expect(res.status).to.eq(403);
+    });
+
+    it('returns 403 when as a program manager trying to delete mapping from a volunteer request where the creator is not from the program', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
+        .set('Authorization', `Bearer ${programManager2Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('As a program manager, you are not allowed to delete this volunteer');
+      expect(res.status).to.eq(403);
+    });
+
+    it('returns 401 when trying to perform the action without working jwt', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
+        .set('Authorization', `Bearer test`);
+      expect((res.error as HTTPError).text).to.eq('Couldnt verify token');
+      expect(res.status).to.eq(401);
     });
   });
 

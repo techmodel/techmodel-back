@@ -55,7 +55,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .getRepository(VolunteerRequestToVolunteer)
       .delete({ volunteerId, volunteerRequestId: requestId });
     if (deleteRes.affected === 0) {
-      throw new NotFoundError('volunteer is not mapped to the request');
+      throw new NotFoundError('Volunteer is not mapped to the request');
     }
   }
 });

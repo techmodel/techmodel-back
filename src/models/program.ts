@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from 'typeorm';
+import { User } from './user';
 
 @Entity()
 export class Program {
@@ -13,4 +14,10 @@ export class Program {
 
   @Column()
   description: string;
+
+  @OneToMany(
+    () => User,
+    user => user.company
+  )
+  users?: User[];
 }

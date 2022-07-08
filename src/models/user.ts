@@ -38,12 +38,16 @@ export class User {
   @Column({ nullable: true })
   companyId?: number | null;
 
-  @OneToOne(() => Institution)
-  @JoinColumn()
+  @ManyToOne(
+    () => Institution,
+    institution => institution.users
+  )
   institution: Institution;
 
-  @OneToOne(() => Program)
-  @JoinColumn()
+  @ManyToOne(
+    () => Program,
+    program => program.users
+  )
   program: Program;
 
   @ManyToOne(

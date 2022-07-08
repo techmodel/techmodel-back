@@ -19,6 +19,13 @@ after(async () => {
   appDataSource.destroy();
 });
 
+export interface HTTPError extends Error {
+  status: number;
+  text: string;
+  method: string;
+  path: string;
+}
+
 // create test jwt using User object
 export const createTestJwt = (user: User): string => {
   const payload = {
