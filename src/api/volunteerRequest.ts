@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
   assignVolunteerToRequest,
-  getRelevantAndOpenVolunteerRequests,
-  getVolunteeRequestsByUser
+  deleteVolunteerFromRequest,
+  getRelevantAndOpenVolunteerRequests
 } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
@@ -63,6 +63,55 @@ router.post(
     try {
       const requestId = parseInt(req.params.requestId, 10);
       await assignVolunteerToRequest((req as DecodedRequest).userDecoded.userId, requestId);
+      res.sendStatus(200);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/volunteer-requests/{requestId}/volunteers/{volunteerId}:
+ *     delete:
+ *       summary: Deletes the mapping of the volunteer to the target volunteer request
+ *       security:
+ *         - bearerAuth: []
+ *       responses:
+ *         '200':
+ *           description: Volunteer has been deleted
+ *         '401':
+ *           $ref: '#/components/responses/UnauthorizedError'
+ *         '404':
+ *           $ref: '#/components/responses/NotFoundError'
+ *         '422':
+ *           $ref: '#/components/responses/OperationNotAllowedError'
+ *       parameters:
+ *         - in: path
+ *           name: requestId
+ *           schema:
+ *           type: number
+ *           required: true
+ *           description: volunteer request id the mapping of the volunteer is done to
+ *         - in: path
+ *           name: volunteerId
+ *           schema:
+ *           type: string
+ *           required: true
+ *           description: volunteer id the mapping of the volunteer is done to
+ */
+router.delete(
+  '/:requestId/volunteers/:volunteerId',
+  authMiddleware(UserType.VOLUNTEER),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const requestId = parseInt(req.params.requestId, 10);
+      const volunteerId = req.params.volunteerId;
+      if ((req as DecodedRequest).userDecoded.userId !== volunteerId) {
+        throw new AuthorizationError('You are not allowed to delete this volunteer');
+      }
+      await deleteVolunteerFromRequest(volunteerId, requestId);
       res.sendStatus(200);
     } catch (e) {
       next(e);

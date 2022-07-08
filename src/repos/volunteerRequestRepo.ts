@@ -1,4 +1,5 @@
 import { appDataSource } from '../dataSource';
+import { CannotPerformOperationError, NotFoundError } from '../exc';
 import { VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
 
 export const volunteerRequestRepository = appDataSource.getRepository(VolunteerRequest).extend({
@@ -43,5 +44,21 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
       .andWhere('vrtv.volunteerId = :volunteerId', { volunteerId })
       .getMany();
+  },
+
+  async deleteVolunteerFromRequest(requestId: number, volunteerId: string): Promise<void> {
+    const targetVolunteerRequest = await this.findOne({ where: { id: requestId } });
+    if (!targetVolunteerRequest) {
+      throw new NotFoundError('Volunteer request not found');
+    }
+    if (targetVolunteerRequest.startDate < new Date()) {
+      throw new CannotPerformOperationError('Cannot delete mapped volunteers from old request');
+    }
+    const deleteRes = await appDataSource
+      .getRepository(VolunteerRequestToVolunteer)
+      .delete({ volunteerId, volunteerRequestId: requestId });
+    if (deleteRes.affected === 0) {
+      throw new NotFoundError('volunteer is not mapped to the request');
+    }
   }
 });

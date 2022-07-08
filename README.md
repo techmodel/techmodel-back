@@ -14,6 +14,7 @@ How to run:
 2. `npm install` - install all related packages
 3. `npm run dc-up` - start local mssql container (uses `docker-compose.yml`)
 4. `npm run init-db` - initialize local db with current schema
+   `ctrl` + `C` to exit after you get a message that the db has been seeded
 5. `npm run dev` - run application in dev mode
 
 How to stop:

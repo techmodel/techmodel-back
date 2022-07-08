@@ -19,6 +19,7 @@ import {
 export const TEST_DATE_28_06_2022 = new Date('2022-06-28T15:20:21.470Z');
 export const TEST_DATE_20_06_2022 = new Date('2022-06-20T15:20:21.470Z');
 export const TEST_DATE_NOW = new Date();
+export const TEST_DATE_NOW_MINUS_FIVE_DAYS = new Date(new Date().getTime() - 5 * 24 * 60 * 60 * 1000);
 export const TEST_DATE_NOW_MINUS_TWO_DAYS = new Date(new Date().getTime() - 2 * 24 * 60 * 60 * 1000);
 export const TEST_DATE_NOW_PLUS_TWO_DAYS = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
 export const TEST_DATE_NOW_PLUS_FIVE_DAYS = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000);
@@ -26,6 +27,11 @@ export const TEST_DATE_NOW_PLUS_FIVE_DAYS = new Date(new Date().getTime() + 5 * 
 export const city1 = {
   id: 1,
   name: 'haifa'
+} as City;
+
+export const city2 = {
+  id: 2,
+  name: 'tel-aviv'
 } as City;
 
 export const location1 = {
@@ -87,6 +93,17 @@ export const volunteer2 = {
   companyId: company2.id
 } as User;
 
+export const volunteer3WithoutMappings = {
+  id: 'volunteerid3',
+  firstName: 'volunteer3WithoutMappings',
+  lastName: 'volunteer3WithoutMappings',
+  createdAt: TEST_DATE_20_06_2022,
+  email: 'volunteer3WithoutMappings@gmail.com',
+  phone: '213213452',
+  userType: UserType.VOLUNTEER,
+  companyId: company1.id
+} as User;
+
 export const programManager1 = {
   id: 'programManagerid1',
   firstName: 'prgoramManager1',
@@ -115,6 +132,23 @@ export const volunteerRequest1 = {
   language: Language.ARABIC
 } as VolunteerRequest;
 
+export const oldVolunteerRequest1 = {
+  id: 2,
+  createdAt: TEST_DATE_28_06_2022,
+  name: 'oldVolunteerRequest1',
+  audience: 12,
+  isPhysical: true,
+  description: 'oldVolunteerRequest1 description',
+  startDate: TEST_DATE_NOW_MINUS_FIVE_DAYS,
+  endDate: TEST_DATE_NOW_MINUS_TWO_DAYS,
+  duration: '2 hour',
+  startTime: new Date(),
+  totalVolunteers: 4,
+  status: RequestStatus.SENT,
+  creatorId: programManager1.id,
+  language: Language.HEBREW
+} as VolunteerRequest;
+
 export const volunteerRequest1ToVolunteer1 = {
   volunteerId: volunteer1.id,
   volunteerRequestId: volunteerRequest1.id
@@ -123,6 +157,11 @@ export const volunteerRequest1ToVolunteer1 = {
 export const volunteerRequest1ToVolunteer2 = {
   volunteerId: volunteer2.id,
   volunteerRequestId: volunteerRequest1.id
+} as VolunteerRequestToVolunteer;
+
+export const oldVolunteerRequest1ToVolunteer1 = {
+  volunteerId: volunteer1.id,
+  volunteerRequestId: oldVolunteerRequest1.id
 } as VolunteerRequestToVolunteer;
 
 export const skill1 = {
@@ -148,3 +187,9 @@ export const skill2ToVolunteerRequest1 = {
   skillId: skill2.id,
   volunteerRequestId: volunteerRequest1.id
 } as SkillToVolunteerRequest;
+
+export const volunteerRequestToVolunteers = [
+  volunteerRequest1ToVolunteer1,
+  volunteerRequest1ToVolunteer2,
+  oldVolunteerRequest1ToVolunteer1
+];

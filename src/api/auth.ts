@@ -3,7 +3,7 @@ import { login, register } from '../app/user';
 import { User } from '../models';
 
 const router = Router();
-
+// TODO: add swagger description of the inputs required
 /**
  * @openapi
  * paths:

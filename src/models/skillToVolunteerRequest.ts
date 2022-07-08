@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Skill } from './skill';
 import { VolunteerRequest } from './volunteerRequest';
 
@@ -9,10 +9,10 @@ export class SkillToVolunteerRequest {
   id: number;
 
   @Column()
-  skillId!: number;
+  skillId?: number;
 
   @Column()
-  volunteerRequestId!: number;
+  volunteerRequestId?: number;
 
   @ManyToOne(
     () => Skill,

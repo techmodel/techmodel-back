@@ -10,7 +10,7 @@ const router = Router();
 /**
  * @openapi
  * paths:
- *   /api/v1/user/{userId}/volunteer-request:
+ *   /api/v1/user/{userId}/volunteer-requests:
  *     get:
  *       summary: Returns list of volunteer requests the user is assigned to
  *       security:
@@ -35,7 +35,7 @@ const router = Router();
  *           description: user id
  */
 router.get(
-  '/:userId/volunteer-request',
+  '/:userId/volunteer-requests',
   authMiddleware(UserType.VOLUNTEER),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -45,8 +45,6 @@ router.get(
       }
       res.send(getVolunteeRequestsByUser(userId));
     } catch (e) {
-      console.log(e);
-
       next(e);
     }
   }
