@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: ["feature/azure-deployment"]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build the Docker image
+        run: docker build -t "$CI_REG_PATH/techmodel-backend:latest"
+
+      - name: Login to ACR
+        uses: docker/login-action@v2
+        with:
+          registry: $CI_REG_PATH
+          username: $CI_REG_USERNAME
+          password: $CI_REG_PASSWORD
+
+      - name: Publish the Docker image
+        run: docker push $CI_REG_PATH/techmodel-backend:latest
