@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne } from 'typeorm';
 import { City } from './city';
 import { InstitutionType } from './institutionType';
 import { Location } from './location';
@@ -25,12 +25,16 @@ export class Institution {
   @Column()
   cityId: number;
 
-  @OneToOne(() => Location)
-  @JoinColumn()
+  @ManyToOne(
+    () => Location,
+    location => location.institutions
+  )
   location: Location;
 
-  @OneToOne(() => City)
-  @JoinColumn()
+  @ManyToOne(
+    () => City,
+    city => city.institutions
+  )
   city: City;
 
   @Column({ type: 'varchar' })

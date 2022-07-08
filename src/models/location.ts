@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Institution } from './institution';
 
 @Entity()
 export class Location {
@@ -7,4 +8,10 @@ export class Location {
 
   @Column()
   name: string;
+
+  @OneToMany(
+    () => Institution,
+    institution => institution.location
+  )
+  institutions?: Institution[];
 }
