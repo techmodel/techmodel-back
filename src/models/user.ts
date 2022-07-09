@@ -30,20 +30,24 @@ export class User {
   userType: UserType;
 
   @Column({ nullable: true })
-  institutionId!: number;
+  institutionId?: number | null;
 
   @Column({ nullable: true })
-  programId!: number;
+  programId?: number | null;
 
   @Column({ nullable: true })
-  companyId!: number;
+  companyId?: number | null;
 
-  @OneToOne(() => Institution)
-  @JoinColumn()
+  @ManyToOne(
+    () => Institution,
+    institution => institution.users
+  )
   institution: Institution;
 
-  @OneToOne(() => Program)
-  @JoinColumn()
+  @ManyToOne(
+    () => Program,
+    program => program.users
+  )
   program: Program;
 
   @ManyToOne(
