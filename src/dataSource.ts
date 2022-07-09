@@ -8,5 +8,5 @@ export const appDataSource = new DataSource({
   username: SQL_DB_USERNAME,
   password: SQL_DB_PASSWORD,
   database: SQL_DB_DATABASE,
-  entities: ['src/models/*.ts']
+  entities: [__dirname + '/models/*.{js,ts}']
 });

@@ -1,4 +1,5 @@
 import * as jwt from 'jsonwebtoken';
+import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
 import { User, UserType } from '../models';
 import { userRepository } from '../repos';
@@ -41,4 +42,8 @@ export const register = async (user: Partial<User>): Promise<loginResponse> => {
   if (!user.id) throw new Error('Missing userId');
   await userRepository.save(user);
   return login(user.id);
+};
+
+export const updateUserInfo = (userId: string, userInfo: Partial<User>): Promise<UpdateResult> => {
+  return userRepository.update({ id: userId }, { ...userInfo });
 };
