@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { updateInfo } from '../app/user';
+import { updateUserInfo } from '../app/user';
 import { getVolunteerRequestsByUser } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
-import { User, UserType } from '../models';
+import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
 
@@ -58,9 +58,8 @@ router.put(
     try {
       const userId = (req as DecodedRequest).userDecoded.userId;
       const { userData } = req.body;
-      let user: Partial<User> = { userId, ...userData };
-      user = await updateInfo(user);
-      res.status(204).send(user);
+      await updateUserInfo(userId, userData);
+      res.status(204).send();
     } catch (e) {
       next(e);
     }

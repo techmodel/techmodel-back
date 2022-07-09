@@ -1,4 +1,5 @@
 import * as jwt from 'jsonwebtoken';
+import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
 import { User, UserType } from '../models';
 import { userRepository } from '../repos';
@@ -43,4 +44,6 @@ export const register = async (user: Partial<User>): Promise<loginResponse> => {
   return login(user.id);
 };
 
-export const updateInfo = (user: Partial<User>): Promise<User> => userRepository.save(user);
+export const updateUserInfo = (userId: string, userInfo: Partial<User>): Promise<UpdateResult> => {
+  return userRepository.update({ id: userId }, { ...userInfo });
+};
