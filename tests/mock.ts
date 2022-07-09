@@ -179,6 +179,23 @@ export const oldVolunteerRequest1 = {
   language: Language.HEBREW
 } as VolunteerRequest;
 
+export const fullVolunteerRequest1 = {
+  id: 3,
+  createdAt: TEST_DATE_28_06_2022,
+  name: 'fullVolunteerRequest1',
+  audience: 2,
+  isPhysical: true,
+  description: 'fullVolunteerRequest1 description',
+  startDate: TEST_DATE_NOW_PLUS_TWO_DAYS,
+  endDate: TEST_DATE_NOW_PLUS_FIVE_DAYS,
+  duration: '1 hour',
+  startTime: new Date(),
+  totalVolunteers: 1,
+  status: RequestStatus.SENT,
+  creatorId: programManager1.id,
+  language: Language.RUSSIAN
+} as VolunteerRequest;
+
 export const volunteerRequest1ToVolunteer1 = {
   volunteerId: volunteer1.id,
   volunteerRequestId: volunteerRequest1.id
@@ -192,6 +209,11 @@ export const volunteerRequest1ToVolunteer2 = {
 export const oldVolunteerRequest1ToVolunteer1 = {
   volunteerId: volunteer1.id,
   volunteerRequestId: oldVolunteerRequest1.id
+} as VolunteerRequestToVolunteer;
+
+export const fullVolunteerRequest1ToVolunteer1 = {
+  volunteerId: volunteer1.id,
+  volunteerRequestId: fullVolunteerRequest1.id
 } as VolunteerRequestToVolunteer;
 
 export const skill1 = {
@@ -221,5 +243,6 @@ export const skill2ToVolunteerRequest1 = {
 export const volunteerRequestToVolunteers = [
   volunteerRequest1ToVolunteer1,
   volunteerRequest1ToVolunteer2,
-  oldVolunteerRequest1ToVolunteer1
+  oldVolunteerRequest1ToVolunteer1,
+  fullVolunteerRequest1ToVolunteer1
 ];

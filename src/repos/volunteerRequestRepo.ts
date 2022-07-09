@@ -1,5 +1,5 @@
 import { appDataSource } from '../dataSource';
-import { CannotPerformOperationError, NotFoundError } from '../exc';
+import { NotFoundError } from '../exc';
 import { VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
 
 export const volunteerRequestRepository = appDataSource.getRepository(VolunteerRequest).extend({
@@ -31,6 +31,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
     await appDataSource
       .getRepository(VolunteerRequestToVolunteer)
       .insert({ volunteerId, volunteerRequestId: requestId });
+    // TODO: handle concurrent inserts (it should be inside the transaction)
   },
 
   async volunteerRequestsByVolunteerId(volunteerId: string): Promise<VolunteerRequest[]> {
@@ -46,8 +47,8 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .getMany();
   },
 
-  async findOneWithCreator(id: number): Promise<VolunteerRequest | null> {
-    return await this.findOne({ where: { id }, relations: ['creator'] });
+  async requestById(id: number): Promise<VolunteerRequest | null> {
+    return await this.findOne({ where: { id }, relations: ['creator', 'volunteerRequestToVolunteer'] });
   },
 
   async deleteVolunteerFromRequest(requestId: number, volunteerId: string): Promise<void> {
