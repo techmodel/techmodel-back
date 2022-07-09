@@ -9,7 +9,7 @@ export const assignVolunteerToRequest = async (userId: string, volunteerRequestI
   await volunteerRequestRepository.assignVolunteerToRequest(volunteerRequestId, userId);
 };
 
-export const getVolunteeRequestsByUser = async (userId: string): Promise<VolunteerRequest[]> => {
+export const getVolunteerRequestsByUser = async (userId: string): Promise<VolunteerRequest[]> => {
   return volunteerRequestRepository.volunteerRequestsByVolunteerId(userId);
 };
 

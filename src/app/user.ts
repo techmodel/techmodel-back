@@ -32,3 +32,5 @@ export const register = async (user: Partial<User>): Promise<loginResponse> => {
   await userRepository.save(user);
   return login(user.id);
 };
+
+export const updateInfo = (user: Partial<User>): Promise<User> => userRepository.save(user);

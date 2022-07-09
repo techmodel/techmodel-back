@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { getVolunteeRequestsByUser } from '../app/volunteerRequest';
+import { updateInfo } from '../app/user';
+import { getVolunteerRequestsByUser } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
-import { UserType } from '../models';
+import { User, UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
 
@@ -43,7 +44,23 @@ router.get(
       if (userId != (req as DecodedRequest).userDecoded.userId) {
         throw new AuthorizationError('Trying to access different user info');
       }
-      res.send(getVolunteeRequestsByUser(userId));
+      res.send(getVolunteerRequestsByUser(userId));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+router.put(
+  '/update-info',
+  authMiddleware([...Object.values(UserType)]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req as DecodedRequest).userDecoded.userId;
+      const { userData } = req.body;
+      let user: Partial<User> = { userId, ...userData };
+      user = await updateInfo(user);
+      res.status(204).send(user);
     } catch (e) {
       next(e);
     }

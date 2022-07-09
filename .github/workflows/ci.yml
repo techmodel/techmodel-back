@@ -18,9 +18,9 @@ jobs:
       - name: Login to ACR
         uses: docker/login-action@v2
         with:
-          registry: techmodel.azurecr.io
-          username: techmodel
-          password: 1vgBVm/y/pEJfjsePY1ZEjfH9ZSHKQiH
+          registry: $CI_REG_PATH
+          username: $CI_REG_USERNAME
+          password: $CI_REG_PASSWORD
 
       - name: Publish the Docker image
         run: docker push techmodel.azurecr.io/techmodel-backend:latest
