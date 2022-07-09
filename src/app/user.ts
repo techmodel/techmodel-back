@@ -1,6 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
+import { CannotPerformOperationError } from '../exc';
 import { User, UserType } from '../models';
 import { userRepository } from '../repos';
 
@@ -44,6 +45,13 @@ export const register = async (user: Partial<User>): Promise<loginResponse> => {
   return login(user.id);
 };
 
-export const updateUserInfo = (userId: string, userInfo: Partial<User>): Promise<UpdateResult> => {
+export const updateUserInfo = (userId: string, userType: UserType, userInfo: Partial<User>): Promise<UpdateResult> => {
+  if (
+    (userType == UserType.VOLUNTEER && (userInfo.institutionId || userInfo.programId)) ||
+    (userType == UserType.PROGRAM_COORDINATOR && userInfo.companyId) ||
+    (userType == UserType.PROGRAM_MANAGER && (userInfo.companyId || userInfo.institutionId))
+  ) {
+    throw new CannotPerformOperationError("Can't update inaccessible user info");
+  }
   return userRepository.update({ id: userId }, { ...userInfo });
 };
