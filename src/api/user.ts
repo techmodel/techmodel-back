@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { getVolunteeRequestsByUser } from '../app/volunteerRequest';
+import { updateUserInfo } from '../app/user';
+import { getVolunteerRequestsByUser } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
@@ -43,7 +44,22 @@ router.get(
       if (userId != (req as DecodedRequest).userDecoded.userId) {
         throw new AuthorizationError('Trying to access different user info');
       }
-      res.send(getVolunteeRequestsByUser(userId));
+      res.send(getVolunteerRequestsByUser(userId));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+router.put(
+  '/update-info',
+  authMiddleware([...Object.values(UserType)]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req as DecodedRequest).userDecoded.userId;
+      const { userInfo } = req.body;
+      await updateUserInfo(userId, userInfo);
+      res.status(204).send();
     } catch (e) {
       next(e);
     }
