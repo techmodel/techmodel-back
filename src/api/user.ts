@@ -57,8 +57,8 @@ router.put(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = (req as DecodedRequest).userDecoded.userId;
-      const { userData } = req.body;
-      await updateUserInfo(userId, userData);
+      const { userInfo } = req.body;
+      await updateUserInfo(userId, userInfo);
       res.status(204).send();
     } catch (e) {
       next(e);
