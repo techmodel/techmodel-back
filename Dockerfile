@@ -2,8 +2,8 @@ FROM node:14 AS builder
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-RUN NG_CLI_ANALYTICS=ci npm install
-RUN npm audit fix --force
+RUN npm install
+RUN npm audit fix
 
 COPY . .
 RUN ./node_modules/.bin/tsc -p .
@@ -14,8 +14,8 @@ FROM node:14
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-RUN NG_CLI_ANALYTICS=ci npm install
-RUN npm audit fix --force
+RUN npm install
+RUN npm audit fix
 
 COPY --from=builder /usr/src/app/build ./build
 EXPOSE 8080
