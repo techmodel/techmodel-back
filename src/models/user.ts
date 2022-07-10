@@ -29,10 +29,10 @@ export class User {
   @Column({ type: 'varchar' })
   userType: UserType;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: false })
   institutionId?: number | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: false })
   programId?: number | null;
 
   @Column({ nullable: true })

@@ -4,6 +4,7 @@ import {
   deleteVolunteerFromRequest,
   getRelevantAndOpenVolunteerRequests
 } from '../app/volunteerRequest';
+import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
@@ -26,13 +27,19 @@ const router = Router();
  *                 items:
  *                   $ref: '#/components/schemas/volunteerRequest'
  */
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    res.json(await getRelevantAndOpenVolunteerRequests());
-  } catch (e) {
-    next(e);
+router.get(
+  '/',
+  authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { programId, institutionId } = (req as DecodedRequest).userDecoded;
+      if (!programId) throw new AuthorizationError('No program found');
+      res.json(await getRelevantAndOpenVolunteerRequests(programId, institutionId));
+    } catch (e) {
+      next(e);
+    }
   }
-});
+);
 
 /**
  * @openapi

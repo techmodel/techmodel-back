@@ -1,11 +1,13 @@
 import { AuthorizationError, CannotPerformOperationError, NotFoundError } from '../exc';
-import logger from '../logger';
 import { User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
 import { userDecoded } from './user';
 
-export const getRelevantAndOpenVolunteerRequests = async (): Promise<VolunteerRequest[]> => {
-  return volunteerRequestRepository.relevantAndOpen();
+export const getRelevantAndOpenVolunteerRequests = async (
+  programId: number,
+  institutionId?: number
+): Promise<VolunteerRequest[]> => {
+  return volunteerRequestRepository.relevantAndOpen(programId, institutionId);
 };
 
 export const assignVolunteerToRequest = async (userId: string, volunteerRequestId: number): Promise<void> => {
