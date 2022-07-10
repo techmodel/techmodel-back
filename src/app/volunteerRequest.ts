@@ -3,11 +3,16 @@ import { User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
 import { userDecoded } from './user';
 
-export const getRelevantAndOpenVolunteerRequests = async (
+export const getRelevantAndOpenVolunteerRequests = async (): Promise<VolunteerRequest[]> => {
+  return volunteerRequestRepository.relevantAndOpen();
+};
+
+export const getVolunteerRequestsOfProgram = async (
   programId: number,
-  institutionId?: number
+  institutionId?: number,
+  startDate?: string
 ): Promise<VolunteerRequest[]> => {
-  return volunteerRequestRepository.relevantAndOpen(programId, institutionId);
+  return volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
 };
 
 export const assignVolunteerToRequest = async (userId: string, volunteerRequestId: number): Promise<void> => {

@@ -3,15 +3,14 @@ import { NotFoundError } from '../exc';
 import { VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
 
 export const volunteerRequestRepository = appDataSource.getRepository(VolunteerRequest).extend({
-  async relevantAndOpen(programId: number, institutionId?: number): Promise<VolunteerRequest[]> {
-    let qb = this
+  async relevantAndOpen(): Promise<VolunteerRequest[]> {
+    return await this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
       // populate vr.currentVolunteers
       .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
       .leftJoinAndSelect('stvr.skill', 'skill')
-      .leftJoinAndSelect(`vr.creator`, `creator`)
       .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
       // filter out requests that are full
       .andWhere(qb => {
@@ -25,6 +24,23 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
           .getQuery();
         return 'vr.id IN ' + subQuery;
       })
+      .getMany();
+  },
+
+  async requestsOfProgram(
+    programId: number,
+    institutionId?: number,
+    startDate = new Date().toISOString()
+  ): Promise<VolunteerRequest[]> {
+    let qb = this
+      // alias to VolunteerRequest
+      .createQueryBuilder('vr')
+      // populate vr.currentVolunteers
+      .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
+      .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
+      .leftJoinAndSelect('stvr.skill', 'skill')
+      .leftJoinAndSelect(`vr.creator`, `creator`)
+      .andWhere('vr.startDate > :startDate', { startDate })
       .andWhere(`creator.programId = :programId`, { programId });
     if (institutionId) {
       qb = qb.andWhere(`creator.institutionId = :institutionId`, { institutionId });
