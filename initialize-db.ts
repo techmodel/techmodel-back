@@ -71,6 +71,5 @@ InitDataSource.initialize()
       skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
     });
     console.log('preformed seeding');
-    process.exit(0);
   })
   .catch(error => console.log(error));
