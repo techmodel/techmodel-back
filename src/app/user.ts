@@ -51,7 +51,7 @@ export const updateUserInfo = (userId: string, userType: UserType, userInfo: Par
     (userType == UserType.PROGRAM_COORDINATOR && userInfo.companyId) ||
     (userType == UserType.PROGRAM_MANAGER && (userInfo.companyId || userInfo.institutionId))
   ) {
-    throw new CannotPerformOperationError("Can't update inaccessible user info");
+    throw new CannotPerformOperationError(`Can't update inaccessible user info`);
   }
   return userRepository.update({ id: userId }, { ...userInfo });
 };

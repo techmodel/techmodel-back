@@ -59,7 +59,7 @@ router.put(
       const { userId, userType } = (req as DecodedRequest).userDecoded;
       const { userInfo } = req.body;
       await updateUserInfo(userId, userType, userInfo);
-      res.status(204).send();
+      res.sendStatus(204);
     } catch (e) {
       next(e);
     }
