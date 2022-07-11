@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
-import { CannotPerformOperationError } from '../exc';
+import { BadRequestError, CannotPerformOperationError } from '../exc';
 import { User, UserType } from '../models';
 import { userRepository } from '../repos';
 
@@ -22,6 +22,14 @@ export type userDecoded = {
   exp: number;
 };
 
+const arePropertiesValidOnType = (user: Partial<User>, userType: UserType): boolean => {
+  return (
+    (userType == UserType.VOLUNTEER && !(user.institutionId || user.programId)) ||
+    (userType == UserType.PROGRAM_COORDINATOR && !user.companyId) ||
+    (userType == UserType.PROGRAM_MANAGER && !(user.companyId || user.institutionId))
+  );
+};
+
 export const login = async (userId: string): Promise<loginResponse> => {
   const user = await userRepository.findOneBy({ id: userId });
   if (!userId || !user) {
@@ -40,17 +48,16 @@ export const login = async (userId: string): Promise<loginResponse> => {
 };
 
 export const register = async (user: Partial<User>): Promise<loginResponse> => {
-  if (!user.id) throw new Error('Missing userId');
+  if (!user.id) throw new BadRequestError('Missing userId');
+  if (!arePropertiesValidOnType(user, user.userType as UserType)) {
+    throw new CannotPerformOperationError(`Can't create inaccessible user info`);
+  }
   await userRepository.save(user);
   return login(user.id);
 };
 
 export const updateUserInfo = (userId: string, userType: UserType, userInfo: Partial<User>): Promise<UpdateResult> => {
-  if (
-    (userType == UserType.VOLUNTEER && (userInfo.institutionId || userInfo.programId)) ||
-    (userType == UserType.PROGRAM_COORDINATOR && userInfo.companyId) ||
-    (userType == UserType.PROGRAM_MANAGER && (userInfo.companyId || userInfo.institutionId))
-  ) {
+  if (!arePropertiesValidOnType(userInfo, userType)) {
     throw new CannotPerformOperationError(`Can't update inaccessible user info`);
   }
   return userRepository.update({ id: userId }, { ...userInfo });
