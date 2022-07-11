@@ -13,11 +13,14 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Init DB
+      - name: Create DB
         run: npm run dc-up
 
       - name: Install dependencies
         run: npm i
+
+      - name: Init DB
+        run: npm run init-db
 
       - name: Run tests
         env:
