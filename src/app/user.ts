@@ -1,8 +1,11 @@
 import * as jwt from 'jsonwebtoken';
 import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
+import { ObjectValidationError } from '../exc';
+import logger from '../logger';
 import { User, UserType } from '../models';
 import { userRepository } from '../repos';
+import { userSchema } from '../schema.validators';
 
 type loginResponse = {
   userDetails: User | null;
@@ -19,6 +22,17 @@ export type userDecoded = {
   companyId?: number;
   iat: number;
   exp: number;
+};
+
+const validator = (user: User): User => {
+  const { error } = userSchema.validate(user);
+
+  if (error) {
+    logger.info(`Error inserting user, id: ${user.id}`);
+    throw new ObjectValidationError(error.message);
+  }
+
+  return user;
 };
 
 export const login = async (userId: string): Promise<loginResponse> => {
@@ -38,9 +52,9 @@ export const login = async (userId: string): Promise<loginResponse> => {
   return { userDetails: user, isFound: true, userToken: token, userType: user.userType };
 };
 
-export const register = async (user: Partial<User>): Promise<loginResponse> => {
+export const register = async (user: User): Promise<loginResponse> => {
   if (!user.id) throw new Error('Missing userId');
-  await userRepository.save(user);
+  await userRepository.save(validator(user));
   return login(user.id);
 };
 
