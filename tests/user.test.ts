@@ -5,10 +5,7 @@ import logger from '../src/logger';
 import { User } from '../src/models';
 import { userRepository } from '../src/repos';
 import app from '../src/server/server';
-import {
-  program1, programCoordinator1,
-  programManager1, volunteer1
-} from './mock';
+import { program1, programCoordinator1, programManager1, volunteer1 } from './mock';
 import { removeSeed, seed } from './seed';
 import { createTestJwt, HTTPError } from './setup';
 
