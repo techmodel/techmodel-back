@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import sinon, { SinonSandbox } from 'sinon';
 import request from 'supertest';
-import { appDataSource } from '../src/dataSource';
 import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
 import {
@@ -105,14 +104,14 @@ describe('volunteerRequest', function() {
         .delete(`/api/v1/volunteer-requests/${oldVolunteerRequest1.id}/volunteers/${volunteer1.id}`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`);
       expect(res.status).to.eq(422);
-      expect((res.error as any).text).to.eq('Cannot delete mapped volunteers from old request');
+      expect((res.error as HTTPError).text).to.eq('Cannot delete mapped volunteers from old request');
     });
 
     it('returns 404 when trying to delete mapping to not found request', async function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${453453}/volunteers/${volunteer1.id}`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`);
-      expect((res.error as any).text).to.eq('Volunteer request not found');
+      expect((res.error as HTTPError).text).to.eq('Volunteer request not found');
       expect(res.status).to.eq(404);
     });
 
@@ -120,7 +119,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer3WithoutMappings.id}`)
         .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
-      expect((res.error as any).text).to.eq('Volunteer is not mapped to the request');
+      expect((res.error as HTTPError).text).to.eq('Volunteer is not mapped to the request');
       expect(res.status).to.eq(404);
     });
 
@@ -128,7 +127,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
         .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
-      expect((res.error as any).text).to.eq('As a volunteer, you are not allowed to delete this volunteer');
+      expect((res.error as HTTPError).text).to.eq('As a volunteer, you are not allowed to delete this volunteer');
       expect(res.status).to.eq(403);
     });
 

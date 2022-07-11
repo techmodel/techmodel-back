@@ -15,13 +15,13 @@ import {
   VolunteerRequest,
   VolunteerRequestToVolunteer
 } from '../src/models';
-import * as dfns from 'date-fns'
+import * as dfns from 'date-fns';
 
 export const TEST_DATE_28_06_2022 = new Date('2022-06-28T15:20:21.470Z');
-export const TEST_DATE_20_06_2022 = dfns.subDays(TEST_DATE_28_06_2022, 8); 
+export const TEST_DATE_20_06_2022 = dfns.subDays(TEST_DATE_28_06_2022, 8);
 export const TEST_DATE_NOW = new Date();
-export const TEST_DATE_NOW_MINUS_FIVE_DAYS = dfns.subDays(TEST_DATE_NOW, 5)
-export const TEST_DATE_NOW_MINUS_TWO_DAYS = dfns.subDays(TEST_DATE_NOW, 2)
+export const TEST_DATE_NOW_MINUS_FIVE_DAYS = dfns.subDays(TEST_DATE_NOW, 5);
+export const TEST_DATE_NOW_MINUS_TWO_DAYS = dfns.subDays(TEST_DATE_NOW, 2);
 export const TEST_DATE_NOW_PLUS_TWO_DAYS = dfns.addDays(TEST_DATE_NOW, 2);
 export const TEST_DATE_NOW_PLUS_FIVE_DAYS = dfns.addDays(TEST_DATE_NOW, 5);
 

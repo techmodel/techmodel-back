@@ -1,11 +1,9 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import {
   assignVolunteerToRequest,
   deleteVolunteerFromRequest,
-  getRelevantAndOpenVolunteerRequests,
-  getVolunteerRequestsOfProgram
+  getRelevantAndOpenVolunteerRequests
 } from '../app/volunteerRequest';
-import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
