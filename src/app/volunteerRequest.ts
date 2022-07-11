@@ -1,5 +1,4 @@
 import { AuthorizationError, CannotPerformOperationError, NotFoundError } from '../exc';
-import logger from '../logger';
 import { User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
 import { userDecoded } from './user';
@@ -9,6 +8,16 @@ export const getRelevantAndOpenVolunteerRequests = async (): Promise<VolunteerRe
 };
 
 export const assignVolunteerToRequest = async (userId: string, volunteerRequestId: number): Promise<void> => {
+  const targetVolunteerRequest = await volunteerRequestRepository.requestById(volunteerRequestId);
+  if (!targetVolunteerRequest) {
+    throw new NotFoundError('Volunteer request not found');
+  }
+  if (targetVolunteerRequest.startDate < new Date()) {
+    throw new CannotPerformOperationError('Cannot assign volunteer to old request');
+  }
+  if (targetVolunteerRequest.volunteerRequestToVolunteer.length >= targetVolunteerRequest.totalVolunteers) {
+    throw new CannotPerformOperationError('Volunteer request is full');
+  }
   await volunteerRequestRepository.assignVolunteerToRequest(volunteerRequestId, userId);
 };
 
@@ -28,7 +37,7 @@ export const deleteVolunteerFromRequest = async (
   if (caller.userType === UserType.VOLUNTEER && caller.userId !== volunteerId) {
     throw new AuthorizationError('As a volunteer, you are not allowed to delete this volunteer');
   }
-  const targetVolunteerRequest = await volunteerRequestRepository.findOneWithCreator(volunteerRequestId);
+  const targetVolunteerRequest = await volunteerRequestRepository.requestById(volunteerRequestId);
   if (!targetVolunteerRequest) {
     throw new NotFoundError('Volunteer request not found');
   }

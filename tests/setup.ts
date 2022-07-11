@@ -9,6 +9,7 @@ import { appDataSource } from '../src/dataSource';
 import { User } from '../src/models';
 import { removeSeed } from './seed';
 import { JWT_SECRET } from '../src/config';
+import { programCoordinator1, programManager2, volunteer1, volunteer3WithoutMappings } from './mock';
 
 before(async () => {
   await appDataSource.initialize();
@@ -37,3 +38,8 @@ export const createTestJwt = (user: User): string => {
   } as userDecoded;
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
 };
+
+export const volunteer1Jwt = createTestJwt(volunteer1);
+export const volunteer3WithoutMappingsJwt = createTestJwt(volunteer3WithoutMappings);
+export const programCoordinator1Jwt = createTestJwt(programCoordinator1);
+export const programManager2Jwt = createTestJwt(programManager2);

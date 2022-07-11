@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import sinon, { SinonSandbox } from 'sinon';
 import request from 'supertest';
-import { appDataSource } from '../src/dataSource';
 import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
 import {
   city1,
   company1,
   company2,
+  fullVolunteerRequest1,
   institution1,
   location1,
   oldVolunteerRequest1,
@@ -28,7 +28,13 @@ import {
 } from './mock';
 import app from '../src/server/server';
 import { volunteerRequestRepository } from '../src/repos';
-import { createTestJwt, HTTPError } from './setup';
+import {
+  HTTPError,
+  programCoordinator1Jwt,
+  programManager2Jwt,
+  volunteer1Jwt,
+  volunteer3WithoutMappingsJwt
+} from './setup';
 
 describe('volunteerRequest', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
@@ -45,14 +51,14 @@ describe('volunteerRequest', function() {
       programs: [program1, program2],
       companies: [company1, company2],
       users: [volunteer1, volunteer2, programManager1, volunteer3WithoutMappings, programCoordinator1, programManager2],
-      volunteerRequests: [volunteerRequest1, oldVolunteerRequest1],
+      volunteerRequests: [volunteerRequest1, oldVolunteerRequest1, fullVolunteerRequest1],
       volunteerRequestToVolunteers: volunteerRequestToVolunteers,
       skills: [skill1, skill2],
       skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
     });
   });
 
-  describe('volunteerRequestsByVolunteerId', function() {
+  describe('volunteer requests by volunteer id', function() {
     it('returns the volunteer requests relevant for the volunteer', async function() {
       const volunteer1MappedRequestIds = volunteerRequestToVolunteers
         .filter(mapping => mapping.volunteerId === volunteer1.id)
@@ -79,12 +85,58 @@ describe('volunteerRequest', function() {
     });
   });
 
-  describe('deleteVolunteerFromRequest', function() {
-    const volunteer1Jwt = createTestJwt(volunteer1);
-    const volunteer3WithoutMappingsJwt = createTestJwt(volunteer3WithoutMappings);
-    const programCoordinator1Jwt = createTestJwt(programCoordinator1);
-    const programManager2Jwt = createTestJwt(programManager2);
+  describe('assign volunteer to volunteer request', function() {
+    it('returns 401 when called by program manager or program coordinator', async function() {
+      let res = await request(app)
+        .post(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
+      res = await request(app)
+        .post(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
+    });
+    it('assigns volunteer to the volunteer request if everything is ok', async function() {
+      let volunteer3WithoutMappingsRequests = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
+        volunteer3WithoutMappings.id
+      );
+      expect(volunteer3WithoutMappingsRequests.length).to.eq(0);
+      const res = await request(app)
+        .post(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers`)
+        .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
+      expect(res.status).to.eq(200);
+      volunteer3WithoutMappingsRequests = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
+        volunteer3WithoutMappings.id
+      );
+      expect(volunteer3WithoutMappingsRequests.length).to.eq(1);
+      expect(volunteer3WithoutMappingsRequests[0].id).to.eq(volunteerRequest1.id);
+    });
+    it('returns 404 if volunteer request is not found', async function() {
+      const res = await request(app)
+        .post(`/api/v1/volunteer-requests/635645terst/volunteers`)
+        .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
+      expect((res.error as HTTPError).text).to.eq('Volunteer request not found');
+      expect(res.status).to.eq(404);
+    });
+    it('returns 422 if volunteer request is too old', async function() {
+      const res = await request(app)
+        .post(`/api/v1/volunteer-requests/${oldVolunteerRequest1.id}/volunteers`)
+        .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
+      expect((res.error as HTTPError).text).to.eq('Cannot assign volunteer to old request');
+      expect(res.status).to.eq(422);
+    });
+    it('returns 422 if volunteer request is full', async function() {
+      const res = await request(app)
+        .post(`/api/v1/volunteer-requests/${fullVolunteerRequest1.id}/volunteers`)
+        .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
+      expect((res.error as HTTPError).text).to.eq('Volunteer request is full');
+      expect(res.status).to.eq(422);
+    });
+  });
 
+  describe('delete volunteer from request', function() {
     it('deletes the mapped volunteer to the request if the volunteer is trying to delete himself', async function() {
       const initialVolunteer1MappedRequests = await volunteerRequestRepository.volunteerRequestsByVolunteerId(
         volunteer1.id
@@ -105,14 +157,14 @@ describe('volunteerRequest', function() {
         .delete(`/api/v1/volunteer-requests/${oldVolunteerRequest1.id}/volunteers/${volunteer1.id}`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`);
       expect(res.status).to.eq(422);
-      expect((res.error as any).text).to.eq('Cannot delete mapped volunteers from old request');
+      expect((res.error as HTTPError).text).to.eq('Cannot delete mapped volunteers from old request');
     });
 
     it('returns 404 when trying to delete mapping to not found request', async function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${453453}/volunteers/${volunteer1.id}`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`);
-      expect((res.error as any).text).to.eq('Volunteer request not found');
+      expect((res.error as HTTPError).text).to.eq('Volunteer request not found');
       expect(res.status).to.eq(404);
     });
 
@@ -120,7 +172,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer3WithoutMappings.id}`)
         .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
-      expect((res.error as any).text).to.eq('Volunteer is not mapped to the request');
+      expect((res.error as HTTPError).text).to.eq('Volunteer is not mapped to the request');
       expect(res.status).to.eq(404);
     });
 
@@ -128,7 +180,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
         .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
-      expect((res.error as any).text).to.eq('As a volunteer, you are not allowed to delete this volunteer');
+      expect((res.error as HTTPError).text).to.eq('As a volunteer, you are not allowed to delete this volunteer');
       expect(res.status).to.eq(403);
     });
 
@@ -159,11 +211,8 @@ describe('volunteerRequest', function() {
     });
   });
 
-  this.afterEach(function() {
+  this.afterEach(async function() {
     sandbox.restore();
-  });
-
-  this.afterAll(async function() {
     await removeSeed();
   });
 });
