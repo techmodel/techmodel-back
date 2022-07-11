@@ -1,18 +1,21 @@
 import { expect } from 'chai';
 import sinon, { SinonSandbox } from 'sinon';
-import logger from '../src/logger';
-import { removeSeed, seed } from './seed';
-import { volunteer1, programCoordinator1, programManager1, program1, company1, institution1, location1, city1 } from './mock';
-import { createTestJwt, HTTPError } from './setup';
-import app from '../src/server/server';
 import request from 'supertest';
-import { userRepository } from '../src/repos';
+import logger from '../src/logger';
 import { User } from '../src/models';
+import { userRepository } from '../src/repos';
+import app from '../src/server/server';
+import {
+  program1, programCoordinator1,
+  programManager1, volunteer1
+} from './mock';
+import { removeSeed, seed } from './seed';
+import { createTestJwt, HTTPError } from './setup';
 
-describe('user', function () {
+describe('user', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
 
-  this.beforeEach(async function () {
+  this.beforeEach(async function() {
     sandbox = sinon.createSandbox();
     // disable logging
     sandbox.stub(logger);
