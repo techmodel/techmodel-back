@@ -28,14 +28,16 @@ import {
 } from './mock';
 import app from '../src/server/server';
 import { volunteerRequestRepository } from '../src/repos';
-import { createTestJwt, HTTPError } from './setup';
+import {
+  HTTPError,
+  programCoordinator1Jwt,
+  programManager2Jwt,
+  volunteer1Jwt,
+  volunteer3WithoutMappingsJwt
+} from './setup';
 
 describe('volunteerRequest', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
-  const volunteer1Jwt = createTestJwt(volunteer1);
-  const volunteer3WithoutMappingsJwt = createTestJwt(volunteer3WithoutMappings);
-  const programCoordinator1Jwt = createTestJwt(programCoordinator1);
-  const programManager2Jwt = createTestJwt(programManager2);
 
   this.beforeEach(async function() {
     sandbox = sinon.createSandbox();

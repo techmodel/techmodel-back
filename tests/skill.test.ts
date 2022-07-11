@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import request from 'supertest';
+import app from '../src/server/server';
 import sinon, { SinonSandbox } from 'sinon';
 import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
-import { city1, city2 } from './mock';
-import app from '../src/server/server';
+import { skill1, skill2 } from './mock';
 
-describe('cities', function() {
+describe('skills', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
 
   this.beforeEach(async function() {
@@ -15,13 +15,13 @@ describe('cities', function() {
     sandbox.stub(logger);
     // seed db
     await seed({
-      cities: [city1, city2]
+      skills: [skill1, skill2]
     });
   });
 
-  it('returns list of cities', async function() {
-    const res = await request(app).get(`/api/v1/cities`);
-    expect(res.body).to.eql([city1, city2]);
+  it('returns list of skills', async function() {
+    const res = await request(app).get(`/api/v1/skills`);
+    expect(res.body).to.eql([skill1, skill2]);
   });
 
   this.afterEach(async function() {

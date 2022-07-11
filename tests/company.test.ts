@@ -3,10 +3,10 @@ import request from 'supertest';
 import sinon, { SinonSandbox } from 'sinon';
 import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
-import { city1, city2 } from './mock';
+import { company1, company2 } from './mock';
 import app from '../src/server/server';
 
-describe('cities', function() {
+describe('companies', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
 
   this.beforeEach(async function() {
@@ -15,13 +15,15 @@ describe('cities', function() {
     sandbox.stub(logger);
     // seed db
     await seed({
-      cities: [city1, city2]
+      companies: [company1, company2]
     });
   });
 
-  it('returns list of cities', async function() {
-    const res = await request(app).get(`/api/v1/cities`);
-    expect(res.body).to.eql([city1, city2]);
+  it('returns list of companies', async function() {
+    it('returns list of programs', async function() {
+      const res = await request(app).get(`/api/v1/companies`);
+      expect(res.body).to.eql([company1, company2]);
+    });
   });
 
   this.afterEach(async function() {

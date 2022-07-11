@@ -52,28 +52,24 @@ export const institution1 = {
 
 export const program1 = {
   id: 1,
-  createdAt: TEST_DATE_20_06_2022,
   name: 'program1',
   description: 'program description 1'
 } as Program;
 
 export const program2 = {
   id: 2,
-  createdAt: TEST_DATE_20_06_2022,
   name: 'program2',
   description: 'program description 2'
 } as Program;
 
 export const company1 = {
   id: 1,
-  createdAt: TEST_DATE_20_06_2022,
   name: 'company1',
   description: 'company description 1'
 } as Company;
 
 export const company2 = {
   id: 2,
-  createdAt: TEST_DATE_20_06_2022,
   name: 'company2',
   description: 'company description 2'
 } as Company;

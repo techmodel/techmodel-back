@@ -1,9 +1,10 @@
 import { expect } from 'chai';
+import request from 'supertest';
 import sinon, { SinonSandbox } from 'sinon';
 import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
 import { city1, institution1, location1 } from './mock';
-import { institutionRepository } from '../src/repos';
+import app from '../src/server/server';
 
 describe('institutions', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
@@ -21,8 +22,8 @@ describe('institutions', function() {
   });
 
   it('returns list of institutions', async function() {
-    const institutions = await institutionRepository.find();
-    expect(institutions).to.eql([institution1]);
+    const res = await request(app).get(`/api/v1/institutions`);
+    expect(res.body).to.eql([{ ...institution1, createdAt: institution1.createdAt.toISOString() }]);
   });
 
   this.afterEach(async function() {
