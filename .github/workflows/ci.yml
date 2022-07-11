@@ -2,10 +2,21 @@ name: Docker Image CI
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["feature/program-coordinator"]
 
 jobs:
-  docker:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run tests
+        run: npm test
+
+  buildAndPublish:
     runs-on: ubuntu-latest
     steps:
     
