@@ -31,6 +31,7 @@ import { volunteerRequestRepository } from '../src/repos';
 import {
   HTTPError,
   programCoordinator1Jwt,
+  programManager1Jwt,
   programManager2Jwt,
   volunteer1Jwt,
   volunteer3WithoutMappingsJwt
@@ -205,6 +206,75 @@ describe('volunteerRequest', function() {
     it('returns 401 when trying to perform the action without working jwt', async function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
+        .set('Authorization', `Bearer test`);
+      expect((res.error as HTTPError).text).to.eq('Couldnt verify token');
+      expect(res.status).to.eq(401);
+    });
+  });
+
+  describe('set volunteer reqeust as deleted', function() {
+    it('chagnes the status of the volunteer request to `deleted`', async function() {
+      let targetVolunteerRequest = await volunteerRequestRepository.requestById(volunteerRequest1.id);
+      if (!targetVolunteerRequest) {
+        throw new Error('Volunteer request not found');
+      }
+      expect(targetVolunteerRequest.status).to.eq('sent');
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`);
+      expect(res.status).to.eq(200);
+      targetVolunteerRequest = await volunteerRequestRepository.requestById(volunteerRequest1.id);
+      if (!targetVolunteerRequest) {
+        throw new Error('Volunteer request not found');
+      }
+      expect(targetVolunteerRequest.status).to.eq('deleted');
+    });
+
+    it('returns 422 when trying to delete old request', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${oldVolunteerRequest1.id}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`);
+      expect(res.status).to.eq(422);
+      expect((res.error as HTTPError).text).to.eq('Cannot delete old request');
+    });
+
+    it('returns 404 when request is not found', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${453453}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('Volunteer request not found');
+      expect(res.status).to.eq(404);
+    });
+
+    it('returns 403 when as a volunteer trying to delete a request', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
+        .set('Authorization', `Bearer ${volunteer1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
+    });
+
+    it('returns 403 when as a program coordinator trying to delete request he did not created', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq(
+        'As a program coordinator, you are not allowed to delete this request'
+      );
+      expect(res.status).to.eq(403);
+    });
+
+    it('returns 403 when as a program manager trying to delete a volunteer request where the creator is not from the program', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
+        .set('Authorization', `Bearer ${programManager2Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('As a program manager, you are not allowed to delete this request');
+      expect(res.status).to.eq(403);
+    });
+
+    it('returns 401 when trying to perform the action without working jwt', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
         .set('Authorization', `Bearer test`);
       expect((res.error as HTTPError).text).to.eq('Couldnt verify token');
       expect(res.status).to.eq(401);

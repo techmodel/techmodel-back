@@ -1,3 +1,4 @@
 export enum RequestStatus {
-  SENT = 'sent'
+  SENT = 'sent',
+  DELETED = 'deleted'
 }

@@ -2,7 +2,8 @@ import { NextFunction, Request, Response, Router } from 'express';
 import {
   assignVolunteerToRequest,
   deleteVolunteerFromRequest,
-  getRelevantAndOpenVolunteerRequests
+  getRelevantAndOpenVolunteerRequests,
+  setVolunteerRequestAsDeleted
 } from '../app/volunteerRequest';
 import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
@@ -66,6 +67,45 @@ router.post(
     try {
       const requestId = parseInt(req.params.requestId, 10);
       await assignVolunteerToRequest((req as DecodedRequest).userDecoded.userId, requestId);
+      res.sendStatus(200);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/volunteer-requests/{requestId}:
+ *     delete:
+ *       summary: Sets the volunteer request as deleted
+ *       security:
+ *         - bearerAuth: []
+ *       responses:
+ *         '200':
+ *           description: Volunteer request has been deleted
+ *         '401':
+ *           $ref: '#/components/responses/UnauthorizedError'
+ *         '404':
+ *           $ref: '#/components/responses/NotFoundError'
+ *         '422':
+ *           $ref: '#/components/responses/OperationNotAllowedError'
+ *       parameters:
+ *         - in: path
+ *           name: requestId
+ *           schema:
+ *           type: number
+ *           required: true
+ *           description: volunteer request id the mapping of the volunteer is done to
+ */
+router.delete(
+  '/:requestId',
+  authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const requestId = parseInt(req.params.requestId, 10);
+      await setVolunteerRequestAsDeleted((req as DecodedRequest).userDecoded, requestId);
       res.sendStatus(200);
     } catch (e) {
       next(e);
