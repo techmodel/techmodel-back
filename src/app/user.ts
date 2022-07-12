@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
-import { ObjectValidationError } from '../exc';
+import { BadRequestError, CannotPerformOperationError, ObjectValidationError } from '../exc';
 import logger from '../logger';
 import { User, UserType } from '../models';
 import { userRepository } from '../repos';
@@ -35,6 +35,14 @@ const validator = (user: User): User => {
   return user;
 };
 
+const arePropertiesValidOnType = (user: Partial<User>, userType: UserType): boolean => {
+  return (
+    (userType == UserType.VOLUNTEER && !(user.institutionId || user.programId)) ||
+    (userType == UserType.PROGRAM_COORDINATOR && !user.companyId) ||
+    (userType == UserType.PROGRAM_MANAGER && !(user.companyId || user.institutionId))
+  );
+};
+
 export const login = async (userId: string): Promise<loginResponse> => {
   const user = await userRepository.findOneBy({ id: userId });
   if (!userId || !user) {
@@ -52,12 +60,18 @@ export const login = async (userId: string): Promise<loginResponse> => {
   return { userDetails: user, isFound: true, userToken: token, userType: user.userType };
 };
 
-export const register = async (user: User): Promise<loginResponse> => {
-  if (!user.id) throw new Error('Missing userId');
-  await userRepository.save(validator(user));
+export const register = async (user: Partial<User>): Promise<loginResponse> => {
+  if (!user.id) throw new BadRequestError('Missing userId');
+  if (!arePropertiesValidOnType(user, user.userType as UserType)) {
+    throw new CannotPerformOperationError(`Can't create inaccessible user info`);
+  }
+  await userRepository.save(user);
   return login(user.id);
 };
 
-export const updateUserInfo = (userId: string, userInfo: Partial<User>): Promise<UpdateResult> => {
+export const updateUserInfo = (userId: string, userType: UserType, userInfo: Partial<User>): Promise<UpdateResult> => {
+  if (!arePropertiesValidOnType(userInfo, userType)) {
+    throw new CannotPerformOperationError(`Can't update inaccessible user info`);
+  }
   return userRepository.update({ id: userId }, { ...userInfo });
 };

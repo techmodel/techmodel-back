@@ -5,7 +5,36 @@ on:
     branches: ["dev"]
 
 jobs:
-  docker:
+
+  test:
+    runs-on: ubuntu-latest
+    env: 
+      APP_PORT: ${{secrets.APP_PORT}}
+      SQL_DB_HOST: ${{secrets.SQL_DB_HOST}}
+      SQL_DB_PORT: ${{secrets.SQL_DB_PORT}}
+      SQL_DB_USERNAME: ${{secrets.SQL_DB_USERNAME}}
+      SQL_DB_PASSWORD: ${{secrets.SQL_DB_PASSWORD}}
+      SQL_DB_DATABASE: ${{secrets.SQL_DB_DATABASE}}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Create DB
+        run: npm run dc-up
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Init DB
+        run: npm run init-db
+
+      - name: Run tests
+        run: npm test
+
+  buildAndPublish:
+    needs: test
     runs-on: ubuntu-latest
     steps:
     

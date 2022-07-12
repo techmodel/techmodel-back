@@ -7,6 +7,14 @@ export const getRelevantAndOpenVolunteerRequests = async (): Promise<VolunteerRe
   return volunteerRequestRepository.relevantAndOpen();
 };
 
+export const getVolunteerRequestsOfProgram = async (
+  programId: number,
+  institutionId?: number,
+  startDate?: string
+): Promise<VolunteerRequest[]> => {
+  return volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
+};
+
 export const assignVolunteerToRequest = async (userId: string, volunteerRequestId: number): Promise<void> => {
   const targetVolunteerRequest = await volunteerRequestRepository.requestById(volunteerRequestId);
   if (!targetVolunteerRequest) {

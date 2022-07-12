@@ -13,6 +13,13 @@ const router = Router();
  *       responses:
  *         '200':
  *           description: Successfully logged in user
+ *     parameters:
+ *       - in: body
+ *         name: userId
+ *         schema:
+ *           type: string
+ *           description: User ID of the user that is trying to log in
+ *           required: true
  */
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -32,7 +39,6 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
  *       responses:
  *         '200':
  *           description: inserts user to db and logs in by userId, returns type loginResponse
- *             application/json:'
  */
 router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
   try {

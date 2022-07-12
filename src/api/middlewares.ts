@@ -1,11 +1,11 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { AppError, AuthenticationError, AuthorizationError, SqlRetryableError } from '../exc';
-import { JWT_SECRET } from '../config';
-import { UserType } from '../models';
 import { userDecoded } from '../app/user';
-import { DecodedRequest } from './decodedRequest';
+import { JWT_SECRET } from '../config';
+import { AppError, AuthenticationError, AuthorizationError } from '../exc';
 import logger from '../logger';
+import { UserType } from '../models';
+import { DecodedRequest } from './decodedRequest';
 
 const tokenValidation = (token: string): userDecoded | null => {
   try {

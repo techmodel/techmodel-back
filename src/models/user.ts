@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { Company } from './company';
 import { Institution } from './institution';
 import { Program } from './program';
@@ -29,10 +29,10 @@ export class User {
   @Column({ type: 'varchar' })
   userType: UserType;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: false })
   institutionId?: number | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: false })
   programId?: number | null;
 
   @Column({ nullable: true })
