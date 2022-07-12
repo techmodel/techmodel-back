@@ -62,7 +62,7 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { programId, institutionId } = (req as DecodedRequest).userDecoded;
-      const startDate = req.query.startDate as string;
+      const startDate = req.query.startDate as string | undefined;
       if (!programId) throw new AuthorizationError('No program found');
       res.json(await getVolunteerRequestsOfProgram(programId, institutionId, startDate));
     } catch (e) {

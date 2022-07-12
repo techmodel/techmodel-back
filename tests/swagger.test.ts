@@ -18,12 +18,9 @@ describe('api', function() {
   });
 
   describe('/swagger', function() {
-    it('should return OK status', function() {
-      return request(app)
-        .get('/swagger')
-        .then(function(response) {
-          expect(response.status).to.be.oneOf([200, 301]);
-        });
+    it('should return OK status', async () => {
+      const response = await request(app).get('/swagger');
+      expect(response.status).to.be.oneOf([200, 301]);
     });
   });
 });

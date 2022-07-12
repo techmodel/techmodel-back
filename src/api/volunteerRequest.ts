@@ -47,6 +47,10 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
  *           description: Volunteer has been assigned
  *         '401':
  *           $ref: '#/components/responses/UnauthorizedError'
+ *         '404':
+ *           $ref: '#/components/responses/NotFoundError'
+ *         '422':
+ *           $ref: '#/components/responses/OperationNotAllowedError'
  *       parameters:
  *         - in: path
  *           name: requestId

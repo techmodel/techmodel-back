@@ -6,9 +6,6 @@ export class Program {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @CreateDateColumn()
-  createdAt!: Date;
-
   @Column({ unique: true })
   name: string;
 
