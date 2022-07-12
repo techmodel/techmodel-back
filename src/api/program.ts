@@ -35,7 +35,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 /**
  * @openapi
  * paths:
- *   /api/v1/program/volunteer-requests:
+ *   /api/v1/programs/volunteer-requests:
  *    get:
  *     operationId: getObject
  *     security:
