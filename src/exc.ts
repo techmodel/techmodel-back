@@ -49,3 +49,10 @@ export class CannotPerformOperationError extends AppError {
     Object.setPrototypeOf(this, CannotPerformOperationError.prototype);
   }
 }
+
+export class BadRequestError extends AppError {
+  constructor(m = 'Bad request!', status = 400) {
+    super(m, status);
+    Object.setPrototypeOf(this, BadRequestError.prototype);
+  }
+}

@@ -1,7 +1,8 @@
-import logger from '../src/logger';
-import sinon, { SinonSandbox } from 'sinon';
+require('dotenv/config');
 import { expect } from 'chai';
+import sinon, { SinonSandbox } from 'sinon';
 import request from 'supertest';
+import logger from '../src/logger';
 import app from '../src/server/server';
 
 describe('api', function() {
