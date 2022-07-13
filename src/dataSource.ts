@@ -8,5 +8,7 @@ export const appDataSource = new DataSource({
   username: SQL_DB_USERNAME,
   password: SQL_DB_PASSWORD,
   database: SQL_DB_DATABASE,
-  entities: [__dirname + '/models/*.{js,ts}']
+  entities: [__dirname + '/models/*.{js,ts}'],
+  migrations: [__dirname + '/migrations/*.{js,ts}'],
+  migrationsTableName: 'migrations' // default table name is migrations
 });

@@ -1,4 +1,4 @@
-Project Folder Structure:
+**Project Folder Structure**:
 
 - src - application related code
   - api - controllers and controller related objects & functions
@@ -8,7 +8,7 @@ Project Folder Structure:
   - server - bootstraping express server
 - tests - tests for the application
 
-How to run:
+**How To Run**:
 
 1. `git pull` - get up to date
 2. `npm install` - install all related packages
@@ -20,6 +20,17 @@ How to run:
 How to stop:
 
 1. `npm run dc-stop` - stop mssql container
+
+**Migrations**
+
+- we use the `.env` configuration to run the migartion generation
+  - MAKE SURE YOUR `.env` CONFIGURATION IS SET TO THE LOCAL DB
+- typeorm will connect to the database defined in the `.env` and diff it with the current entities with have
+
+how to run:
+
+1. install globaly `dotenv-cli` if you still didnt - `npm install -g dotenv-cli`
+1. run `npm run typeorm-dev migration:generate ./src/migrations/**migration name**`
 
 resources to go over for typeorm:
 
