@@ -1,6 +1,6 @@
 import { appDataSource } from '../dataSource';
 import { NotFoundError } from '../exc';
-import { VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
+import { RequestStatus, VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
 
 export const volunteerRequestRepository = appDataSource.getRepository(VolunteerRequest).extend({
   async relevantAndOpen(): Promise<VolunteerRequest[]> {
@@ -79,5 +79,9 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
     if (deleteRes.affected === 0) {
       throw new NotFoundError('Volunteer is not mapped to the request');
     }
+  },
+
+  async setVolunteerRequestAsDeleted(requestId: number): Promise<void> {
+    await this.update({ id: requestId }, { status: RequestStatus.DELETED });
   }
 });

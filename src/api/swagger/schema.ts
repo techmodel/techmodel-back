@@ -36,6 +36,7 @@
  *           type: number
  *         status:
  *           type: string
+ *           enum: [sent, deleted]
  *         creatorId:
  *           type: string
  *         language:
