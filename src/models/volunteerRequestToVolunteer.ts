@@ -3,9 +3,11 @@ import { User } from './user';
 import { VolunteerRequest } from './volunteerRequest';
 
 @Entity()
-@Index(['volunteerId', 'volunteerRequestId'], { unique: true })
+@Index('IDX_volunteer_request_to_volunteer_UQ_volunteerid_volunteerrequestid', ['volunteerId', 'volunteerRequestId'], {
+  unique: true
+})
 export class VolunteerRequestToVolunteer {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'PK_volunteer_request_to_volunteer' })
   id: number;
 
   @Column()

@@ -7,7 +7,7 @@ import { User } from './user';
 
 @Entity()
 export class Institution {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'PK_institution' })
   id: number;
 
   @CreateDateColumn()

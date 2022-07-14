@@ -26,6 +26,9 @@ How to stop:
 - we use the `.env` configuration to run the migartion generation
   - MAKE SURE YOUR `.env` CONFIGURATION IS SET TO THE LOCAL DB
 - typeorm will connect to the database defined in the `.env` and diff it with the current entities with have
+- in each migration, all of the statements we run are in a single transaction, be it inside the `await queryRunner.query` or all of the `await queryRunner.query` statements together. if one of them fails, then none will run
+- each migration that is executed is saved to the `migrations` table, that way we know which migrations we already ran
+- each new migration that is added, when we try to run the migrations is checked against the `migrations` table to see if we need to run it
 
 how to run:
 
