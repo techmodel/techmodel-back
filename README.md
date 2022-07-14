@@ -30,10 +30,14 @@ How to stop:
 - each migration that is executed is saved to the `migrations` table, that way we know which migrations we already ran
 - each new migration that is added, when we try to run the migrations is checked against the `migrations` table to see if we need to run it
 
-how to run:
+how to create new migration:
 
-1. install globaly `dotenv-cli` if you still didnt - `npm install -g dotenv-cli`
-1. run `npm run typeorm-dev migration:generate ./src/migrations/**migration name**`
+1. change the models the way you want
+2. install globaly `dotenv-cli` if you still didnt - `npm install -g dotenv-cli`
+3. run `docker-compose down` then `docker-compose up -d`.
+   we do this because we want our database to be clean
+4. run `npm run typeorm-dev migration:run` to get the local database up to date with the current migrations
+5. run `npm run typeorm-dev migration:generate ./src/migrations/**migration name**` to create a new migration that contains the diff
 
 resources to go over for typeorm:
 
