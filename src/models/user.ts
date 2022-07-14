@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { Company } from './company';
 import { Institution } from './institution';
 import { Program } from './program';
@@ -42,18 +42,27 @@ export class User {
     () => Institution,
     institution => institution.users
   )
+  @JoinColumn({
+    foreignKeyConstraintName: 'FK_users_institution_id'
+  })
   institution: Institution;
 
   @ManyToOne(
     () => Program,
     program => program.users
   )
+  @JoinColumn({
+    foreignKeyConstraintName: 'FK_users_program_id'
+  })
   program: Program;
 
   @ManyToOne(
     () => Company,
     company => company.users
   )
+  @JoinColumn({
+    foreignKeyConstraintName: 'FK_users_company_id'
+  })
   company: Company;
 
   @OneToMany(

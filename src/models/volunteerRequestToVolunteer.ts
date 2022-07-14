@@ -1,4 +1,4 @@
-import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user';
 import { VolunteerRequest } from './volunteerRequest';
 
@@ -20,11 +20,17 @@ export class VolunteerRequestToVolunteer {
     () => User,
     user => user.volunteerRequestToVolunteer
   )
+  @JoinColumn({
+    foreignKeyConstraintName: 'FK_volunteer_request_to_volunteer_volunteer_id'
+  })
   volunteer: User;
 
   @ManyToOne(
     () => VolunteerRequest,
     volunteerRequest => volunteerRequest.volunteerRequestToVolunteer
   )
+  @JoinColumn({
+    foreignKeyConstraintName: 'FK_volunteer_request_to_volunteer_volunteer_request_id'
+  })
   volunteerRequest: VolunteerRequest;
 }

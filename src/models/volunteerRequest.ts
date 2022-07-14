@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Language } from './language';
 import { RequestStatus } from './volunteerRequestStatus';
 import { SkillToVolunteerRequest } from './skillToVolunteerRequest';
@@ -53,6 +53,9 @@ export class VolunteerRequest {
     () => User,
     user => user.createdVolunteerRequests
   )
+  @JoinColumn({
+    foreignKeyConstraintName: 'FK_volunteer_request_creator_id'
+  })
   creator: User;
 
   @Column({ type: 'varchar' })
