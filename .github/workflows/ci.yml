@@ -1,8 +1,6 @@
 name: Docker Image CI
 
-on:
-  push:
-    branches: ["dev"]
+on: push
 
 jobs:
 
@@ -36,6 +34,9 @@ jobs:
   buildAndPublish:
     needs: test
     runs-on: ubuntu-latest
+    
+    # runs only on dev
+    if: success() && github.ref == 'refs/heads/dev'
     steps:
     
       - name: Check out code
