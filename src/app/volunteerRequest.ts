@@ -1,6 +1,7 @@
-import { AuthorizationError, CannotPerformOperationError, NotFoundError } from '../exc';
+import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFoundError } from '../exc';
 import { User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
+import { validateSchema, volunteerRequestSchema } from './schema.validators';
 import { userDecoded } from './user';
 
 export const getRelevantAndOpenVolunteerRequests = async (): Promise<VolunteerRequest[]> => {
@@ -13,6 +14,15 @@ export const getVolunteerRequestsOfProgram = async (
   startDate?: string
 ): Promise<VolunteerRequest[]> => {
   return volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
+};
+
+export const createVolunteerRequest = async (volunteerRequest: VolunteerRequest) => {
+  return volunteerRequestRepository.save(validateSchema(volunteerRequestSchema, volunteerRequest));
+};
+
+export const updateVolunteerRequest = async (id: number, volunteerRequestInfo: Partial<VolunteerRequest>) => {
+  if (!id) throw new BadRequestError('Missing Id to update volunteer request by');
+  return volunteerRequestRepository.update({ id }, validateSchema(volunteerRequestSchema, volunteerRequestInfo));
 };
 
 export const assignVolunteerToRequest = async (userId: string, volunteerRequestId: number): Promise<void> => {

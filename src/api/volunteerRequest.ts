@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import {
   assignVolunteerToRequest,
+  createVolunteerRequest,
   deleteVolunteerFromRequest,
-  getRelevantAndOpenVolunteerRequests
+  getRelevantAndOpenVolunteerRequests,
+  updateVolunteerRequest
 } from '../app/volunteerRequest';
-import { UserType } from '../models';
+import { UserType, VolunteerRequest } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
 
@@ -26,9 +28,30 @@ const router = Router();
  *                 items:
  *                   $ref: '#/components/schemas/volunteerRequest'
  */
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+router
+  .route('/')
+  .get(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.json(await getRelevantAndOpenVolunteerRequests());
+    } catch (e) {
+      next(e);
+    }
+  })
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { volunteerRequest } = req.body;
+      res.json(await createVolunteerRequest(volunteerRequest as VolunteerRequest));
+    } catch (e) {
+      next(e);
+    }
+  });
+
+router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.json(await getRelevantAndOpenVolunteerRequests());
+    const { volunteerRequestInfo } = req.body;
+    const id = +req.params.id;
+    await updateVolunteerRequest(id, volunteerRequestInfo as Partial<VolunteerRequest>);
+    res.sendStatus(204);
   } catch (e) {
     next(e);
   }
