@@ -1,3 +1,4 @@
+import { UpdateResult } from 'typeorm';
 import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFoundError } from '../exc';
 import { User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
@@ -16,11 +17,14 @@ export const getVolunteerRequestsOfProgram = async (
   return volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
 };
 
-export const createVolunteerRequest = async (volunteerRequest: VolunteerRequest) => {
+export const createVolunteerRequest = async (volunteerRequest: VolunteerRequest): Promise<VolunteerRequest> => {
   return volunteerRequestRepository.save(validateSchema(volunteerRequestSchema, volunteerRequest));
 };
 
-export const updateVolunteerRequest = async (id: number, volunteerRequestInfo: Partial<VolunteerRequest>) => {
+export const updateVolunteerRequest = async (
+  id: number,
+  volunteerRequestInfo: Partial<VolunteerRequest>
+): Promise<UpdateResult> => {
   if (!id) throw new BadRequestError('Missing Id to update volunteer request by');
   return volunteerRequestRepository.update({ id }, validateSchema(volunteerRequestSchema, volunteerRequestInfo));
 };
