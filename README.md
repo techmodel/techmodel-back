@@ -1,4 +1,7 @@
-Project Folder Structure:
+# Tech Model
+
+
+### Project Folder Structure
 
 - src - application related code
   - api - controllers and controller related objects & functions
@@ -8,7 +11,7 @@ Project Folder Structure:
   - server - bootstraping express server
 - tests - tests for the application
 
-How to run:
+### Running for development
 
 1. `git pull` - get up to date
 2. `npm install` - install all related packages
@@ -17,11 +20,12 @@ How to run:
    `ctrl` + `C` to exit after you get a message that the db has been seeded
 5. `npm run dev` - run application in dev mode
 
-How to stop:
+### Stopping
 
 1. `npm run dc-stop` - stop mssql container
 
-resources to go over for typeorm:
+
+Resources for TypeORM:
 
 - datasource - https://typeorm.io/data-source
 - custom repository - https://typeorm.io/custom-repository
