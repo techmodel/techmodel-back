@@ -3,7 +3,7 @@ import { User } from './user';
 
 @Entity()
 export class Company {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'PK_company' })
   id: number;
 
   @Column()

@@ -3,7 +3,7 @@ import { User } from './user';
 
 @Entity()
 export class Program {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'PK_program' })
   id: number;
 
   @Column({ unique: true })
