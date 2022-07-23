@@ -24,10 +24,6 @@ jobs:
         with:
           node-version: 14.20.0
 
-      - uses: KengoTODA/actions-setup-docker-compose@main
-        with:
-          version: '1.29.2'
-
       - name: Create DB
         run: npm run dc-up
 
