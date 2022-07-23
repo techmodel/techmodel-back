@@ -19,13 +19,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Node Js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.20.0
-
       - name: tttt
-        run: echo "/usr/local/bin/docker-compose" >> $GITHUB_PATH
+        run: echo "/usr/bin/npm" >> $GITHUB_PATH
       
       - name: tttt1
         run: |
