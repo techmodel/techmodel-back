@@ -23,12 +23,14 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.20.0
-      
-      - name: tttt
-        run: echo "$PATH"
 
       - name: tttt1
-        run: echo "${PATH}:/usr/local/bin/docker-compose" >> $PATH
+        run: echo "/usr/local/bin/docker-compose" >> $GITHUB_PATH
+      
+      - name: tttt
+        run: |
+          echo "$PATH"
+          echo "$GITHUB_PATH"
 
       - name: Create DB
         run: npm run dc-up
