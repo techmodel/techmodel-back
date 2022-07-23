@@ -24,12 +24,15 @@ jobs:
         with:
           node-version: 14.20.0
 
-      - name: tttt1
+      - name: tttt
         run: echo "/usr/local/bin/docker-compose" >> $GITHUB_PATH
       
-      - name: tttt
+      - name: tttt1
         run: |
           echo "$PATH"
+
+      - name: tttt2
+        run: |
           echo "$GITHUB_PATH"
 
       - name: Create DB
