@@ -23,6 +23,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.20.0
+      
+      - name: tttt
+        run: echo "$PATH"
 
       - name: Create DB
         run: npm run dc-up
