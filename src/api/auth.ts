@@ -42,6 +42,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
  */
 router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    //TODO: Validate google auth jwt
     const user = req.body.user as Partial<User>;
     res.json(await register(user));
   } catch (e) {

@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import {
   assignVolunteerToRequest,
+  createVolunteerRequest,
   deleteVolunteerFromRequest,
   getRelevantAndOpenVolunteerRequests,
+  updateVolunteerRequest,
   setVolunteerRequestAsDeleted
 } from '../app/volunteerRequest';
-import { UserType } from '../models';
+import { UserType, VolunteerRequest } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
 
@@ -34,6 +36,35 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     next(e);
   }
 });
+
+router.post(
+  '/',
+  authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { volunteerRequest } = req.body;
+      res.json(await createVolunteerRequest(volunteerRequest));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+router.put(
+  '/:id',
+  authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { volunteerRequestInfo } = req.body;
+      const id = +req.params.id;
+      const loggedInUser = (req as DecodedRequest).userDecoded;
+      await updateVolunteerRequest(id, volunteerRequestInfo, loggedInUser);
+      res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
 
 /**
  * @openapi
