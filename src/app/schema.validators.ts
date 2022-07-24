@@ -4,7 +4,7 @@ import logger from '../logger';
 import { Language, RequestStatus } from '../models';
 import { UserType } from '../models/userType';
 
-const onlyNull = Joi.valid(null);
+const onlyNull = Joi.valid(null, undefined);
 
 export const userSchema = Joi.object({
   id: Joi.string()
@@ -21,7 +21,7 @@ export const userSchema = Joi.object({
     otherwise: onlyNull
   }),
   programId: Joi.when('userType', {
-    is: UserType.VOLUNTEER,
+    is: Joi.valid(UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER),
     then: onlyNull,
     otherwise: Joi.number()
   }),
@@ -44,7 +44,7 @@ export const volunteerRequestSchema = Joi.object({
   endDate: Joi.date().min(Joi.ref('startDate')),
   duration: Joi.string(),
   startTime: Joi.date().greater(new Date()),
-  totalVolunteers: Joi.number(),
+  totalVolunteers: Joi.number().min(1),
   currentVolunteers: Joi.number(),
   status: Joi.string().valid(...Object.values(RequestStatus)),
   creatorId: Joi.string().min(30),

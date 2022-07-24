@@ -25,7 +25,13 @@ export const getVolunteerRequestsOfProgram = async (
   return volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
 };
 
-export const createVolunteerRequest = async (volunteerRequest: VolunteerRequest): Promise<VolunteerRequest> => {
+export const createVolunteerRequest = async (
+  volunteerRequest: VolunteerRequest,
+  caller: userDecoded
+): Promise<VolunteerRequest> => {
+  if (!(volunteerRequest.creatorId == caller.userId)) {
+    throw new CannotPerformOperationError("Can't create request in the name of someone else");
+  }
   return volunteerRequestRepository.save(validateSchema(volunteerRequestSchema, volunteerRequest));
 };
 
