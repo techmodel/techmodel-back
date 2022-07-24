@@ -15,17 +15,17 @@ export const userSchema = Joi.object({
   phone: Joi.string().min(10),
   email: Joi.string().email(),
   userType: Joi.string().valid(...Object.values(UserType)),
-  companyId: Joi.number().when('userType', {
+  companyId: Joi.when('userType', {
     is: UserType.VOLUNTEER,
     then: Joi.number(),
     otherwise: onlyNull
   }),
-  programId: Joi.number().when('userType', {
+  programId: Joi.when('userType', {
     is: UserType.VOLUNTEER,
     then: onlyNull,
     otherwise: Joi.number()
   }),
-  institutionId: Joi.number().when('userType', {
+  institutionId: Joi.when('userType', {
     is: UserType.PROGRAM_COORDINATOR,
     then: Joi.number(),
     otherwise: onlyNull

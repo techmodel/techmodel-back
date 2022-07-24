@@ -53,7 +53,7 @@ export class CannotPerformOperationError extends AppError {
 export class ObjectValidationError extends AppError {
   constructor(m: string, status = 400) {
     super(m, status);
-    Object.setPrototypeOf(this, CannotPerformOperationError.prototype);
+    Object.setPrototypeOf(this, ObjectValidationError.prototype);
   }
 }
 export class BadRequestError extends AppError {

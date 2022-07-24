@@ -29,34 +29,42 @@ const router = Router();
  *                 items:
  *                   $ref: '#/components/schemas/volunteerRequest'
  */
-router
-  .route('/')
-  .get(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      res.json(await getRelevantAndOpenVolunteerRequests());
-    } catch (e) {
-      next(e);
-    }
-  })
-  .post(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { volunteerRequest } = req.body;
-      res.json(await createVolunteerRequest(volunteerRequest as VolunteerRequest));
-    } catch (e) {
-      next(e);
-    }
-  });
-
-router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { volunteerRequestInfo } = req.body;
-    const id = +req.params.id;
-    await updateVolunteerRequest(id, volunteerRequestInfo as Partial<VolunteerRequest>);
-    res.sendStatus(204);
+    res.json(await getRelevantAndOpenVolunteerRequests());
   } catch (e) {
     next(e);
   }
 });
+
+router.post(
+  '/',
+  authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { volunteerRequest } = req.body;
+      res.json(await createVolunteerRequest(volunteerRequest));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+router.put(
+  '/:id',
+  authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { volunteerRequestInfo } = req.body;
+      const id = +req.params.id;
+      const loggedInUser = (req as DecodedRequest).userDecoded;
+      await updateVolunteerRequest(id, volunteerRequestInfo, loggedInUser);
+      res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
 
 /**
  * @openapi
