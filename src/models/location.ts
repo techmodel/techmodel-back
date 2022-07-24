@@ -3,7 +3,7 @@ import { Institution } from './institution';
 
 @Entity()
 export class Location {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'PK_location' })
   id: number;
 
   @Column()

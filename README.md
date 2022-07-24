@@ -1,4 +1,6 @@
-Project Folder Structure:
+# Tech Model
+
+### Project Folder Structure
 
 - src - application related code
   - api - controllers and controller related objects & functions
@@ -8,7 +10,7 @@ Project Folder Structure:
   - server - bootstraping express server
 - tests - tests for the application
 
-How to run:
+### Running for development
 
 1. `git pull` - get up to date
 2. `npm install` - install all related packages
@@ -17,11 +19,29 @@ How to run:
    `ctrl` + `C` to exit after you get a message that the db has been seeded
 5. `npm run dev` - run application in dev mode
 
-How to stop:
+### Stopping
 
 1. `npm run dc-stop` - stop mssql container
 
-resources to go over for typeorm:
+### Migrations
+
+- we use the `.env` configuration to run the migartion generation
+  - MAKE SURE YOUR `.env` CONFIGURATION IS SET TO THE LOCAL DB
+- typeorm will connect to the database defined in the `.env` and diff it with the current entities with have
+- in each migration, all of the statements we run are in a single transaction, be it inside the `await queryRunner.query` or all of the `await queryRunner.query` statements together. if one of them fails, then none will run
+- each migration that is executed is saved to the `migrations` table, that way we know which migrations we already ran
+- each new migration that is added, when we try to run the migrations is checked against the `migrations` table to see if we need to run it
+
+#### Creating New Migration:
+
+1. change the models the way you want
+2. install globaly `dotenv-cli` if you still didnt - `npm install -g dotenv-cli`
+3. run `docker-compose down` then `docker-compose up -d`.
+   we do this because we want our database to be clean
+4. run `npm run typeorm-dev migration:run` to get the local database up to date with the current migrations
+5. run `npm run typeorm-dev migration:generate ./src/migrations/**migration name**` to create a new migration that contains the diff
+
+Resources for TypeORM:
 
 - datasource - https://typeorm.io/data-source
 - custom repository - https://typeorm.io/custom-repository

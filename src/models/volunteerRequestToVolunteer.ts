@@ -1,11 +1,13 @@
-import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user';
 import { VolunteerRequest } from './volunteerRequest';
 
 @Entity()
-@Index(['volunteerId', 'volunteerRequestId'], { unique: true })
+@Index('IDX_volunteer_request_to_volunteer_UQ_volunteerid_volunteerrequestid', ['volunteerId', 'volunteerRequestId'], {
+  unique: true
+})
 export class VolunteerRequestToVolunteer {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'PK_volunteer_request_to_volunteer' })
   id: number;
 
   @Column()
@@ -18,11 +20,17 @@ export class VolunteerRequestToVolunteer {
     () => User,
     user => user.volunteerRequestToVolunteer
   )
+  @JoinColumn({
+    foreignKeyConstraintName: 'FK_volunteer_request_to_volunteer_volunteer_id'
+  })
   volunteer: User;
 
   @ManyToOne(
     () => VolunteerRequest,
     volunteerRequest => volunteerRequest.volunteerRequestToVolunteer
   )
+  @JoinColumn({
+    foreignKeyConstraintName: 'FK_volunteer_request_to_volunteer_volunteer_request_id'
+  })
   volunteerRequest: VolunteerRequest;
 }

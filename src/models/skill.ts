@@ -2,9 +2,9 @@ import { Column, Entity, PrimaryGeneratedColumn, OneToMany, Index } from 'typeor
 import { SkillToVolunteerRequest } from './skillToVolunteerRequest';
 
 @Entity()
-@Index(['name', 'type'], { unique: true })
+@Index('IDX_skill_UQ_name_type', ['name', 'type'], { unique: true })
 export class Skill {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'PK_skill' })
   id: number;
 
   @Column()
