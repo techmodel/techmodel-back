@@ -12,6 +12,14 @@
 
 ### Running for development
 
+to run the app you need:
+
+1. git
+2. node and npm
+3. docker and docker-compose
+
+Then, to run the application do:
+
 1. `git pull` - get up to date
 2. `npm install` - install all related packages
 3. `npm run dc-up` - start local mssql container (uses `docker-compose.yml`)
