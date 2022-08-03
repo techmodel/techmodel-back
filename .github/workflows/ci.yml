@@ -44,7 +44,7 @@ jobs:
       SQL_DB_DATABASE: ${{secrets.DEV_SQL_DB_DATABASE}}
       JWT_SECRET: test # it doesnt really matter, just fill in so the app wont crash
     
-    if: success() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/self-hosted-runner')
+    if: success() && github.ref == 'refs/heads/dev'
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -64,7 +64,7 @@ jobs:
     needs: runMigrations
     runs-on: ubuntu-latest
     
-    if: success() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/self-hosted-runner')
+    if: success() && github.ref == 'refs/heads/dev'
     steps:
     
       - name: Check out code
