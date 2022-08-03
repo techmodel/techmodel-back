@@ -6,7 +6,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    env: 
+    env:
       APP_PORT: ${{secrets.APP_PORT}}
       SQL_DB_HOST: ${{secrets.SQL_DB_HOST}}
       SQL_DB_PORT: ${{secrets.SQL_DB_PORT}}
@@ -31,12 +31,40 @@ jobs:
       - name: Run tests
         run: npm test
 
-  buildAndPublish:
+  runMigrations:
     needs: test
+    runs-on: self-hosted
+
+    env:
+      APP_PORT: 4000 # it doesnt really matter, just fill in so the app wont crash
+      SQL_DB_HOST: ${{secrets.DEV_SQL_DB_HOST}}
+      SQL_DB_PORT: ${{secrets.DEV_SQL_DB_PORT}}
+      SQL_DB_USERNAME: ${{secrets.DEV_SQL_DB_USERNAME}}
+      SQL_DB_PASSWORD: ${{secrets.DEV_SQL_DB_PASSWORD}}
+      SQL_DB_DATABASE: ${{secrets.DEV_SQL_DB_DATABASE}}
+      JWT_SECRET: test # it doesnt really matter, just fill in so the app wont crash
+    
+    if: success() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/self-hosted-runner')
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Setup node14/npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run migrations against DEV sql server
+        run: npm run typeorm migration:run
+      
+  buildAppAndPublish:
+    needs: runMigrations
     runs-on: ubuntu-latest
     
-    # runs only on dev
-    if: success() && github.ref == 'refs/heads/dev'
+    if: success() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/feature/self-hosted-runner')
     steps:
     
       - name: Check out code
