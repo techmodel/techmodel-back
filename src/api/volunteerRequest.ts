@@ -4,10 +4,10 @@ import {
   createVolunteerRequest,
   deleteVolunteerFromRequest,
   getRelevantAndOpenVolunteerRequests,
-  updateVolunteerRequest,
-  setVolunteerRequestAsDeleted
+  setVolunteerRequestAsDeleted,
+  updateVolunteerRequest
 } from '../app/volunteerRequest';
-import { UserType, VolunteerRequest } from '../models';
+import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
 
@@ -43,7 +43,8 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { volunteerRequest } = req.body;
-      res.json(await createVolunteerRequest(volunteerRequest));
+      const { userDecoded } = req as DecodedRequest;
+      res.json(await createVolunteerRequest(volunteerRequest, userDecoded));
     } catch (e) {
       next(e);
     }
@@ -57,8 +58,8 @@ router.put(
     try {
       const { volunteerRequestInfo } = req.body;
       const id = +req.params.id;
-      const loggedInUser = (req as DecodedRequest).userDecoded;
-      await updateVolunteerRequest(id, volunteerRequestInfo, loggedInUser);
+      const { userDecoded } = req as DecodedRequest;
+      await updateVolunteerRequest(id, volunteerRequestInfo, userDecoded);
       res.sendStatus(204);
     } catch (e) {
       next(e);
