@@ -10,5 +10,8 @@ export const appDataSource = new DataSource({
   database: SQL_DB_DATABASE,
   entities: [__dirname + '/models/*.{js,ts}'],
   migrations: [__dirname + '/migrations/*.{js,ts}'],
-  migrationsTableName: 'migrations' // default table name is migrations
+  migrationsTableName: 'migrations', // default table name is migrations
+  extra: {
+    trustServerCertificate: true
+  }
 });
