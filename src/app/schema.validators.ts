@@ -22,7 +22,7 @@ export const userSchema = Joi.object({
     otherwise: onlyNull
   }),
   programId: Joi.when('userType', {
-    is: UserType.VOLUNTEER,
+    is: Joi.array().items(UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER),
     then: onlyNull,
     otherwise: Joi.number()
   }),
