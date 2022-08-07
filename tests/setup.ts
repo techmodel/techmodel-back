@@ -11,7 +11,6 @@ import { removeSeed } from './seed';
 import { JWT_SECRET } from '../src/config';
 import {
   programCoordinator1,
-  programCoordinator2,
   programManager1,
   programManager2,
   volunteer1,
