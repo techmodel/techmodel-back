@@ -49,6 +49,5 @@ export const createTestJwt = (user: User): string => {
 export const volunteer1Jwt = createTestJwt(volunteer1);
 export const volunteer3WithoutMappingsJwt = createTestJwt(volunteer3WithoutMappings);
 export const programCoordinator1Jwt = createTestJwt(programCoordinator1);
-export const programCoordinator2Jwt = createTestJwt(programCoordinator2);
 export const programManager2Jwt = createTestJwt(programManager2);
 export const programManager1Jwt = createTestJwt(programManager1);

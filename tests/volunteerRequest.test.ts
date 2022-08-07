@@ -36,7 +36,6 @@ import { volunteerRequestRepository } from '../src/repos';
 import {
   HTTPError,
   programCoordinator1Jwt,
-  programCoordinator2Jwt,
   programManager1Jwt,
   programManager2Jwt,
   volunteer1Jwt,
