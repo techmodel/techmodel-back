@@ -9,13 +9,7 @@ import { appDataSource } from '../src/dataSource';
 import { User } from '../src/models';
 import { removeSeed } from './seed';
 import { JWT_SECRET } from '../src/config';
-import {
-  programCoordinator1,
-  programManager1,
-  programManager2,
-  volunteer1,
-  volunteer3WithoutMappings
-} from './mock';
+import { programCoordinator1, programManager1, programManager2, volunteer1, volunteer3WithoutMappings } from './mock';
 
 before(async () => {
   await appDataSource.initialize();
