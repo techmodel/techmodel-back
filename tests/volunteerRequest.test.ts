@@ -5,6 +5,7 @@ import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
 import {
   city1,
+  city2,
   company1,
   company2,
   fullVolunteerRequest1,
@@ -15,6 +16,7 @@ import {
   program1,
   program2,
   programCoordinator1,
+  programCoordinator2,
   programManager1,
   programManager2,
   skill1,
@@ -34,6 +36,7 @@ import { volunteerRequestRepository } from '../src/repos';
 import {
   HTTPError,
   programCoordinator1Jwt,
+  programCoordinator2Jwt,
   programManager1Jwt,
   programManager2Jwt,
   volunteer1Jwt,
@@ -49,12 +52,20 @@ describe('volunteerRequest', function() {
     sandbox.stub(logger);
     // seed db
     await seed({
-      cities: [city1],
+      cities: [city1, city2],
       locations: [location1],
       institutions: [institution1, institution2],
       programs: [program1, program2],
       companies: [company1, company2],
-      users: [volunteer1, volunteer2, programManager1, volunteer3WithoutMappings, programCoordinator1, programManager2],
+      users: [
+        volunteer1,
+        volunteer2,
+        programManager1,
+        volunteer3WithoutMappings,
+        programCoordinator1,
+        programManager2,
+        programCoordinator2
+      ],
       volunteerRequests: [volunteerRequest1, oldVolunteerRequest1, fullVolunteerRequest1, volunteerRequestToUpdate],
       volunteerRequestToVolunteers: volunteerRequestToVolunteers,
       skills: [skill1, skill2],
@@ -288,8 +299,8 @@ describe('volunteerRequest', function() {
     it('returns 422 when request creator is not the logged in user', async () => {
       const res = await request(app)
         .post(`/api/v1/volunteer-requests`)
-        .set('Authorization', `Bearer ${programManager1Jwt}`)
-        .send({ volunteerRequestToCreate });
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
+        .send({ volunteerRequest: volunteerRequestToCreate });
       expect(res.status).to.eq(422);
       expect((res.error as HTTPError).text).to.eq(`Can't create request in the name of someone else`);
     });
@@ -298,7 +309,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .post(`/api/v1/volunteer-requests`)
         .set('Authorization', `Bearer ${programManager1Jwt}`)
-        .send({ volunteerRequestToCreate });
+        .send({ volunteerRequest: volunteerRequestToCreate });
       expect(res.status).to.eq(200);
       const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ name: volunteerRequestToCreate.name });
       expect(newVolunteerRequest).to.not.be.null;
@@ -311,7 +322,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/0`)
         .set('Authorization', `Bearer ${programManager1Jwt}`)
-        .send({ volunteerRequestUpdateData });
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
       expect(res.status).to.eq(400);
       expect((res.error as HTTPError).text).to.eq(`Missing Id to update volunteer request by`);
     });
@@ -320,7 +331,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
         .set('Authorization', `Bearer ${programManager2Jwt}`)
-        .send({ volunteerRequestUpdateData });
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
       expect(res.status).to.eq(422);
       expect((res.error as HTTPError).text).to.eq(`You are not allowed to update this request`);
     });
@@ -329,7 +340,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
-        .send({ volunteerRequestUpdateData });
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
       expect(res.status).to.eq(422);
       expect((res.error as HTTPError).text).to.eq(`You are not allowed to update this request`);
     });
@@ -338,7 +349,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
         .set('Authorization', `Bearer ${programManager1Jwt}`)
-        .send({ volunteerRequestUpdateData });
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
       const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ id: volunteerRequestToUpdate.id });
       expect(newVolunteerRequest?.audience).to.equal(volunteerRequestUpdateData.audience);
       expect(res.status).to.eq(204);

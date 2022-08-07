@@ -33,7 +33,7 @@
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^7.1.2",
-    "mssql": "^6.2.0",
+    "mssql": "^6.4.1",
     "swagger-jsdoc": "^4.0.0",
     "swagger-ui-express": "^4.4.0",
     "typeorm": "^0.3.7",

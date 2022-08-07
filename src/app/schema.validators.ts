@@ -3,8 +3,9 @@ import { ObjectValidationError } from '../exc';
 import logger from '../logger';
 import { Language, RequestStatus } from '../models';
 import { UserType } from '../models/userType';
+import { subMinutes } from 'date-fns';
 
-const onlyNull = Joi.valid(null, undefined);
+const onlyNull = Joi.valid(null);
 
 export const userSchema = Joi.object({
   id: Joi.string()
@@ -21,7 +22,7 @@ export const userSchema = Joi.object({
     otherwise: onlyNull
   }),
   programId: Joi.when('userType', {
-    is: Joi.valid(UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER),
+    is: UserType.VOLUNTEER,
     then: onlyNull,
     otherwise: Joi.number()
   }),
@@ -35,7 +36,7 @@ export const userSchema = Joi.object({
 export const volunteerRequestSchema = Joi.object({
   id: Joi.number(),
   name: Joi.string().min(2),
-  audience: Joi.string().min(2),
+  audience: Joi.number().min(2),
   isPhysical: Joi.boolean(),
   description: Joi.string()
     .min(2)
@@ -43,12 +44,13 @@ export const volunteerRequestSchema = Joi.object({
   startDate: Joi.date().greater(new Date()),
   endDate: Joi.date().min(Joi.ref('startDate')),
   duration: Joi.string(),
-  startTime: Joi.date().greater(new Date()),
+  startTime: Joi.date().min(subMinutes(new Date(), 1)),
   totalVolunteers: Joi.number().min(1),
   currentVolunteers: Joi.number(),
   status: Joi.string().valid(...Object.values(RequestStatus)),
   creatorId: Joi.string().min(30),
-  language: Joi.string().valid(...Object.values(Language))
+  language: Joi.string().valid(...Object.values(Language)),
+  createdAt: Joi.date()
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {

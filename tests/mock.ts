@@ -52,7 +52,7 @@ export const institution1 = {
 } as Institution;
 
 export const institution2 = {
-  id: 1,
+  id: 2,
   createdAt: TEST_DATE_20_06_2022,
   name: 'institution2',
   address: 'address2',
@@ -87,7 +87,7 @@ export const company2 = {
 } as Company;
 
 export const volunteer1 = {
-  id: 'volunteerid1',
+  id: ''.padEnd(36, 'a'),
   firstName: 'volunteer1',
   lastName: 'volunteer1',
   createdAt: TEST_DATE_20_06_2022,
@@ -98,7 +98,7 @@ export const volunteer1 = {
 } as User;
 
 export const volunteer2 = {
-  id: 'volunteerid2',
+  id: ''.padEnd(36, 'b'),
   firstName: 'volunteer2',
   lastName: 'volunteer2',
   createdAt: TEST_DATE_20_06_2022,
@@ -109,7 +109,7 @@ export const volunteer2 = {
 } as User;
 
 export const volunteer3WithoutMappings = {
-  id: 'volunteerid3',
+  id: ''.padEnd(36, 'c'),
   firstName: 'volunteer3WithoutMappings',
   lastName: 'volunteer3WithoutMappings',
   createdAt: TEST_DATE_20_06_2022,
@@ -120,7 +120,7 @@ export const volunteer3WithoutMappings = {
 } as User;
 
 export const programManager1 = {
-  id: 'programManagerid1',
+  id: ''.padEnd(36, 'd'),
   firstName: 'prgoramManager1',
   lastName: 'prgoramManager1',
   createdAt: TEST_DATE_20_06_2022,
@@ -131,7 +131,7 @@ export const programManager1 = {
 } as User;
 
 export const programManager2 = {
-  id: 'programManagerid2',
+  id: ''.padEnd(36, 'e'),
   firstName: 'prgoramManager2',
   lastName: 'prgoramManager2',
   createdAt: TEST_DATE_20_06_2022,
@@ -142,7 +142,7 @@ export const programManager2 = {
 } as User;
 
 export const programCoordinator1 = {
-  id: 'programCoordinator1',
+  id: ''.padEnd(36, 'f'),
   firstName: 'programCoordinator1',
   lastName: 'programCoordinator1',
   createdAt: TEST_DATE_20_06_2022,
@@ -154,12 +154,12 @@ export const programCoordinator1 = {
 } as User;
 
 export const programCoordinator2 = {
-  id: 'programCoordinator2',
+  id: ''.padEnd(36, 'g'),
   firstName: 'programCoordinator2',
   lastName: 'programCoordinator2',
   createdAt: TEST_DATE_20_06_2022,
   email: 'programCoordinator2@gmail.com',
-  phone: '654634634',
+  phone: '141617',
   userType: UserType.PROGRAM_COORDINATOR,
   programId: program1.id,
   institutionId: institution2.id
@@ -229,7 +229,7 @@ export const volunteerRequestToCreate = {
   startTime: new Date(),
   totalVolunteers: 3,
   status: RequestStatus.SENT,
-  creatorId: programCoordinator2.id,
+  creatorId: programManager1.id,
   language: Language.HEBREW
 } as VolunteerRequest;
 
