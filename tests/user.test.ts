@@ -31,7 +31,7 @@ describe('user', function() {
         programId: 1
       };
       const res = await request(app)
-        .put(`/api/v1/user/update-info`)
+        .put(`/api/v1/user/${volunteer1.id}`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`)
         .send({ userInfo });
       expect(res.status).to.eq(422);
@@ -44,7 +44,7 @@ describe('user', function() {
         companyId: 1
       };
       const res = await request(app)
-        .put(`/api/v1/user/update-info`)
+        .put(`/api/v1/user/${programCoordinator1.id}`)
         .set('Authorization', `Bearer ${coordinatorJwt}`)
         .send({ userInfo });
       expect(res.status).to.eq(422);
@@ -57,7 +57,7 @@ describe('user', function() {
         institutionId: 1
       };
       const res = await request(app)
-        .put(`/api/v1/user/update-info`)
+        .put(`/api/v1/user/${programManager1.id}`)
         .set('Authorization', `Bearer ${managerJwt}`)
         .send({ userInfo });
       expect(res.status).to.eq(422);
@@ -71,7 +71,7 @@ describe('user', function() {
         firstName: `first`
       };
       const res = await request(app)
-        .put(`/api/v1/user/update-info`)
+        .put(`/api/v1/user/${programManager1.id}`)
         .set('Authorization', `Bearer ${managerJwt}`)
         .send({ userInfo });
       const managerUser = (await userRepository.findOneBy({ id: programManager1.id })) as User;

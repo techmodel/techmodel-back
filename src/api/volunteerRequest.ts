@@ -40,7 +40,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 /**
  * @openapi
  * paths:
- *   /api/v1/volunteer-requests/:
+ *   /api/v1/volunteer-requests:
  *     post:
  *       summary: Create a new volunteer request
  *       security:
@@ -56,7 +56,8 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
  *         - in: body
  *           name: volunteerRequest
  *           schema:
- *             type: volunteerRequestPayload
+ *             type: object
+ *             $ref: '#/components/schemas/volunteerRequestPayload'
  *           required: true
  *           description: information about the volunteer request
  */
@@ -93,7 +94,8 @@ router.post(
  *         - in: body
  *           name: volunteerRequest
  *           schema:
- *             type: volunteerRequestPayload
+ *             type: object
+ *             $ref: '#/components/schemas/volunteerRequestPayload'
  *           required: true
  *           description: information about the volunteer request
  *         - in: path
