@@ -35,7 +35,7 @@ describe('user', function() {
         .set('Authorization', `Bearer ${volunteer1Jwt}`)
         .send({ userInfo });
       expect(res.status).to.eq(400);
-      expect((res.error as HTTPError).text).to.eq('"programId" must be [null]');
+      expect((res.error as HTTPError).text).to.eq('Error validating schema, "programId" must be [null]');
     });
 
     it('returns 400 when coordinator tries to update companyId', async () => {
@@ -48,7 +48,7 @@ describe('user', function() {
         .set('Authorization', `Bearer ${coordinatorJwt}`)
         .send({ userInfo });
       expect(res.status).to.eq(400);
-      expect((res.error as HTTPError).text).to.eq('"companyId" must be [null]');
+      expect((res.error as HTTPError).text).to.eq('Error validating schema, "companyId" must be [null]');
     });
 
     it('returns 400 when manager tries to update institutionId', async () => {
@@ -61,7 +61,7 @@ describe('user', function() {
         .set('Authorization', `Bearer ${managerJwt}`)
         .send({ userInfo });
       expect(res.status).to.eq(400);
-      expect((res.error as HTTPError).text).to.eq('"institutionId" must be [null]');
+      expect((res.error as HTTPError).text).to.eq('Error validating schema, "institutionId" must be [null]');
     });
 
     it('Successfully updates user', async () => {
