@@ -34,7 +34,7 @@ describe('user', function() {
         .put(`/api/v1/user/update-info`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`)
         .send({ userInfo });
-      expect(res.status).to.eq(400);
+      expect(res.status).to.eq(422);
       expect((res.error as HTTPError).text).to.eq('Error validating schema, "programId" must be [null]');
     });
 
@@ -47,7 +47,7 @@ describe('user', function() {
         .put(`/api/v1/user/update-info`)
         .set('Authorization', `Bearer ${coordinatorJwt}`)
         .send({ userInfo });
-      expect(res.status).to.eq(400);
+      expect(res.status).to.eq(422);
       expect((res.error as HTTPError).text).to.eq('Error validating schema, "companyId" must be [null]');
     });
 
@@ -60,7 +60,7 @@ describe('user', function() {
         .put(`/api/v1/user/update-info`)
         .set('Authorization', `Bearer ${managerJwt}`)
         .send({ userInfo });
-      expect(res.status).to.eq(400);
+      expect(res.status).to.eq(422);
       expect((res.error as HTTPError).text).to.eq('Error validating schema, "institutionId" must be [null]');
     });
 

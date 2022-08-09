@@ -51,7 +51,7 @@ export class CannotPerformOperationError extends AppError {
 }
 
 export class ObjectValidationError extends AppError {
-  constructor(m: string, status = 400) {
+  constructor(m: string, status = 422) {
     super(m, status);
     Object.setPrototypeOf(this, ObjectValidationError.prototype);
   }
