@@ -5,15 +5,18 @@ import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
 import {
   city1,
+  city2,
   company1,
   company2,
   fullVolunteerRequest1,
   institution1,
+  institution2,
   location1,
   oldVolunteerRequest1,
   program1,
   program2,
   programCoordinator1,
+  programCoordinator2,
   programManager1,
   programManager2,
   skill1,
@@ -24,6 +27,8 @@ import {
   volunteer2,
   volunteer3WithoutMappings,
   volunteerRequest1,
+  volunteerRequestToCreate,
+  volunteerRequestToUpdate,
   volunteerRequestToVolunteers
 } from './mock';
 import app from '../src/server/server';
@@ -46,13 +51,21 @@ describe('volunteerRequest', function() {
     sandbox.stub(logger);
     // seed db
     await seed({
-      cities: [city1],
+      cities: [city1, city2],
       locations: [location1],
-      institutions: [institution1],
+      institutions: [institution1, institution2],
       programs: [program1, program2],
       companies: [company1, company2],
-      users: [volunteer1, volunteer2, programManager1, volunteer3WithoutMappings, programCoordinator1, programManager2],
-      volunteerRequests: [volunteerRequest1, oldVolunteerRequest1, fullVolunteerRequest1],
+      users: [
+        volunteer1,
+        volunteer2,
+        programManager1,
+        volunteer3WithoutMappings,
+        programCoordinator1,
+        programManager2,
+        programCoordinator2
+      ],
+      volunteerRequests: [volunteerRequest1, oldVolunteerRequest1, fullVolunteerRequest1, volunteerRequestToUpdate],
       volunteerRequestToVolunteers: volunteerRequestToVolunteers,
       skills: [skill1, skill2],
       skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
@@ -278,6 +291,67 @@ describe('volunteerRequest', function() {
         .set('Authorization', `Bearer test`);
       expect((res.error as HTTPError).text).to.eq('Couldnt verify token');
       expect(res.status).to.eq(401);
+    });
+  });
+
+  describe('Create volunteer request', () => {
+    it('returns 422 when request creator is not the logged in user', async () => {
+      const res = await request(app)
+        .post(`/api/v1/volunteer-requests`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
+        .send({ volunteerRequest: volunteerRequestToCreate });
+      expect(res.status).to.eq(422);
+      expect((res.error as HTTPError).text).to.eq(`Can't create request in the name of someone else`);
+    });
+
+    it('successfully creates volunteer request', async () => {
+      const res = await request(app)
+        .post(`/api/v1/volunteer-requests`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send({ volunteerRequest: volunteerRequestToCreate });
+      expect(res.status).to.eq(200);
+      const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ name: volunteerRequestToCreate.name });
+      expect(newVolunteerRequest).to.not.be.null;
+    });
+  });
+
+  describe('Update volunteer request', () => {
+    const volunteerRequestUpdateData = { audience: 10 };
+    it('returns 400 when id is missing from request or equals 0', async () => {
+      const res = await request(app)
+        .put(`/api/v1/volunteer-requests/0`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+      expect(res.status).to.eq(400);
+      expect((res.error as HTTPError).text).to.eq(`Missing Id to update volunteer request by`);
+    });
+
+    it('returns 422 when caller and request creator are not from the same program', async () => {
+      const res = await request(app)
+        .put(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
+        .set('Authorization', `Bearer ${programManager2Jwt}`)
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+      expect(res.status).to.eq(422);
+      expect((res.error as HTTPError).text).to.eq(`You are not allowed to update this request`);
+    });
+
+    it('returns 422 when caller and request creator are from the same program but not the same institution and caller is a program coordinator ', async () => {
+      const res = await request(app)
+        .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+      expect(res.status).to.eq(422);
+      expect((res.error as HTTPError).text).to.eq(`You are not allowed to update this request`);
+    });
+
+    it('successfully updates volunteer request', async () => {
+      const res = await request(app)
+        .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+      const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ id: volunteerRequestToUpdate.id });
+      expect(newVolunteerRequest?.audience).to.equal(volunteerRequestUpdateData.audience);
+      expect(res.status).to.eq(204);
     });
   });
 

@@ -56,9 +56,10 @@ router.put(
   authMiddleware([...Object.values(UserType)]),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userId, userType } = (req as DecodedRequest).userDecoded;
+      const { userId: id, userType } = (req as DecodedRequest).userDecoded;
       const { userInfo } = req.body;
-      await updateUserInfo(userId, userType, userInfo);
+      userInfo['userType'] = userType;
+      await updateUserInfo({ id, ...userInfo });
       res.sendStatus(204);
     } catch (e) {
       next(e);

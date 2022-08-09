@@ -45,7 +45,10 @@ const InitDataSource = new DataSource({
   database: SQL_DB_DATABASE,
   entities: ['./src/models/*.ts'],
   synchronize: true, // ** DO NOT USE THIS IN PRODUCTION
-  logging: false
+  logging: false,
+  extra: {
+    trustServerCertificate: true
+  }
 });
 
 // to initialize initial connection with the database, register all entities

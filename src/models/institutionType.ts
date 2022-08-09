@@ -1,6 +1,6 @@
 export enum InstitutionType {
   ELEMENTARY = 'elementary',
-  HGIH = 'high'
+  HIGH = 'high'
   // TODO: add the rest of the options
   // 'יסודי',
   // 'ביניים',
