@@ -13,6 +13,9 @@ export class VolunteerRequest {
   @CreateDateColumn()
   createdAt!: Date;
 
+  @CreateDateColumn()
+  updatedAt!: Date;
+
   @Column()
   name: string;
 

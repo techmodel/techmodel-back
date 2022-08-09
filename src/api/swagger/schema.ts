@@ -3,6 +3,36 @@
  *
  * components:
  *   schemas:
+ *     volunteerRequestPayload:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *         audience:
+ *           type: number
+ *         isPhysical:
+ *           type: boolean
+ *         description:
+ *           type: string
+ *         startDate:
+ *           type: string
+ *           format: date-time
+ *         endDate:
+ *           type: string
+ *           format: date-time
+ *         duration:
+ *           type: string
+ *         startTime:
+ *           type: string
+ *           format: date-time
+ *         totalVolunteers:
+ *           type: number
+ *         language:
+ *           type: string
+ *         skillToVolunteerRequest:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/skillToVolunteerRequest'
  *     volunteerRequest:
  *       type: object
  *       properties:

@@ -82,6 +82,6 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
   },
 
   async setVolunteerRequestAsDeleted(requestId: number): Promise<void> {
-    await this.update({ id: requestId }, { status: RequestStatus.DELETED });
+    await this.update({ id: requestId }, { status: RequestStatus.DELETED, updatedAt: new Date() });
   }
 });

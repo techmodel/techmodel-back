@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi, { number } from 'joi';
 import { ObjectValidationError } from '../exc';
 import logger from '../logger';
 import { Language, RequestStatus } from '../models';
@@ -34,7 +34,6 @@ export const userSchema = Joi.object({
 });
 
 export const volunteerRequestSchema = Joi.object({
-  id: Joi.number(),
   name: Joi.string().min(2),
   audience: Joi.number().min(2),
   isPhysical: Joi.boolean(),
@@ -46,11 +45,7 @@ export const volunteerRequestSchema = Joi.object({
   duration: Joi.string(),
   startTime: Joi.date().min(subMinutes(new Date(), 1)),
   totalVolunteers: Joi.number().min(1),
-  currentVolunteers: Joi.number(),
-  status: Joi.string().valid(...Object.values(RequestStatus)),
-  creatorId: Joi.string().min(30),
-  language: Joi.string().valid(...Object.values(Language)),
-  createdAt: Joi.date()
+  language: Joi.string().valid(...Object.values(Language))
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {

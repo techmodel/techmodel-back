@@ -1,6 +1,6 @@
 import { UpdateResult } from 'typeorm';
 import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFoundError } from '../exc';
-import { User, UserType, VolunteerRequest } from '../models';
+import { RequestStatus, User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
 import { validateSchema, volunteerRequestSchema } from './schema.validators';
 import { userDecoded } from './user';
@@ -29,10 +29,10 @@ export const createVolunteerRequest = async (
   volunteerRequest: VolunteerRequest,
   caller: userDecoded
 ): Promise<VolunteerRequest> => {
-  if (!(volunteerRequest.creatorId == caller.userId)) {
-    throw new CannotPerformOperationError("Can't create request in the name of someone else");
-  }
-  return volunteerRequestRepository.save(validateSchema(volunteerRequestSchema, volunteerRequest));
+  const payload = validateSchema(volunteerRequestSchema, volunteerRequest);
+  payload['creatorId'] = caller.userId;
+  payload['status'] = RequestStatus.SENT;
+  return volunteerRequestRepository.save(payload);
 };
 
 export const updateVolunteerRequest = async (
@@ -50,7 +50,9 @@ export const updateVolunteerRequest = async (
   ) {
     throw new CannotPerformOperationError(`You are not allowed to update this request`);
   }
-  return volunteerRequestRepository.update({ id }, validateSchema(volunteerRequestSchema, volunteerRequestInfo));
+  const payload = validateSchema(volunteerRequestSchema, volunteerRequestInfo);
+  payload['updatedAt'] = new Date();
+  return volunteerRequestRepository.update({ id }, payload);
 };
 
 export const assignVolunteerToRequest = async (userId: string, volunteerRequestId: number): Promise<void> => {

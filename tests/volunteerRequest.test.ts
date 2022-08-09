@@ -41,6 +41,20 @@ import {
   volunteer1Jwt,
   volunteer3WithoutMappingsJwt
 } from './setup';
+import { VolunteerRequest } from '../src/models';
+
+const vrToCreatePayload = (vr: VolunteerRequest) => ({
+  name: vr.name,
+  audience: vr.audience,
+  isPhysical: vr.isPhysical,
+  description: vr.description,
+  startDate: vr.startDate,
+  endDate: vr.endDate,
+  duration: vr.duration,
+  startTime: vr.startTime,
+  totalVolunteers: vr.totalVolunteers,
+  language: vr.language
+});
 
 describe('volunteerRequest', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
@@ -226,7 +240,7 @@ describe('volunteerRequest', function() {
   });
 
   describe('set volunteer reqeust as deleted', function() {
-    it('chagnes the status of the volunteer request to `deleted`', async function() {
+    it('chagnes the status of the volunteer request to `deleted` and updates `updatedAt`', async function() {
       let targetVolunteerRequest = await volunteerRequestRepository.requestById(volunteerRequest1.id);
       if (!targetVolunteerRequest) {
         throw new Error('Volunteer request not found');
@@ -241,6 +255,7 @@ describe('volunteerRequest', function() {
         throw new Error('Volunteer request not found');
       }
       expect(targetVolunteerRequest.status).to.eq('deleted');
+      expect(targetVolunteerRequest.updatedAt).to.be.greaterThan(volunteerRequest1.updatedAt);
     });
 
     it('returns 422 when trying to delete old request', async function() {
@@ -295,23 +310,27 @@ describe('volunteerRequest', function() {
   });
 
   describe('Create volunteer request', () => {
-    it('returns 422 when request creator is not the logged in user', async () => {
+    it('trying to pass parameters not allowed results in error', async () => {
+      const createPayload = vrToCreatePayload(volunteerRequestToCreate);
       const res = await request(app)
         .post(`/api/v1/volunteer-requests`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
-        .send({ volunteerRequest: volunteerRequestToCreate });
+        .send({ volunteerRequest: { ...createPayload, creatorId: 'test' } });
       expect(res.status).to.eq(422);
-      expect((res.error as HTTPError).text).to.eq(`Can't create request in the name of someone else`);
+      expect((res.error as HTTPError).text).to.eq(`Error validating schema, "creatorId" is not allowed`);
     });
 
     it('successfully creates volunteer request', async () => {
+      const createPayload = vrToCreatePayload(volunteerRequestToCreate);
       const res = await request(app)
         .post(`/api/v1/volunteer-requests`)
         .set('Authorization', `Bearer ${programManager1Jwt}`)
-        .send({ volunteerRequest: volunteerRequestToCreate });
+        .send({ volunteerRequest: createPayload });
       expect(res.status).to.eq(200);
       const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ name: volunteerRequestToCreate.name });
-      expect(newVolunteerRequest).to.not.be.null;
+      if (!newVolunteerRequest) throw new Error('Volunteer request not found');
+      expect(newVolunteerRequest.creatorId).to.eq(programManager1.id);
+      expect(newVolunteerRequest.status).to.eq('sent');
     });
   });
 
@@ -350,7 +369,9 @@ describe('volunteerRequest', function() {
         .set('Authorization', `Bearer ${programManager1Jwt}`)
         .send({ volunteerRequestInfo: volunteerRequestUpdateData });
       const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ id: volunteerRequestToUpdate.id });
-      expect(newVolunteerRequest?.audience).to.equal(volunteerRequestUpdateData.audience);
+      if (!newVolunteerRequest) throw new Error('Volunteer request not found');
+      expect(newVolunteerRequest.audience).to.equal(volunteerRequestUpdateData.audience);
+      expect(newVolunteerRequest.updatedAt).to.be.greaterThan(volunteerRequestToUpdate.createdAt); // make sure `updatedAt` is updated
       expect(res.status).to.eq(204);
     });
   });

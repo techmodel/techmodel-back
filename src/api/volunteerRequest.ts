@@ -37,6 +37,29 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/volunteer-requests/:
+ *     post:
+ *       summary: Create a new volunteer request
+ *       security:
+ *         - bearerAuth: []
+ *       responses:
+ *         '200':
+ *           description: Created volunteer request
+ *         '401':
+ *           $ref: '#/components/responses/UnauthorizedError'
+ *         '422':
+ *           $ref: '#/components/responses/OperationNotAllowedError'
+ *       parameters:
+ *         - in: body
+ *           name: volunteerRequest
+ *           schema:
+ *             type: volunteerRequestPayload
+ *           required: true
+ *           description: information about the volunteer request
+ */
 router.post(
   '/',
   authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
@@ -51,6 +74,35 @@ router.post(
   }
 );
 
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/volunteer-requests/{id}:
+ *     put:
+ *       summary: Create a new volunteer request
+ *       security:
+ *         - bearerAuth: []
+ *       responses:
+ *         '200':
+ *           description: Created volunteer request
+ *         '401':
+ *           $ref: '#/components/responses/UnauthorizedError'
+ *         '422':
+ *           $ref: '#/components/responses/OperationNotAllowedError'
+ *       parameters:
+ *         - in: body
+ *           name: volunteerRequest
+ *           schema:
+ *             type: volunteerRequestPayload
+ *           required: true
+ *           description: information about the volunteer request
+ *         - in: path
+ *           name: id
+ *           schema:
+ *             type: number
+ *           required: true
+ *           description: volunteer request id the mapping of the volunteer is done to
+ */
 router.put(
   '/:id',
   authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
