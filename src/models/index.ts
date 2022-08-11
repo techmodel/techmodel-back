@@ -13,3 +13,5 @@ export { UserType } from './userType';
 export { VolunteerRequest } from './volunteerRequest';
 export { RequestStatus } from './volunteerRequestStatus';
 export { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
+export { PendingProgramManager } from './pendingProgramManager';
+export { PendingProgramCoordinator } from './pendingProgramCoordinator';
