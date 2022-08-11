@@ -8,7 +8,7 @@ import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
 
 @Entity({ name: 'users' })
 export class User {
-  @PrimaryColumn({ name: 'PK_users' })
+  @PrimaryColumn({ primaryKeyConstraintName: 'PK_users' })
   id: string;
 
   @CreateDateColumn()
