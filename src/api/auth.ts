@@ -39,6 +39,18 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
  *       responses:
  *         '200':
  *           description: inserts user to db and logs in by userId, returns type loginResponse
+ *         '401':
+ *           $ref: '#/components/responses/UnauthorizedError'
+ *         '422':
+ *           $ref: '#/components/responses/OperationNotAllowedError'
+ *       parameters:
+ *         - in: body
+ *           name: user
+ *           schema:
+ *             type: object
+ *             $ref: '#/components/schemas/createUserInfoPayload'
+ *           required: true
+ *           description: new user creation payload
  */
 router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
   try {

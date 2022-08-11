@@ -3,6 +3,49 @@
  *
  * components:
  *   schemas:
+ *     updateUserInfoPayload:
+ *       type: object
+ *       properties:
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         phone:
+ *           type: string
+ *         email:
+ *           type: string
+ *         userType:
+ *           type: string
+ *         companyId:
+ *           type: number
+ *     createUserInfoPayload:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         phone:
+ *           type: string
+ *         email:
+ *           type: string
+ *         userType:
+ *           type: string
+ *         companyId:
+ *           type: number
+ *         programId:
+ *           type: number
+ *         institutionId:
+ *           type: number
+ *       required:
+ *        - id
+ *        - firstName
+ *        - lastName
+ *        - phone
+ *        - email
+ *        - userType
  *     volunteerRequestPayload:
  *       type: object
  *       properties:

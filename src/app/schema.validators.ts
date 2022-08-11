@@ -1,36 +1,53 @@
-import Joi, { number } from 'joi';
+import Joi from 'joi';
 import { ObjectValidationError } from '../exc';
-import logger from '../logger';
-import { Language, RequestStatus } from '../models';
+import { Language } from '../models';
 import { UserType } from '../models/userType';
 import { subMinutes } from 'date-fns';
 
 const onlyNull = Joi.valid(null);
+const schemaId = Joi.string()
+  .min(30)
+  .required();
+const schemaUserType = Joi.string().valid(...Object.values(UserType));
+const schemaCompanyId = Joi.when('userType', {
+  is: UserType.VOLUNTEER,
+  then: Joi.number(),
+  otherwise: onlyNull
+});
+const schemaProgramId = Joi.when('userType', {
+  is: [UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER],
+  then: Joi.number(),
+  otherwise: onlyNull
+});
+const schemaInstitutionId = Joi.when('userType', {
+  is: UserType.PROGRAM_COORDINATOR,
+  then: Joi.number(),
+  otherwise: onlyNull
+});
+const schemaFirstName = Joi.string().min(2);
+const schemaLastName = Joi.string().min(2);
+const schemaPhone = Joi.string().min(10);
+const schemaEmail = Joi.string().email();
 
-export const userSchema = Joi.object({
-  id: Joi.string()
-    .min(30)
-    .required(),
-  firstName: Joi.string().min(2),
-  lastName: Joi.string().min(2),
-  phone: Joi.string().min(10),
-  email: Joi.string().email(),
-  userType: Joi.string().valid(...Object.values(UserType)),
-  companyId: Joi.when('userType', {
-    is: UserType.VOLUNTEER,
-    then: Joi.number(),
-    otherwise: onlyNull
-  }),
-  programId: Joi.when('userType', {
-    is: [UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER],
-    then: Joi.number(),
-    otherwise: onlyNull
-  }),
-  institutionId: Joi.when('userType', {
-    is: UserType.PROGRAM_COORDINATOR,
-    then: Joi.number(),
-    otherwise: onlyNull
-  })
+export const createUserSchema = Joi.object({
+  id: schemaId,
+  firstName: schemaFirstName,
+  lastName: schemaLastName,
+  phone: schemaPhone,
+  email: schemaEmail,
+  userType: schemaUserType,
+  companyId: schemaCompanyId,
+  programId: schemaProgramId,
+  institutionId: schemaInstitutionId
+});
+
+export const selfUpdateUserSchema = Joi.object({
+  firstName: schemaFirstName,
+  lastName: schemaLastName,
+  phone: schemaPhone,
+  email: schemaEmail,
+  userType: schemaUserType,
+  companyId: schemaCompanyId
 });
 
 export const volunteerRequestSchema = Joi.object({

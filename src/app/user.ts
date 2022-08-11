@@ -4,7 +4,7 @@ import { JWT_SECRET } from '../config';
 import { BadRequestError } from '../exc';
 import { User, UserType } from '../models';
 import { userRepository } from '../repos';
-import { userSchema, validateSchema } from './schema.validators';
+import { createUserSchema, selfUpdateUserSchema, validateSchema } from './schema.validators';
 
 type loginResponse = {
   userDetails: User | null;
@@ -42,10 +42,10 @@ export const login = async (userId: string): Promise<loginResponse> => {
 
 export const register = async (user: Partial<User>): Promise<loginResponse> => {
   if (!user.id) throw new BadRequestError('Missing userId');
-  await userRepository.save(validateSchema(userSchema, user));
+  await userRepository.save(validateSchema(createUserSchema, user));
   return login(user.id);
 };
 
-export const updateUserInfo = (userInfo: Partial<User>): Promise<UpdateResult> => {
-  return userRepository.update({ id: userInfo.id }, validateSchema(userSchema, userInfo));
+export const updateUserInfo = (id: string, userInfo: Partial<User>): Promise<UpdateResult> => {
+  return userRepository.update({ id }, validateSchema(selfUpdateUserSchema, userInfo));
 };

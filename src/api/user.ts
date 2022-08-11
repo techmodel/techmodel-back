@@ -73,7 +73,7 @@ router.get(
  *             type: object
  *             $ref: '#/components/schemas/updateUserInfoPayload'
  *           required: true
- *           description: information about the volunteer request
+ *           description: update payload
  *         - in: path
  *           name: id
  *           schema:
@@ -87,13 +87,12 @@ router.put(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = req.params.userId;
-      if (userId != (req as DecodedRequest).userDecoded.userId) {
+      const userDecoded = (req as DecodedRequest).userDecoded;
+      if (userId != userDecoded.userId) {
         throw new AuthorizationError('Trying to access different user info');
       }
-      const { userId: id, userType } = (req as DecodedRequest).userDecoded;
       const { userInfo } = req.body;
-      userInfo['userType'] = userType;
-      await updateUserInfo({ id, ...userInfo });
+      await updateUserInfo(userId, { ...userInfo, userType: userDecoded.userType });
       res.sendStatus(204);
     } catch (e) {
       next(e);
