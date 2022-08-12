@@ -13,6 +13,7 @@ import {
   institution2,
   location1,
   oldVolunteerRequest1,
+  pendingProgramManager3,
   program1,
   program2,
   programCoordinator1,
@@ -35,6 +36,7 @@ import app from '../src/server/server';
 import { volunteerRequestRepository } from '../src/repos';
 import {
   HTTPError,
+  pendingProgramManager3Jwt,
   programCoordinator1Jwt,
   programManager1Jwt,
   programManager2Jwt,
@@ -43,7 +45,7 @@ import {
 } from './setup';
 import { VolunteerRequest } from '../src/models';
 
-const vrToCreatePayload = (vr: VolunteerRequest) => ({
+const vrToCreatePayload = (vr: VolunteerRequest): Partial<VolunteerRequest> => ({
   name: vr.name,
   audience: vr.audience,
   isPhysical: vr.isPhysical,
@@ -56,7 +58,7 @@ const vrToCreatePayload = (vr: VolunteerRequest) => ({
   language: vr.language
 });
 
-describe('volunteerRequest', function() {
+describe.only('volunteerRequest', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
 
   this.beforeEach(async function() {
@@ -114,7 +116,7 @@ describe('volunteerRequest', function() {
   });
 
   describe('assign volunteer to volunteer request', function() {
-    it('returns 401 when called by program manager or program coordinator', async function() {
+    it('returns 401 when called by program manager or program coordinator or pending user', async function() {
       let res = await request(app)
         .post(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
@@ -123,6 +125,11 @@ describe('volunteerRequest', function() {
       res = await request(app)
         .post(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
+      res = await request(app)
+        .post(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers`)
+        .set('Authorization', `Bearer ${pendingProgramManager3Jwt}`);
       expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
       expect(res.status).to.eq(403);
     });
@@ -237,6 +244,14 @@ describe('volunteerRequest', function() {
       expect((res.error as HTTPError).text).to.eq('Couldnt verify token');
       expect(res.status).to.eq(401);
     });
+
+    it('returns 403 when pending user trying to perform action', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
+        .set('Authorization', `Bearer ${pendingProgramManager3Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
+    });
   });
 
   describe('set volunteer reqeust as deleted', function() {
@@ -307,6 +322,14 @@ describe('volunteerRequest', function() {
       expect((res.error as HTTPError).text).to.eq('Couldnt verify token');
       expect(res.status).to.eq(401);
     });
+
+    it('returns 403 when pending user trying to perform action', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
+        .set('Authorization', `Bearer ${pendingProgramManager3Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
+    });
   });
 
   describe('Create volunteer request', () => {
@@ -373,6 +396,24 @@ describe('volunteerRequest', function() {
       expect(newVolunteerRequest.audience).to.equal(volunteerRequestUpdateData.audience);
       expect(newVolunteerRequest.updatedAt).to.be.greaterThan(volunteerRequestToUpdate.createdAt); // make sure `updatedAt` is updated
       expect(res.status).to.eq(204);
+    });
+
+    it('returns 403 when pending user trying to perform action', async function() {
+      const res = await request(app)
+        .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
+        .set('Authorization', `Bearer ${pendingProgramManager3Jwt}`)
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+      expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
+    });
+
+    it('returns 403 when volunteer trying to perform action', async function() {
+      const res = await request(app)
+        .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
+        .set('Authorization', `Bearer ${volunteer1Jwt}`)
+        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+      expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
     });
   });
 

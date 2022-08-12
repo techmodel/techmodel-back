@@ -9,7 +9,14 @@ import { appDataSource } from '../src/dataSource';
 import { User } from '../src/models';
 import { removeSeed } from './seed';
 import { JWT_SECRET } from '../src/config';
-import { programCoordinator1, programManager1, programManager2, volunteer1, volunteer3WithoutMappings } from './mock';
+import {
+  pendingProgramManager3,
+  programCoordinator1,
+  programManager1,
+  programManager2,
+  volunteer1,
+  volunteer3WithoutMappings
+} from './mock';
 
 before(async () => {
   await appDataSource.initialize();
@@ -44,3 +51,4 @@ export const volunteer3WithoutMappingsJwt = createTestJwt(volunteer3WithoutMappi
 export const programCoordinator1Jwt = createTestJwt(programCoordinator1);
 export const programManager2Jwt = createTestJwt(programManager2);
 export const programManager1Jwt = createTestJwt(programManager1);
+export const pendingProgramManager3Jwt = createTestJwt(pendingProgramManager3);

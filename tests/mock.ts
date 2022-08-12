@@ -5,6 +5,7 @@ import {
   InstitutionType,
   Language,
   Location,
+  PendingProgramManager,
   PopulationType,
   Program,
   RequestStatus,
@@ -300,3 +301,20 @@ export const volunteerRequestToVolunteers = [
   oldVolunteerRequest1ToVolunteer1,
   fullVolunteerRequest1ToVolunteer1
 ];
+
+export const pendingProgramManager3 = {
+  id: ''.padEnd(15, 'a').padEnd(11, 'b'),
+  firstName: 'pendingProgramManager3',
+  lastName: 'pendingProgramManager3',
+  createdAt: TEST_DATE_28_06_2022,
+  email: 'pendingProgramManager3@gmail.com',
+  phone: '1111154343',
+  userType: UserType.PENDING
+} as User;
+
+export const pendingProgramManager3SecondPart = {
+  id: 1,
+  userId: pendingProgramManager3.id,
+  programId: program1.id,
+  createdAt: TEST_DATE_28_06_2022
+} as PendingProgramManager;
