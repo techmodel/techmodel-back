@@ -14,7 +14,7 @@
     "prod": "tsc && node ./build/server/run-server.js",
     "serve": "node ./build/server/run-server.js",
     "testcov": "nyc mocha -r ts-node/register tests/**/*.test.ts --exit",
-    "test": "mocha -r ts-node/register tests/setup.ts tests/**/*.test.ts --exit",
+    "test": "mocha -r ts-node/register tests/setup.ts tests/**/*.test.ts --timeout 15000 --exit",
     "lint": "eslint . --ext .ts --fix",
     "prettier-format": "prettier --config .prettierrc \"src/**/*.ts\" --write",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js --dataSource ./src/dataSource.ts",
