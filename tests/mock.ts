@@ -166,6 +166,18 @@ export const programCoordinator2 = {
   institutionId: institution2.id
 } as User;
 
+export const programCoordinator3 = {
+  id: ''.padEnd(20, 'f'),
+  firstName: 'programCoordinator3',
+  lastName: 'programCoordinator3',
+  createdAt: TEST_DATE_20_06_2022,
+  email: 'programCoordinator3@gmail.com',
+  phone: '6546345555',
+  userType: UserType.PROGRAM_COORDINATOR,
+  programId: program2.id,
+  institutionId: institution2.id
+} as User;
+
 export const volunteerRequest1 = {
   id: 1,
   createdAt: TEST_DATE_28_06_2022,

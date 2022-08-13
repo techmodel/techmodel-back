@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getPrograms } from '../app/program';
+import { getCoordinators, getPrograms } from '../app/program';
 import { getVolunteerRequestsOfProgram } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
@@ -76,6 +76,25 @@ router.get(
         throw new AuthorizationError('Trying to access another program data');
       }
       res.json(await getVolunteerRequestsOfProgram(userProgramId, institutionId, startDate));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+// TODO: add swagger
+router.get(
+  '/:programId/coordinators',
+  authMiddleware(UserType.PROGRAM_MANAGER),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { programId: userProgramId } = (req as DecodedRequest).userDecoded;
+      if (!userProgramId) throw new AuthorizationError('No program found');
+      const pathProgramId = parseInt(req.params.programId, 10);
+      if (pathProgramId != userProgramId) {
+        throw new AuthorizationError('Trying to access another program data');
+      }
+      res.json(await getCoordinators(userProgramId));
     } catch (e) {
       next(e);
     }
