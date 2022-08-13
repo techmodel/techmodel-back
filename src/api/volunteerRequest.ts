@@ -57,7 +57,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
  *           name: volunteerRequest
  *           schema:
  *             type: object
- *             $ref: '#/components/schemas/volunteerRequestPayload'
+ *             $ref: '#/components/schemas/createVolunteerRequestPayload'
  *           required: true
  *           description: information about the volunteer request
  */
@@ -95,7 +95,7 @@ router.post(
  *           name: volunteerRequest
  *           schema:
  *             type: object
- *             $ref: '#/components/schemas/volunteerRequestPayload'
+ *             $ref: '#/components/schemas/updateVolunteerRequestPayload'
  *           required: true
  *           description: information about the volunteer request
  *         - in: path

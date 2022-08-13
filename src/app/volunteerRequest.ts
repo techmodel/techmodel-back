@@ -1,16 +1,17 @@
 import { UpdateResult } from 'typeorm';
 import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFoundError } from '../exc';
+import logger from '../logger';
 import { RequestStatus, User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
-import { validateSchema, volunteerRequestSchema } from './schema.validators';
+import { validateSchema, updateVolunteerRequestSchema, createVolunteerRequestSchema } from './schema.validators';
 import { userDecoded } from './user';
 
-const sameProgram = (userA: Partial<User>, userB: Partial<User>): boolean => {
-  return userA.programId === userB.programId;
+const userAndPayloadSameProgram = (user: Partial<User>, payload: any): boolean => {
+  return user.programId === payload.programId;
 };
 
-const sameInstitution = (userA: Partial<User>, userB: Partial<User>): boolean => {
-  return userA.institutionId === userB.institutionId;
+const userAndPayloadSameInstitution = (user: Partial<User>, payload: any): boolean => {
+  return user.institutionId === payload.institutionId;
 };
 
 export const getRelevantAndOpenVolunteerRequests = async (): Promise<VolunteerRequest[]> => {
@@ -29,8 +30,16 @@ export const createVolunteerRequest = async (
   volunteerRequest: VolunteerRequest,
   caller: userDecoded
 ): Promise<VolunteerRequest> => {
-  const payload = validateSchema(volunteerRequestSchema, volunteerRequest);
-  payload['creatorId'] = caller.userId;
+  const payload = validateSchema(createVolunteerRequestSchema, volunteerRequest);
+  if (
+    caller.userType === UserType.PROGRAM_COORDINATOR &&
+    (!userAndPayloadSameProgram(caller, payload) || !userAndPayloadSameInstitution(caller, payload))
+  ) {
+    throw new AuthorizationError('Coordinator cant create request for other program or institution');
+  }
+  if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, payload)) {
+    throw new AuthorizationError('Manager cant create request for other program');
+  }
   payload['status'] = RequestStatus.SENT;
   return volunteerRequestRepository.save(payload);
 };
@@ -41,16 +50,18 @@ export const updateVolunteerRequest = async (
   caller: userDecoded
 ): Promise<UpdateResult> => {
   if (!id) throw new BadRequestError('Missing Id to update volunteer request by');
-  const { creator: requestCreator } = (await volunteerRequestRepository.requestById(id)) as VolunteerRequest;
+  const targetVolunteerRequest = (await volunteerRequestRepository.requestById(id)) as VolunteerRequest;
   if (
-    !(
-      sameProgram(caller, requestCreator) &&
-      (sameInstitution(caller, requestCreator) || caller.userType == UserType.PROGRAM_MANAGER)
-    )
+    caller.userType === UserType.PROGRAM_COORDINATOR &&
+    (!userAndPayloadSameProgram(caller, targetVolunteerRequest) ||
+      !userAndPayloadSameInstitution(caller, targetVolunteerRequest))
   ) {
-    throw new CannotPerformOperationError(`You are not allowed to update this request`);
+    throw new AuthorizationError('Coordinator cant update request for other program or institution');
   }
-  const payload = validateSchema(volunteerRequestSchema, volunteerRequestInfo);
+  if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, targetVolunteerRequest)) {
+    throw new AuthorizationError('Manager cant update request for other program');
+  }
+  const payload = validateSchema(updateVolunteerRequestSchema, volunteerRequestInfo);
   payload['updatedAt'] = new Date();
   return volunteerRequestRepository.update({ id }, payload);
 };
@@ -85,11 +96,21 @@ export const deleteVolunteerFromRequest = async (
   if (!targetVolunteerRequest) {
     throw new NotFoundError('Volunteer request not found');
   }
-  const requestCreator = targetVolunteerRequest.creator;
-  if (caller.userType === UserType.PROGRAM_MANAGER && !sameProgram(caller, requestCreator)) {
+  logger.info({
+    ci: caller.institutionId,
+    cp: caller.programId,
+    vri: targetVolunteerRequest.institutionId,
+    vrp: targetVolunteerRequest.programId
+  });
+
+  if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, targetVolunteerRequest)) {
     throw new AuthorizationError('As a program manager, you are not allowed to delete this volunteer');
   }
-  if (caller.userType === UserType.PROGRAM_COORDINATOR && caller.userId !== requestCreator.id) {
+  if (
+    caller.userType === UserType.PROGRAM_COORDINATOR &&
+    (!userAndPayloadSameProgram(caller, targetVolunteerRequest) ||
+      !userAndPayloadSameInstitution(caller, targetVolunteerRequest))
+  ) {
     throw new AuthorizationError('As a program coordinator, you are not allowed to delete this volunteer');
   }
   if (targetVolunteerRequest.startDate < new Date()) {
@@ -106,11 +127,14 @@ export const setVolunteerRequestAsDeleted = async (caller: userDecoded, requestI
   if (!targetVolunteerRequest) {
     throw new NotFoundError('Volunteer request not found');
   }
-  const requestCreator = targetVolunteerRequest.creator;
-  if (caller.userType === UserType.PROGRAM_MANAGER && !sameProgram(caller, requestCreator)) {
+  if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, targetVolunteerRequest)) {
     throw new AuthorizationError('As a program manager, you are not allowed to delete this request');
   }
-  if (caller.userType === UserType.PROGRAM_COORDINATOR && caller.userId !== requestCreator.id) {
+  if (
+    caller.userType === UserType.PROGRAM_COORDINATOR &&
+    (!userAndPayloadSameProgram(caller, targetVolunteerRequest) ||
+      userAndPayloadSameInstitution(caller, targetVolunteerRequest))
+  ) {
     throw new AuthorizationError('As a program coordinator, you are not allowed to delete this request');
   }
   if (targetVolunteerRequest.startDate < new Date()) {

@@ -179,7 +179,8 @@ export const volunteerRequest1 = {
   startTime: new Date(),
   totalVolunteers: 4,
   status: RequestStatus.SENT,
-  creatorId: programManager1.id,
+  institutionId: institution1.id,
+  programId: programManager1.programId,
   language: Language.ARABIC
 } as VolunteerRequest;
 
@@ -196,7 +197,8 @@ export const oldVolunteerRequest1 = {
   startTime: new Date(),
   totalVolunteers: 4,
   status: RequestStatus.SENT,
-  creatorId: programManager1.id,
+  institutionId: institution1.id,
+  programId: programManager1.programId,
   language: Language.HEBREW
 } as VolunteerRequest;
 
@@ -213,7 +215,8 @@ export const fullVolunteerRequest1 = {
   startTime: new Date(),
   totalVolunteers: 1,
   status: RequestStatus.SENT,
-  creatorId: programManager1.id,
+  institutionId: institution2.id,
+  programId: programManager1.programId,
   language: Language.RUSSIAN
 } as VolunteerRequest;
 
@@ -230,7 +233,8 @@ export const volunteerRequestToCreate = {
   startTime: new Date(),
   totalVolunteers: 3,
   status: RequestStatus.SENT,
-  creatorId: programManager1.id,
+  institutionId: institution1.id,
+  programId: programManager1.programId,
   language: Language.HEBREW
 } as VolunteerRequest;
 
@@ -247,7 +251,8 @@ export const volunteerRequestToUpdate = {
   startTime: new Date(),
   totalVolunteers: 3,
   status: RequestStatus.SENT,
-  creatorId: programCoordinator2.id,
+  institutionId: programCoordinator2.institutionId,
+  programId: programCoordinator2.programId,
   language: Language.HEBREW
 } as VolunteerRequest;
 

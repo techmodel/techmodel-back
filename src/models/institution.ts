@@ -4,6 +4,7 @@ import { InstitutionType } from './institutionType';
 import { Location } from './location';
 import { PopulationType } from './populationType';
 import { User } from './user';
+import { VolunteerRequest } from './volunteerRequest';
 
 @Entity()
 export class Institution {
@@ -54,4 +55,10 @@ export class Institution {
     user => user.company
   )
   users?: User[];
+
+  @OneToMany(
+    () => VolunteerRequest,
+    volunteerRequest => volunteerRequest.program
+  )
+  volunteerRequests?: VolunteerRequest[];
 }

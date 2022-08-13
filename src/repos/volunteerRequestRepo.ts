@@ -39,11 +39,10 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
       .leftJoinAndSelect('stvr.skill', 'skill')
-      .leftJoinAndSelect(`vr.creator`, `creator`)
       .andWhere('vr.startDate > :startDate', { startDate })
-      .andWhere(`creator.programId = :programId`, { programId });
+      .andWhere(`vr.programId = :programId`, { programId });
     if (institutionId) {
-      qb = qb.andWhere(`creator.institutionId = :institutionId`, { institutionId });
+      qb = qb.andWhere(`vr.institutionId = :institutionId`, { institutionId });
     }
     return qb.getMany();
   },
@@ -69,7 +68,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
   },
 
   async requestById(id: number): Promise<VolunteerRequest | null> {
-    return await this.findOne({ where: { id }, relations: ['creator', 'volunteerRequestToVolunteer'] });
+    return await this.findOne({ where: { id }, relations: ['volunteerRequestToVolunteer'] });
   },
 
   async deleteVolunteerFromRequest(requestId: number, volunteerId: string): Promise<void> {

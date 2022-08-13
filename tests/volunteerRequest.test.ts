@@ -13,7 +13,6 @@ import {
   institution2,
   location1,
   oldVolunteerRequest1,
-  pendingProgramManager3,
   program1,
   program2,
   programCoordinator1,
@@ -38,6 +37,7 @@ import {
   HTTPError,
   pendingProgramManager3Jwt,
   programCoordinator1Jwt,
+  programCoordinator2Jwt,
   programManager1Jwt,
   programManager2Jwt,
   volunteer1Jwt,
@@ -55,10 +55,12 @@ const vrToCreatePayload = (vr: VolunteerRequest): Partial<VolunteerRequest> => (
   duration: vr.duration,
   startTime: vr.startTime,
   totalVolunteers: vr.totalVolunteers,
-  language: vr.language
+  language: vr.language,
+  institutionId: vr.institutionId,
+  programId: vr.programId
 });
 
-describe.only('volunteerRequest', function() {
+describe('volunteerRequest', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
 
   this.beforeEach(async function() {
@@ -219,9 +221,9 @@ describe.only('volunteerRequest', function() {
       expect(res.status).to.eq(403);
     });
 
-    it('returns 403 when as a program coordinator trying to delete mapping not related to a volunteer request he created', async function() {
+    it('returns 403 when as a program coordinator trying to delete mapping not related to an institution and program he is in', async function() {
       const res = await request(app)
-        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
+        .delete(`/api/v1/volunteer-requests/${fullVolunteerRequest1.id}/volunteers/${volunteer1.id}`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
       expect((res.error as HTTPError).text).to.eq(
         'As a program coordinator, you are not allowed to delete this volunteer'
@@ -229,7 +231,7 @@ describe.only('volunteerRequest', function() {
       expect(res.status).to.eq(403);
     });
 
-    it('returns 403 when as a program manager trying to delete mapping from a volunteer request where the creator is not from the program', async function() {
+    it('returns 403 when as a program manager trying to delete mapping from a volunteer request where the request is not from the program', async function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}/volunteers/${volunteer1.id}`)
         .set('Authorization', `Bearer ${programManager2Jwt}`);
@@ -307,7 +309,7 @@ describe.only('volunteerRequest', function() {
       expect(res.status).to.eq(403);
     });
 
-    it('returns 403 when as a program manager trying to delete a volunteer request where the creator is not from the program', async function() {
+    it('returns 403 when as a program manager trying to delete a volunteer request where the request is not from the program', async function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
         .set('Authorization', `Bearer ${programManager2Jwt}`);
@@ -352,7 +354,8 @@ describe.only('volunteerRequest', function() {
       expect(res.status).to.eq(200);
       const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ name: volunteerRequestToCreate.name });
       if (!newVolunteerRequest) throw new Error('Volunteer request not found');
-      expect(newVolunteerRequest.creatorId).to.eq(programManager1.id);
+      expect(newVolunteerRequest.institutionId).to.eq(volunteerRequestToCreate.institutionId);
+      expect(newVolunteerRequest.programId).to.eq(volunteerRequestToCreate.programId);
       expect(newVolunteerRequest.status).to.eq('sent');
     });
   });
@@ -368,33 +371,33 @@ describe.only('volunteerRequest', function() {
       expect((res.error as HTTPError).text).to.eq(`Missing Id to update volunteer request by`);
     });
 
-    it('returns 422 when caller and request creator are not from the same program', async () => {
+    it('returns 403 when a program manager tries to update request not from his program', async () => {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
         .set('Authorization', `Bearer ${programManager2Jwt}`)
         .send({ volunteerRequestInfo: volunteerRequestUpdateData });
-      expect(res.status).to.eq(422);
-      expect((res.error as HTTPError).text).to.eq(`You are not allowed to update this request`);
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`Manager cant update request for other program`);
     });
 
-    it('returns 422 when caller and request creator are from the same program but not the same institution and caller is a program coordinator ', async () => {
+    it('returns 403 when a program coordinator tries to update request not from his program and institution', async () => {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
         .send({ volunteerRequestInfo: volunteerRequestUpdateData });
-      expect(res.status).to.eq(422);
-      expect((res.error as HTTPError).text).to.eq(`You are not allowed to update this request`);
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`Coordinator cant update request for other program or institution`);
     });
 
     it('successfully updates volunteer request', async () => {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
-        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .set('Authorization', `Bearer ${programCoordinator2Jwt}`)
         .send({ volunteerRequestInfo: volunteerRequestUpdateData });
-      const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ id: volunteerRequestToUpdate.id });
-      if (!newVolunteerRequest) throw new Error('Volunteer request not found');
-      expect(newVolunteerRequest.audience).to.equal(volunteerRequestUpdateData.audience);
-      expect(newVolunteerRequest.updatedAt).to.be.greaterThan(volunteerRequestToUpdate.createdAt); // make sure `updatedAt` is updated
+      const updatedVolunteerRequest = await volunteerRequestRepository.findOneBy({ id: volunteerRequestToUpdate.id });
+      if (!updatedVolunteerRequest) throw new Error('Volunteer request not found');
+      expect(updatedVolunteerRequest.audience).to.equal(volunteerRequestUpdateData.audience);
+      expect(updatedVolunteerRequest.updatedAt).to.be.greaterThan(volunteerRequestToUpdate.createdAt); // make sure `updatedAt` is updated
       expect(res.status).to.eq(204);
     });
 

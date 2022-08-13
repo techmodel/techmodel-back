@@ -46,7 +46,7 @@
  *        - phone
  *        - email
  *        - userType
- *     volunteerRequestPayload:
+ *     updateVolunteerRequestPayload:
  *       type: object
  *       properties:
  *         name:
@@ -76,6 +76,49 @@
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/skillToVolunteerRequest'
+ *     createVolunteerRequestPayload:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *         audience:
+ *           type: number
+ *         isPhysical:
+ *           type: boolean
+ *         description:
+ *           type: string
+ *         startDate:
+ *           type: string
+ *           format: date-time
+ *         endDate:
+ *           type: string
+ *           format: date-time
+ *         duration:
+ *           type: string
+ *         startTime:
+ *           type: string
+ *           format: date-time
+ *         totalVolunteers:
+ *           type: number
+ *         language:
+ *           type: string
+ *         institutionId:
+ *           type: number
+ *         programId:
+ *           type: number
+ *         skillToVolunteerRequest:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/skillToVolunteerRequest'
+ *       required:
+ *         - name
+ *         - audience
+ *         - isPhysical
+ *         - description
+ *         - totalVolunteers
+ *         - language
+ *         - institutionId
+ *         - programId
  *     volunteerRequest:
  *       type: object
  *       properties:
@@ -110,8 +153,10 @@
  *         status:
  *           type: string
  *           enum: [sent, deleted]
- *         creatorId:
- *           type: string
+ *         institutionId:
+ *           type: number
+ *         programId:
+ *           type: number
  *         language:
  *           type: string
  *         skillToVolunteerRequest:

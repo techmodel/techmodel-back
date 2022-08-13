@@ -2,8 +2,9 @@ import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, Ma
 import { Language } from './language';
 import { RequestStatus } from './volunteerRequestStatus';
 import { SkillToVolunteerRequest } from './skillToVolunteerRequest';
-import { User } from './user';
 import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
+import { Institution } from './institution';
+import { Program } from './program';
 
 @Entity()
 export class VolunteerRequest {
@@ -49,17 +50,29 @@ export class VolunteerRequest {
   @Column({ type: 'varchar' })
   status: RequestStatus;
 
-  @Column({ nullable: true })
-  creatorId!: string;
+  @Column()
+  institutionId: number;
+
+  @Column()
+  programId: number;
 
   @ManyToOne(
-    () => User,
-    user => user.createdVolunteerRequests
+    () => Institution,
+    institution => institution.users
   )
   @JoinColumn({
-    foreignKeyConstraintName: 'FK_volunteer_request_creator_id'
+    foreignKeyConstraintName: 'FK_volunteer_request_institution_id'
   })
-  creator: User;
+  institution: Institution;
+
+  @ManyToOne(
+    () => Program,
+    program => program.users
+  )
+  @JoinColumn({
+    foreignKeyConstraintName: 'FK_volunteer_request_program_id'
+  })
+  program: Program;
 
   @Column({ type: 'varchar' })
   language: Language;

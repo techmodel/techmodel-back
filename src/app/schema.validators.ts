@@ -50,7 +50,7 @@ export const selfUpdateUserSchema = Joi.object({
   companyId: schemaCompanyId
 });
 
-export const volunteerRequestSchema = Joi.object({
+export const updateVolunteerRequestSchema = Joi.object({
   name: Joi.string().min(2),
   audience: Joi.number().min(2),
   isPhysical: Joi.boolean(),
@@ -63,6 +63,34 @@ export const volunteerRequestSchema = Joi.object({
   startTime: Joi.date().min(subMinutes(new Date(), 1)),
   totalVolunteers: Joi.number().min(1),
   language: Joi.string().valid(...Object.values(Language))
+});
+
+export const createVolunteerRequestSchema = Joi.object({
+  name: Joi.string()
+    .min(2)
+    .required(),
+  audience: Joi.number()
+    .min(2)
+    .required(),
+  isPhysical: Joi.boolean().required(),
+  description: Joi.string()
+    .min(2)
+    .max(100)
+    .required(),
+  startDate: Joi.date().greater(new Date()),
+  endDate: Joi.date().min(Joi.ref('startDate')),
+  duration: Joi.string(),
+  startTime: Joi.date()
+    .min(subMinutes(new Date(), 1))
+    .required(),
+  totalVolunteers: Joi.number()
+    .min(1)
+    .required(),
+  language: Joi.string()
+    .valid(...Object.values(Language))
+    .required(),
+  programId: Joi.number().required(),
+  institutionId: Joi.number().required()
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {
