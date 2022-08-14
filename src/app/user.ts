@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
-import { BadRequestError } from '../exc';
+import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFoundError } from '../exc';
 import { User, UserType } from '../models';
 import { userRepository } from '../repos';
 import { createUserSchema, selfUpdateUserSchema, validateSchema } from './schema.validators';
@@ -48,4 +48,20 @@ export const register = async (user: Partial<User>): Promise<loginResponse> => {
 
 export const updateUserInfo = (id: string, userInfo: Partial<User>): Promise<UpdateResult> => {
   return userRepository.update({ id }, validateSchema(selfUpdateUserSchema, userInfo));
+};
+
+export const updateUserInstitutionId = async (
+  caller: userDecoded,
+  targetUserId: string,
+  newInstitutionId: number
+): Promise<void> => {
+  const targetUser = await userRepository.findOneBy({ id: targetUserId });
+  if (!targetUser) throw new NotFoundError('User not found');
+  if (targetUser.userType !== UserType.PROGRAM_COORDINATOR) {
+    throw new CannotPerformOperationError('Target user is not a coordinator');
+  }
+  if (caller.programId !== targetUser.programId) {
+    throw new AuthorizationError('Trying to access different program coordinator');
+  }
+  await userRepository.update({ id: targetUserId }, { institutionId: newInstitutionId });
 };

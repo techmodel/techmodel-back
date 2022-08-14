@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { updateUserInfo } from '../app/user';
+import { updateUserInfo, updateUserInstitutionId } from '../app/user';
 import { getVolunteerRequestsByUser } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
@@ -93,6 +93,51 @@ router.put(
       }
       const { userInfo } = req.body;
       await updateUserInfo(userId, { ...userInfo, userType: userDecoded.userType });
+      res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/user/{userId}/institution:
+ *     put:
+ *       summary: Updates user info
+ *       security:
+ *         - bearerAuth: []
+ *       responses:
+ *         '200':
+ *           description: Updated user info
+ *         '401':
+ *           $ref: '#/components/responses/UnauthorizedError'
+ *         '422':
+ *           $ref: '#/components/responses/OperationNotAllowedError'
+ *       parameters:
+ *         - in: body
+ *           name: newInstitutionId
+ *           schema:
+ *             type: number
+ *           required: true
+ *           description: the institution id the user will be changed to
+ *         - in: path
+ *           name: id
+ *           schema:
+ *             type: number
+ *           required: true
+ *           description: user id
+ */
+router.put(
+  '/:userId/institution',
+  authMiddleware(UserType.PROGRAM_MANAGER),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const targetUserId = req.params.userId;
+      const userDecoded = (req as DecodedRequest).userDecoded;
+      const { newInstitutionId } = req.body;
+      await updateUserInstitutionId(userDecoded, targetUserId, newInstitutionId);
       res.sendStatus(204);
     } catch (e) {
       next(e);

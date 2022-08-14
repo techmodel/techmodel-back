@@ -56,7 +56,7 @@ describe('programs', function() {
     expect(res.body).to.eql([program1, program2]);
   });
 
-  describe.only('/:programId/coordinators', function() {
+  describe('/:programId/coordinators', function() {
     it('returns only coordinators related to the specific program', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/coordinators`)

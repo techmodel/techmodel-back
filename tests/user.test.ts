@@ -5,9 +5,28 @@ import logger from '../src/logger';
 import { User, UserType } from '../src/models';
 import { userRepository } from '../src/repos';
 import app from '../src/server/server';
-import { company1, institution1, program1, program2, programCoordinator1, programManager1, volunteer1 } from './mock';
+import {
+  city1,
+  city2,
+  company1,
+  institution1,
+  institution2,
+  location1,
+  program1,
+  program2,
+  programCoordinator1,
+  programManager1,
+  volunteer1
+} from './mock';
 import { removeSeed, seed } from './seed';
-import { createTestJwt, HTTPError } from './setup';
+import {
+  createTestJwt,
+  HTTPError,
+  programCoordinator1Jwt,
+  programManager1Jwt,
+  programManager2Jwt,
+  volunteer1Jwt
+} from './setup';
 
 const programId1UpdatePayload = {
   programId: program1.id
@@ -48,9 +67,12 @@ describe('user', function() {
     sandbox.stub(logger);
     // seed db
     await seed({
+      cities: [city1, city2],
+      locations: [location1],
       programs: [program1, program2],
       companies: [company1],
-      users: [volunteer1, programManager1]
+      institutions: [institution1, institution2],
+      users: [volunteer1, programManager1, programCoordinator1]
     });
   });
 
@@ -127,6 +149,66 @@ describe('user', function() {
       const managerUser = (await userRepository.findOneBy({ id: programManager1.id })) as User;
       expect(res.status).to.eq(204);
       expect(managerUser.firstName).to.eq(`first`);
+    });
+  });
+
+  describe('update user institution', function() {
+    it('should change institution when request is correct', async () => {
+      const res = await request(app)
+        .put(`/api/v1/user/${programCoordinator1.id}/institution`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send({ newInstitutionId: institution2.id });
+      const user = (await userRepository.findOneBy({ id: programCoordinator1.id })) as User;
+      expect(res.status).to.eq(204);
+      expect(user.institutionId).to.eq(institution2.id);
+    });
+    it('should return 404 if user is not found', async () => {
+      const res = await request(app)
+        .put(`/api/v1/user/nonexistinguser/institution`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send({ newInstitutionId: institution2.id });
+      expect(res.status).to.eq(404);
+      expect((res.error as HTTPError).text).to.eq(`User not found`);
+    });
+    it('should return 403 if coordinator tries to execute', async () => {
+      const res = await request(app)
+        .put(`/api/v1/user/${programCoordinator1.id}/institution`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
+        .send({ newInstitutionId: institution2.id });
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`You are not authorized to perform this action`);
+    });
+    it('should return 403 if volunteer tries to execute', async () => {
+      const res = await request(app)
+        .put(`/api/v1/user/${programCoordinator1.id}/institution`)
+        .set('Authorization', `Bearer ${volunteer1Jwt}`)
+        .send({ newInstitutionId: institution2.id });
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`You are not authorized to perform this action`);
+    });
+    it('should return 403 if manager from another program is trying to execute', async () => {
+      const res = await request(app)
+        .put(`/api/v1/user/${programCoordinator1.id}/institution`)
+        .set('Authorization', `Bearer ${programManager2Jwt}`)
+        .send({ newInstitutionId: institution2.id });
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`Trying to access different program coordinator`);
+    });
+    it('should return 403 if manager from another program is trying to execute', async () => {
+      const res = await request(app)
+        .put(`/api/v1/user/${programCoordinator1.id}/institution`)
+        .set('Authorization', `Bearer ${programManager2Jwt}`)
+        .send({ newInstitutionId: institution2.id });
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`Trying to access different program coordinator`);
+    });
+    it('should return 422 if target user is not a coordinator', async () => {
+      const res = await request(app)
+        .put(`/api/v1/user/${volunteer1.id}/institution`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send({ newInstitutionId: institution2.id });
+      expect(res.status).to.eq(422);
+      expect((res.error as HTTPError).text).to.eq(`Target user is not a coordinator`);
     });
   });
 
