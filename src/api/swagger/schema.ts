@@ -236,4 +236,28 @@
  *         createdAt:
  *           type: string
  *           format: date-time
+ *     user:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         email:
+ *           type: string
+ *         phone:
+ *           type: string
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         userType:
+ *           type: string
+ *         institutionId:
+ *           type: string
+ *         programId:
+ *           type: string
+ *         companyId:
+ *           type: string
  */

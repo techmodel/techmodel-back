@@ -82,7 +82,30 @@ router.get(
   }
 );
 
-// TODO: add swagger
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/programs/{programId}/coordinators:
+ *    get:
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Returns coordinators of the program
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/user'
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: program id
+ */
 router.get(
   '/:programId/coordinators',
   authMiddleware(UserType.PROGRAM_MANAGER),
