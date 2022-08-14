@@ -101,31 +101,31 @@ describe('programs', function() {
   });
 
   describe('volunteer requests of a program', function() {
-    it.only('returns volunteer-requests open and related to the specific program if executed by manager', async function() {
+    it('returns volunteer-requests open and related to the specific program if executed by manager', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/volunteer-requests`)
         .set('Authorization', `Bearer ${programManager1Jwt}`);
       expect(res.body).to.eql([
-        expectedVolunteerRequest(volunteerRequest1, 0),
-        expectedVolunteerRequest(fullVolunteerRequest1, 0)
+        expectedVolunteerRequest(volunteerRequest1, program1, 0),
+        expectedVolunteerRequest(fullVolunteerRequest1, program1, 0)
       ]);
     });
 
-    it.only('returns volunteer requests open and related to a specific program and institution if executed by coordinator', async function() {
+    it('returns volunteer requests open and related to a specific program and institution if executed by coordinator', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/volunteer-requests`)
         .set('Authorization', `Bearer ${programCoordinator2Jwt}`);
-      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, 0)]);
+      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, program1, 0)]);
     });
 
-    it.only('returns volunteer requests that start after start date and related to a specific program if start date is passed', async function() {
+    it('returns volunteer requests that start after start date and related to a specific program if start date is passed', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/volunteer-requests?startDate=${new Date().toISOString()}`)
         .set('Authorization', `Bearer ${programCoordinator2Jwt}`);
-      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, 0)]);
+      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, program1, 0)]);
     });
 
-    it.only('returns 403 when target program does not equal to user program', async function() {
+    it('returns 403 when target program does not equal to user program', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program2.id}/volunteer-requests`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`);

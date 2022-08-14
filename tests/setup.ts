@@ -6,7 +6,7 @@ chai.use(chaiPromised);
 
 import * as jwt from 'jsonwebtoken';
 import { appDataSource } from '../src/dataSource';
-import { User, VolunteerRequest } from '../src/models';
+import { Program, User, VolunteerRequest } from '../src/models';
 import { removeSeed } from './seed';
 import { JWT_SECRET } from '../src/config';
 import {
@@ -47,7 +47,7 @@ export const createTestJwt = (user: User): string => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
 };
 
-export const expectedVolunteerRequest = (vr: VolunteerRequest, currentVolunteers: number): any => {
+export const expectedVolunteerRequest = (vr: VolunteerRequest, program: Program, currentVolunteers: number): any => {
   const returnedVolunteerRequest = {
     ...vr,
     createdAt: vr.createdAt.toISOString(),
@@ -56,7 +56,12 @@ export const expectedVolunteerRequest = (vr: VolunteerRequest, currentVolunteers
     startTime: vr.startTime.toISOString(),
     endDate: vr.endDate.toISOString(),
     skillToVolunteerRequest: vr.skillToVolunteerRequest || [],
-    currentVolunteers: currentVolunteers || 0
+    currentVolunteers: currentVolunteers || 0,
+    program: {
+      id: program.id,
+      name: program.name,
+      description: program.description
+    }
   };
   return returnedVolunteerRequest;
 };
