@@ -105,12 +105,12 @@ router.put(
  * paths:
  *   /api/v1/user/{userId}/institution:
  *     put:
- *       summary: Updates user info
+ *       summary: Updates coordinator's institution
  *       security:
  *         - bearerAuth: []
  *       responses:
  *         '200':
- *           description: Updated user info
+ *           description: Updated coordinator's institution
  *         '401':
  *           $ref: '#/components/responses/UnauthorizedError'
  *         '422':

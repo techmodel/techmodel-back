@@ -80,12 +80,12 @@ router.post(
  * paths:
  *   /api/v1/volunteer-requests/{id}:
  *     put:
- *       summary: Create a new volunteer request
+ *       summary: Update volunteer request
  *       security:
  *         - bearerAuth: []
  *       responses:
  *         '200':
- *           description: Created volunteer request
+ *           description: Updated volunteer request
  *         '401':
  *           $ref: '#/components/responses/UnauthorizedError'
  *         '422':
