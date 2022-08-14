@@ -268,6 +268,24 @@ export const volunteerRequestToUpdate = {
   language: Language.HEBREW
 } as VolunteerRequest;
 
+export const volunteerRequestInstitution1Program2 = {
+  id: 324,
+  createdAt: TEST_DATE_28_06_2022,
+  name: 'volunteerRequestInstitution1Program2',
+  audience: 12,
+  isPhysical: true,
+  description: 'volunteerRequestInstitution1Program2 description',
+  startDate: TEST_DATE_NOW_PLUS_TWO_DAYS,
+  endDate: TEST_DATE_NOW_PLUS_FIVE_DAYS,
+  duration: '1 hour',
+  startTime: new Date(),
+  totalVolunteers: 4,
+  status: RequestStatus.SENT,
+  institutionId: institution2.id,
+  programId: program2.id,
+  language: Language.ARABIC
+} as VolunteerRequest;
+
 export const volunteerRequest1ToVolunteer1 = {
   volunteerId: volunteer1.id,
   volunteerRequestId: volunteerRequest1.id

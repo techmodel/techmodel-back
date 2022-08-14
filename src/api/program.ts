@@ -62,7 +62,6 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
  *         required: true
  *         description: program id
  */
-// TODO: add tests for this route
 router.get(
   '/:programId/volunteer-requests',
   authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),

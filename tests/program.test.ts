@@ -4,15 +4,24 @@ import app from '../src/server/server';
 import sinon, { SinonSandbox } from 'sinon';
 import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
-import { HTTPError, programCoordinator1Jwt, programManager1Jwt, volunteer1Jwt } from './setup';
+import {
+  expectedVolunteerRequest,
+  HTTPError,
+  programCoordinator1Jwt,
+  programCoordinator2Jwt,
+  programManager1Jwt,
+  volunteer1Jwt
+} from './setup';
 import {
   city1,
   city2,
   company1,
   company2,
+  fullVolunteerRequest1,
   institution1,
   institution2,
   location1,
+  oldVolunteerRequest1,
   program1,
   program2,
   programCoordinator1,
@@ -22,7 +31,8 @@ import {
   programManager2,
   volunteer1,
   volunteer2,
-  volunteer3WithoutMappings
+  volunteerRequest1,
+  volunteerRequestInstitution1Program2
 } from './mock';
 
 describe('programs', function() {
@@ -47,6 +57,12 @@ describe('programs', function() {
         programManager2,
         programCoordinator2,
         programCoordinator3
+      ],
+      volunteerRequests: [
+        volunteerRequest1,
+        fullVolunteerRequest1,
+        oldVolunteerRequest1,
+        volunteerRequestInstitution1Program2
       ]
     });
   });
@@ -56,7 +72,7 @@ describe('programs', function() {
     expect(res.body).to.eql([program1, program2]);
   });
 
-  describe('/:programId/coordinators', function() {
+  describe('coordinators of a program', function() {
     it('returns only coordinators related to the specific program', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/coordinators`)
@@ -78,6 +94,48 @@ describe('programs', function() {
     it('returns 403 when volunteer tries to access', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/coordinators`)
+        .set('Authorization', `Bearer ${volunteer1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
+    });
+  });
+
+  describe('volunteer requests of a program', function() {
+    it.only('returns volunteer-requests open and related to the specific program if executed by manager', async function() {
+      const res = await request(app)
+        .get(`/api/v1/programs/${program1.id}/volunteer-requests`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`);
+      expect(res.body).to.eql([
+        expectedVolunteerRequest(volunteerRequest1, 0),
+        expectedVolunteerRequest(fullVolunteerRequest1, 0)
+      ]);
+    });
+
+    it.only('returns volunteer requests open and related to a specific program and institution if executed by coordinator', async function() {
+      const res = await request(app)
+        .get(`/api/v1/programs/${program1.id}/volunteer-requests`)
+        .set('Authorization', `Bearer ${programCoordinator2Jwt}`);
+      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, 0)]);
+    });
+
+    it.only('returns volunteer requests that start after start date and related to a specific program if start date is passed', async function() {
+      const res = await request(app)
+        .get(`/api/v1/programs/${program1.id}/volunteer-requests?startDate=${new Date().toISOString()}`)
+        .set('Authorization', `Bearer ${programCoordinator2Jwt}`);
+      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, 0)]);
+    });
+
+    it.only('returns 403 when target program does not equal to user program', async function() {
+      const res = await request(app)
+        .get(`/api/v1/programs/${program2.id}/volunteer-requests`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('Trying to access another program data');
+      expect(res.status).to.eq(403);
+    });
+
+    it('returns 403 when volunteer tries to access', async function() {
+      const res = await request(app)
+        .get(`/api/v1/programs/${program1.id}/volunteer-requests`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`);
       expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
       expect(res.status).to.eq(403);
