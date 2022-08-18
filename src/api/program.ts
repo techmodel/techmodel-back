@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getCoordinators, getPrograms } from '../app/program';
+import { getCoordinators, getPendingCoordinators, getPrograms } from '../app/program';
 import { getVolunteerRequestsOfProgram } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
@@ -110,13 +110,54 @@ router.get(
   authMiddleware(UserType.PROGRAM_MANAGER),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { programId: userProgramId } = (req as DecodedRequest).userDecoded;
-      if (!userProgramId) throw new AuthorizationError('No program found');
+      const { programId: callerProgramId } = (req as DecodedRequest).userDecoded;
+      if (!callerProgramId) throw new AuthorizationError('No program found');
       const pathProgramId = parseInt(req.params.programId, 10);
-      if (pathProgramId != userProgramId) {
+      if (pathProgramId != callerProgramId) {
         throw new AuthorizationError('Trying to access another program data');
       }
-      res.json(await getCoordinators(userProgramId));
+      res.json(await getCoordinators(callerProgramId));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/programs/{programId}/pending-coordinators:
+ *    get:
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Returns pending users to become coordinators of the program
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/user'
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: program id
+ */
+router.get(
+  '/:programId/pending-coordinators',
+  authMiddleware(UserType.PROGRAM_MANAGER),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { programId: callerProgramId } = (req as DecodedRequest).userDecoded;
+      const pathProgramId = parseInt(req.params.programId, 10);
+      if (pathProgramId != callerProgramId) {
+        throw new AuthorizationError('Trying to access another program data');
+      }
+      res.json(await getPendingCoordinators(callerProgramId));
     } catch (e) {
       next(e);
     }

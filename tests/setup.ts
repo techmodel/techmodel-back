@@ -10,7 +10,7 @@ import { Program, User, VolunteerRequest } from '../src/models';
 import { removeSeed } from './seed';
 import { JWT_SECRET } from '../src/config';
 import {
-  pendingProgramManager3,
+  pendingProgramCoordinator3,
   programCoordinator1,
   programCoordinator2,
   programManager1,
@@ -72,4 +72,4 @@ export const programCoordinator1Jwt = createTestJwt(programCoordinator1);
 export const programCoordinator2Jwt = createTestJwt(programCoordinator2);
 export const programManager2Jwt = createTestJwt(programManager2);
 export const programManager1Jwt = createTestJwt(programManager1);
-export const pendingProgramManager3Jwt = createTestJwt(pendingProgramManager3);
+export const pendingProgramManager3Jwt = createTestJwt(pendingProgramCoordinator3);

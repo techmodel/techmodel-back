@@ -7,11 +7,12 @@ import {
   PendingProgramCoordinator,
   PendingProgramManager,
   Program,
-  Skill
+  Skill,
+  User
 } from '../models';
 
-export { userRepository } from './userRepo';
 export { volunteerRequestRepository } from './volunteerRequestRepo';
+export const userRepository = appDataSource.getRepository(User);
 export const companyRepository = appDataSource.getRepository(Company);
 export const cityRepository = appDataSource.getRepository(City);
 export const locationRepository = appDataSource.getRepository(Location);

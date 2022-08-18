@@ -4,6 +4,7 @@ import {
   Company,
   Institution,
   Location,
+  PendingProgramCoordinator,
   Program,
   Skill,
   SkillToVolunteerRequest,
@@ -16,6 +17,7 @@ import {
   companyRepository,
   institutionRepository,
   locationRepository,
+  pendingProgramCoordinatorRepository,
   programRepository,
   skillRepository,
   userRepository,
@@ -33,6 +35,7 @@ type seedOptions = {
   volunteerRequestToVolunteers?: VolunteerRequestToVolunteer[];
   skills?: Skill[];
   skillToVolunteerRequests?: SkillToVolunteerRequest[];
+  pendingProgramCoordinators?: PendingProgramCoordinator[];
 };
 
 export const volunteerRequestToVolunteerRepository = appDataSource.getRepository(VolunteerRequestToVolunteer);
@@ -89,9 +92,15 @@ export const seed = async (options: seedOptions): Promise<void> => {
       await skillToVolunteerRequestRepository.save(skillToVolunteerRequest);
     }
   }
+  if (options.pendingProgramCoordinators) {
+    for (const pendingProgramCoordinator of options.pendingProgramCoordinators) {
+      await pendingProgramCoordinatorRepository.save(pendingProgramCoordinator);
+    }
+  }
 };
 
 export const removeSeed = async (): Promise<void> => {
+  await pendingProgramCoordinatorRepository.delete({});
   await skillToVolunteerRequestRepository.delete({});
   await skillRepository.delete({});
   await volunteerRequestToVolunteerRepository.delete({});

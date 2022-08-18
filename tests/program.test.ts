@@ -22,6 +22,8 @@ import {
   institution2,
   location1,
   oldVolunteerRequest1,
+  pendingProgramCoordinator3,
+  pendingProgramCoordinator3SecondPart,
   program1,
   program2,
   programCoordinator1,
@@ -34,6 +36,20 @@ import {
   volunteerRequest1,
   volunteerRequestInstitution1Program2
 } from './mock';
+import { Institution, PendingProgramCoordinator, User } from '../src/models';
+
+const expectedPendingProgramCoordinator = (
+  pedningCoordinator: PendingProgramCoordinator,
+  pendingUser: User,
+  institution: Institution
+): any => {
+  return {
+    ...pedningCoordinator,
+    createdAt: pedningCoordinator.createdAt.toISOString(),
+    user: { ...pendingUser, createdAt: pendingUser.createdAt.toISOString() },
+    institution: { ...institution, createdAt: institution.createdAt.toISOString() }
+  };
+};
 
 describe('programs', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
@@ -56,14 +72,16 @@ describe('programs', function() {
         programCoordinator1,
         programManager2,
         programCoordinator2,
-        programCoordinator3
+        programCoordinator3,
+        pendingProgramCoordinator3
       ],
       volunteerRequests: [
         volunteerRequest1,
         fullVolunteerRequest1,
         oldVolunteerRequest1,
         volunteerRequestInstitution1Program2
-      ]
+      ],
+      pendingProgramCoordinators: [pendingProgramCoordinator3SecondPart]
     });
   });
 
@@ -138,6 +156,30 @@ describe('programs', function() {
         .get(`/api/v1/programs/${program1.id}/volunteer-requests`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`);
       expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
+      expect(res.status).to.eq(403);
+    });
+  });
+
+  describe('pending coordinators of the program', function() {
+    it('returns list of users that are pending to become coordinators of the program', async function() {
+      const res = await request(app)
+        .get(`/api/v1/programs/${program1.id}/pending-coordinators`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`);
+      expect(res.status).to.eq(200);
+      expect(res.body).to.eql([
+        expectedPendingProgramCoordinator(
+          pendingProgramCoordinator3SecondPart,
+          pendingProgramCoordinator3,
+          institution1
+        )
+      ]);
+    });
+
+    it('return 403 if manager tries to access different program', async function() {
+      const res = await request(app)
+        .get(`/api/v1/programs/${program2.id}/pending-coordinators`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`);
+      expect((res.error as HTTPError).text).to.eq('Trying to access another program data');
       expect(res.status).to.eq(403);
     });
   });
