@@ -355,3 +355,21 @@ export const pendingProgramCoordinator3SecondPart = {
   institutionId: institution1.id,
   createdAt: TEST_DATE_28_06_2022
 } as PendingProgramCoordinator;
+
+export const pendingProgramCoordinator4 = {
+  id: 'pendingProgramCoordinator4',
+  firstName: 'pendingProgramCoordinator4',
+  lastName: 'pendingProgramCoordinator4',
+  createdAt: TEST_DATE_28_06_2022,
+  email: 'pendingProgramCoordinator4@gmail.com',
+  phone: '63541312',
+  userType: UserType.PENDING
+} as User;
+
+export const pendingProgramCoordinator4SecondPart = {
+  id: 2,
+  userId: pendingProgramCoordinator4.id,
+  programId: program2.id,
+  institutionId: institution1.id,
+  createdAt: TEST_DATE_28_06_2022
+} as PendingProgramCoordinator;

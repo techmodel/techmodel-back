@@ -10,6 +10,7 @@ import {
   programCoordinator1Jwt,
   programCoordinator2Jwt,
   programManager1Jwt,
+  programManager2Jwt,
   volunteer1Jwt
 } from './setup';
 import {
@@ -24,6 +25,8 @@ import {
   oldVolunteerRequest1,
   pendingProgramCoordinator3,
   pendingProgramCoordinator3SecondPart,
+  pendingProgramCoordinator4,
+  pendingProgramCoordinator4SecondPart,
   program1,
   program2,
   programCoordinator1,
@@ -36,7 +39,8 @@ import {
   volunteerRequest1,
   volunteerRequestInstitution1Program2
 } from './mock';
-import { Institution, PendingProgramCoordinator, User } from '../src/models';
+import { Institution, PendingProgramCoordinator, User, UserType } from '../src/models';
+import { pendingProgramCoordinatorRepository, userRepository } from '../src/repos';
 
 const expectedPendingProgramCoordinator = (
   pedningCoordinator: PendingProgramCoordinator,
@@ -57,7 +61,7 @@ describe('programs', function() {
   this.beforeEach(async function() {
     sandbox = sinon.createSandbox();
     // disable logging
-    sandbox.stub(logger);
+    // sandbox.stub(logger);
     // seed db
     await seed({
       cities: [city1, city2],
@@ -73,7 +77,8 @@ describe('programs', function() {
         programManager2,
         programCoordinator2,
         programCoordinator3,
-        pendingProgramCoordinator3
+        pendingProgramCoordinator3,
+        pendingProgramCoordinator4
       ],
       volunteerRequests: [
         volunteerRequest1,
@@ -81,7 +86,7 @@ describe('programs', function() {
         oldVolunteerRequest1,
         volunteerRequestInstitution1Program2
       ],
-      pendingProgramCoordinators: [pendingProgramCoordinator3SecondPart]
+      pendingProgramCoordinators: [pendingProgramCoordinator3SecondPart, pendingProgramCoordinator4SecondPart]
     });
   });
 
@@ -181,6 +186,81 @@ describe('programs', function() {
         .set('Authorization', `Bearer ${programManager1Jwt}`);
       expect((res.error as HTTPError).text).to.eq('Trying to access another program data');
       expect(res.status).to.eq(403);
+    });
+  });
+
+  describe('accept pending coordinator', function() {
+    it('throws 403 if trying to access different program', async function() {
+      const res = await request(app)
+        .post(`/api/v1/programs/${program1.id}/pending-coordinators/${pendingProgramCoordinator3.id}/accept`)
+        .set('Authorization', `Bearer ${programManager2Jwt}`)
+        .send();
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`Trying to access another program data`);
+    });
+    it('throws 403 if called by coordinator', async function() {
+      const res = await request(app)
+        .post(`/api/v1/programs/${program1.id}/pending-coordinators/${pendingProgramCoordinator3.id}/accept`)
+        .set('Authorization', `Bearer ${programCoordinator2Jwt}`)
+        .send();
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`You are not authorized to perform this action`);
+    });
+    it('throws 422 if user is not program manager from the same program', async function() {
+      const res = await request(app)
+        .post(`/api/v1/programs/${program1.id}/pending-coordinators/${pendingProgramCoordinator4.id}/accept`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(422);
+      expect((res.error as HTTPError).text).to.eq(`Target user is not from the same program`);
+    });
+    it('throws 404 if no there is no user with such id', async function() {
+      const res = await request(app)
+        .post(`/api/v1/programs/${program1.id}/pending-coordinators/test13/accept`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(404);
+      expect((res.error as HTTPError).text).to.eq(`Target user not found`);
+    });
+    it('throws 404 if the user is not pending', async function() {
+      const res = await request(app)
+        .post(`/api/v1/programs/${program1.id}/pending-coordinators/${programCoordinator1.id}/accept`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(404);
+      expect((res.error as HTTPError).text).to.eq(`Target user not found`);
+    });
+    it('updates the user correctly on successful request', async function() {
+      const targetUser = await userRepository.findOne({ where: { id: pendingProgramCoordinator3.id } });
+      expect(targetUser?.userType).to.eq('pending');
+      expect(targetUser?.institutionId).to.eq(null);
+      expect(targetUser?.programId).to.eq(null);
+      const res = await request(app)
+        .post(`/api/v1/programs/${program1.id}/pending-coordinators/${pendingProgramCoordinator3.id}/accept`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(200);
+      const updatedUser = await userRepository.findOne({ where: { id: pendingProgramCoordinator3.id } });
+      expect(updatedUser?.userType).to.eq(UserType.PROGRAM_COORDINATOR);
+      expect(updatedUser?.institutionId).to.eq(pendingProgramCoordinator3SecondPart.institutionId);
+      expect(updatedUser?.programId).to.eq(pendingProgramCoordinator3SecondPart.programId);
+    });
+    it('removes pending user on successful request without touching the user itself', async function() {
+      let targetPendingCoordinator = await pendingProgramCoordinatorRepository.findOne({
+        where: { userId: pendingProgramCoordinator3.id }
+      });
+      expect(targetPendingCoordinator?.id).to.eq(pendingProgramCoordinator3SecondPart.id);
+      const res = await request(app)
+        .post(`/api/v1/programs/${program1.id}/pending-coordinators/${pendingProgramCoordinator3.id}/accept`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(200);
+      targetPendingCoordinator = await pendingProgramCoordinatorRepository.findOne({
+        where: { userId: pendingProgramCoordinator3.id }
+      });
+      expect(targetPendingCoordinator).to.eq(null);
+      const updatedUser = await userRepository.findOne({ where: { id: pendingProgramCoordinator3.id } });
+      expect(updatedUser?.userType).to.eq(UserType.PROGRAM_COORDINATOR);
     });
   });
 
