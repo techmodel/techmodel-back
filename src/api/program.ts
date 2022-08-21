@@ -1,5 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { acceptPendingCoordinator, getCoordinators, getPendingCoordinators, getPrograms } from '../app/program';
+import {
+  acceptPendingCoordinator,
+  denyPendingCoordinator,
+  getCoordinators,
+  getPendingCoordinators,
+  getPrograms
+} from '../app/program';
 import { getVolunteerRequestsOfProgram } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
 import { UserType } from '../models';
@@ -206,6 +212,54 @@ router.post(
         throw new AuthorizationError('Trying to access another program data');
       }
       res.json(await acceptPendingCoordinator(callerProgramId, pendingUserId));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/programs/{programId}/pending-coordinators/{pendingUserId}:
+ *    delete:
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: deny pending user to become a coordinator of the program
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/user'
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: program id
+ *       - in: path
+ *         name: pendingUserId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: id of the pending user
+ */
+router.delete(
+  '/:programId/pending-coordinators/:pendingUserId',
+  authMiddleware(UserType.PROGRAM_MANAGER),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { programId: callerProgramId } = (req as DecodedRequest).userDecoded;
+      const pathProgramId = parseInt(req.params.programId, 10);
+      const pendingUserId = req.params.pendingUserId;
+      if (pathProgramId != callerProgramId) {
+        throw new AuthorizationError('Trying to access another program data');
+      }
+      res.json(await denyPendingCoordinator(callerProgramId, pendingUserId));
     } catch (e) {
       next(e);
     }

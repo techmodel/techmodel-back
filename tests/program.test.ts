@@ -61,7 +61,7 @@ describe('programs', function() {
   this.beforeEach(async function() {
     sandbox = sinon.createSandbox();
     // disable logging
-    // sandbox.stub(logger);
+    sandbox.stub(logger);
     // seed db
     await seed({
       cities: [city1, city2],
@@ -261,6 +261,72 @@ describe('programs', function() {
       expect(targetPendingCoordinator).to.eq(null);
       const updatedUser = await userRepository.findOne({ where: { id: pendingProgramCoordinator3.id } });
       expect(updatedUser?.userType).to.eq(UserType.PROGRAM_COORDINATOR);
+    });
+  });
+
+  describe('deny pending coordinator', function() {
+    it('throws 403 if trying to access different program', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/programs/${program1.id}/pending-coordinators/${pendingProgramCoordinator3.id}`)
+        .set('Authorization', `Bearer ${programManager2Jwt}`)
+        .send();
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`Trying to access another program data`);
+    });
+    it('throws 403 if called by coordinator', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/programs/${program1.id}/pending-coordinators/${pendingProgramCoordinator3.id}`)
+        .set('Authorization', `Bearer ${programCoordinator2Jwt}`)
+        .send();
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`You are not authorized to perform this action`);
+    });
+    it('throws 422 if user is not program manager from the same program', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/programs/${program1.id}/pending-coordinators/${pendingProgramCoordinator4.id}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(422);
+      expect((res.error as HTTPError).text).to.eq(`Target user is not from the same program`);
+    });
+    it('throws 404 if no there is no user with such id', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/programs/${program1.id}/pending-coordinators/test13`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(404);
+      expect((res.error as HTTPError).text).to.eq(`Target user not found`);
+    });
+    it('throws 404 if the user is not pending', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/programs/${program1.id}/pending-coordinators/${programCoordinator1.id}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(404);
+      expect((res.error as HTTPError).text).to.eq(`Target user not found`);
+    });
+    it('deletes the pending user and the pending coordinator row on successful request', async function() {
+      let targetPendingCoordinator = await pendingProgramCoordinatorRepository.findOne({
+        where: { userId: pendingProgramCoordinator3.id }
+      });
+      expect(targetPendingCoordinator?.id).to.eq(pendingProgramCoordinator3SecondPart.id);
+      let targetUser = await userRepository.findOne({
+        where: { id: pendingProgramCoordinator3.id }
+      });
+      expect(targetUser?.id).to.eq(pendingProgramCoordinator3.id);
+      const res = await request(app)
+        .delete(`/api/v1/programs/${program1.id}/pending-coordinators/${pendingProgramCoordinator3.id}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(200);
+      targetPendingCoordinator = await pendingProgramCoordinatorRepository.findOne({
+        where: { userId: pendingProgramCoordinator3.id }
+      });
+      expect(targetPendingCoordinator).to.eq(null);
+      targetUser = await userRepository.findOne({
+        where: { id: pendingProgramCoordinator3.id }
+      });
+      expect(targetUser).to.eq(null);
     });
   });
 

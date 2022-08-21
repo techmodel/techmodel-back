@@ -40,3 +40,21 @@ export const acceptPendingCoordinator = async (programId: number, pendingUserId:
     await transactionalEntityManager.remove(targetPendingCoordinator);
   });
 };
+
+export const denyPendingCoordinator = async (programId: number, pendingUserId: string): Promise<void> => {
+  const targetPendingCoordinator = await pendingProgramCoordinatorRepository.findOne({
+    where: { userId: pendingUserId },
+    relations: ['user']
+  });
+  const targetUser = targetPendingCoordinator?.user;
+  if (!targetUser) {
+    throw new NotFoundError('Target user not found');
+  }
+  if (targetPendingCoordinator.programId !== programId) {
+    throw new CannotPerformOperationError('Target user is not from the same program');
+  }
+  await appDataSource.manager.transaction(async transactionalEntityManager => {
+    await transactionalEntityManager.delete(PendingProgramCoordinator, targetPendingCoordinator.id);
+    await transactionalEntityManager.delete(User, pendingUserId);
+  });
+};
