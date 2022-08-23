@@ -6,6 +6,7 @@
   - api - controllers and controller related objects & functions
   - app - use cases and use case related objects & functions
   - models - entities and types defined in typeorm
+  - migrations - contains migration files
   - repos - repositories based on typeorm for interacting with the database
   - server - bootstraping express server
 - tests - tests for the application
@@ -24,7 +25,6 @@ Then, to run the application do:
 2. `npm install` - install all related packages
 3. `npm run dc-up` - start local mssql container (uses `docker-compose.yml`)
 4. `npm run init-db` - initialize local db with current schema
-   `ctrl` + `C` to exit after you get a message that the db has been seeded
 5. `npm run dev` - run application in dev mode
 
 ### Stopping
