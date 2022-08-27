@@ -32,3 +32,25 @@ export const SQL_INSERT_RETRY_INTERVAL_MS = parseInt(getEnv('SQL_INSERT_RETRY_IN
 export const CLIENT_URL = getEnv('CLIENT_URL', `localhost:3000`);
 export const JWT_SECRET = getEnv('JWT_SECRET');
 export const API_PREFIX = '/api/v1';
+
+export const authConfig = {
+  credentials: {
+    tenantName: 'techmodel.onmicrosoft.com',
+    clientID: '4abc99dd-3509-40c3-abdb-53b29dae9d42'
+  },
+  policies: {
+    policyName: 'B2C_1_policyT1'
+  },
+  metadata: {
+    b2cDomain: 'techmodel.b2clogin.com',
+    authority: 'login.microsoftonline.com',
+    discovery: '.well-known/openid-configuration',
+    version: 'v2.0'
+  },
+  settings: {
+    isB2C: true,
+    validateIssuer: true,
+    passReqToCallback: true,
+    loggingLevel: 'info'
+  }
+};

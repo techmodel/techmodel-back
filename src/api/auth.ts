@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import passport from 'passport';
 import { login, register } from '../app/user';
 import { User } from '../models';
 
@@ -21,14 +22,18 @@ const router = Router();
  *           description: User ID of the user that is trying to log in
  *           required: true
  */
-router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.body.userId as string;
-    res.json(await login(userId));
-  } catch (e) {
-    next(e);
+router.post(
+  '/login',
+  passport.authenticate('oauth-bearer', { session: false }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.body.userId as string;
+      res.json(await login(userId));
+    } catch (e) {
+      next(e);
+    }
   }
-});
+);
 
 /**
  * @openapi
@@ -52,14 +57,18 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
  *           required: true
  *           description: new user creation payload
  */
-router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    //TODO: Validate google auth jwt
-    const user = req.body.user as Partial<User>;
-    res.json(await register(user));
-  } catch (e) {
-    next(e);
+router.post(
+  '/register',
+  passport.authenticate('oauth-bearer', { session: false }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      //TODO: Validate google auth jwt
+      const user = req.body.user as Partial<User>;
+      res.json(await register(user));
+    } catch (e) {
+      next(e);
+    }
   }
-});
+);
 
 export default router;
