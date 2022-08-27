@@ -1,5 +1,6 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
+import { serializeError } from 'serialize-error';
 import { userDecoded } from '../app/user';
 import { JWT_SECRET } from '../config';
 import { AppError, AuthenticationError, AuthorizationError } from '../exc';
@@ -65,6 +66,6 @@ export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: 
     logger.error(err.message);
   } else {
     res.status(500).json('Unknown Error');
-    logger.error(err);
+    logger.error(serializeError(err));
   }
 };

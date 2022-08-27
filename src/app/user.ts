@@ -1,8 +1,9 @@
 import * as jwt from 'jsonwebtoken';
 import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
+import { appDataSource } from '../dataSource';
 import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFoundError } from '../exc';
-import { User, UserType } from '../models';
+import { PendingProgramCoordinator, User, UserType } from '../models';
 import { userRepository } from '../repos';
 import { createUserSchema, selfUpdateUserSchema, validateSchema } from './schema.validators';
 
@@ -40,10 +41,32 @@ export const login = async (userId: string): Promise<loginResponse> => {
   return { userDetails: user, isFound: true, userToken: token, userType: user.userType };
 };
 
+const registerCoordinator = async (user: Partial<User>): Promise<void> => {
+  const institutionId = user.institutionId as number;
+  const programId = user.programId as number;
+  const userId = user.id as string;
+  const pendingProgramCoordinator: Partial<PendingProgramCoordinator> = { institutionId, programId, userId };
+  const userToSave: Partial<User> = {
+    ...user,
+    userType: UserType.PENDING,
+    institutionId: undefined,
+    programId: undefined
+  };
+  await appDataSource.manager.transaction(async transactionalEntityManager => {
+    await transactionalEntityManager.save(User, userToSave);
+    await transactionalEntityManager.save(PendingProgramCoordinator, pendingProgramCoordinator);
+  });
+};
+
 export const register = async (user: Partial<User>): Promise<loginResponse> => {
-  if (!user.id) throw new BadRequestError('Missing userId');
-  await userRepository.save(validateSchema(createUserSchema, user));
-  return login(user.id);
+  const validatedUser = validateSchema(createUserSchema, user);
+  if (validatedUser.userType === UserType.PROGRAM_COORDINATOR) {
+    await registerCoordinator(validatedUser);
+  } else {
+    await userRepository.save(validatedUser);
+  }
+  const userId = user.id as string;
+  return login(userId);
 };
 
 export const updateUserInfo = (id: string, userInfo: Partial<User>): Promise<UpdateResult> => {

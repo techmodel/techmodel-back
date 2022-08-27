@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon, { SinonSandbox } from 'sinon';
 import request from 'supertest';
 import logger from '../src/logger';
-import { User, UserType } from '../src/models';
+import { User } from '../src/models';
 import { userRepository } from '../src/repos';
 import app from '../src/server/server';
 import {
@@ -40,14 +40,10 @@ const institutionId1UpdatePayload = {
   institutionId: institution1.id
 };
 
-const userTypeUpdatePayload = {
-  userType: UserType.PROGRAM_COORDINATOR
-};
-
 const checkUserUpdateFails = async (
   userJwt: string,
   userId: string,
-  payload: any,
+  payload: unknown,
   expectedError: string
 ): Promise<void> => {
   const res = await request(app)
