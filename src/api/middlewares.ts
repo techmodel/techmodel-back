@@ -2,11 +2,13 @@ import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { serializeError } from 'serialize-error';
 import { userDecoded } from '../app/user';
-import { JWT_SECRET } from '../config';
+import { JWT_SECRET, AUTH_CLIENT_ID } from '../config';
 import { AppError, AuthenticationError, AuthorizationError } from '../exc';
 import logger from '../logger';
 import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
+import { OAuth2Client } from 'google-auth-library';
+const client = new OAuth2Client(AUTH_CLIENT_ID);
 
 const tokenValidation = (token: string): userDecoded | null => {
   try {
@@ -68,4 +70,15 @@ export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: 
     res.status(500).json('Unknown Error');
     logger.error(serializeError(err));
   }
+};
+
+export const verifyGoogleAuthToken = async (req: Request, res: Response, next: NextFunction) => {
+  const ticket = await client.verifyIdToken({
+    idToken: req.cookies['user-auth'],
+    audience: AUTH_CLIENT_ID
+  });
+  const payload = ticket.getPayload()!;
+  const userid = payload['sub'];
+  // If request specified a G Suite domain:
+  // const domain = payload['hd'];
 };

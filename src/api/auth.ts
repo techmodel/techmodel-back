@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import { login, register } from '../app/user';
 import { User } from '../models';
+import { verifyGoogleAuthToken } from './middlewares';
 
 const router = Router();
 // TODO: add swagger description of the inputs required
@@ -9,7 +10,7 @@ const router = Router();
  * @openapi
  * paths:
  *   /api/v1/auth/login:
- *     post:
+ *     get:
  *       operationId: login
  *       responses:
  *         '200':
@@ -22,12 +23,14 @@ const router = Router();
  *           description: User ID of the user that is trying to log in
  *           required: true
  */
-router.post(
+router.get(
   '/login',
-  passport.authenticate('oauth-bearer', { session: false }),
+  // passport.authenticate('oauth-bearer', { session: false }),
+  verifyGoogleAuthToken,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = req.body.userId as string;
+      req.cookies;
       res.json(await login(userId));
     } catch (e) {
       next(e);
@@ -59,7 +62,7 @@ router.post(
  */
 router.post(
   '/register',
-  passport.authenticate('oauth-bearer', { session: false }),
+  // passport.authenticate('oauth-bearer', { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       //TODO: Validate google auth jwt
