@@ -25,6 +25,8 @@ import {
   volunteer2,
   volunteer3WithoutMappings,
   volunteerRequest1,
+  volunteerRequest1ToVolunteer1,
+  volunteerRequest1ToVolunteer2,
   volunteerRequestToCreate,
   volunteerRequestToUpdate,
   volunteerRequestToVolunteers
@@ -33,9 +35,28 @@ import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
 import { city1, city2, volutneerRequestDTO1 } from './mock';
 import app from '../src/server/server';
-import { volunteerRequestDtoToDomain } from '../src/app/dto/volunteerRequest';
+import {
+  mapCreateVolunteerRequestDtoToDomain,
+  mapVolunteerRequestToReturnVolunteerRequestDTO
+} from '../src/app/dto/volunteerRequest';
 import { VolunteerRequest } from '../src/models';
 import { volunteerRequestRepository } from '../src/repos';
+
+const returnVolunteerRequestMock: VolunteerRequest = {
+  ...volunteerRequest1,
+  skillToVolunteerRequest: [
+    { ...skill1ToVolunteerRequest1, skill: skill1 },
+    { ...skill2ToVolunteerRequest1, skill: skill2 }
+  ]
+};
+
+const returnVolunteerRequestWithVolunteersMock: VolunteerRequest = {
+  ...returnVolunteerRequestMock,
+  volunteerRequestToVolunteer: [
+    { ...volunteerRequest1ToVolunteer1, volunteer: { ...volunteer1, company: company1 } },
+    { ...volunteerRequest1ToVolunteer2, volunteer: { ...volunteer2, company: company2 } }
+  ]
+};
 
 describe('DTOs', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
@@ -66,9 +87,9 @@ describe('DTOs', function() {
     });
   });
 
-  describe('volunteer request DTO', function() {
+  describe('mapCreateVolunteerRequestDtoToDomain', function() {
     it('should return a proper domain volunteer request object', async function() {
-      const domainVr = volunteerRequestDtoToDomain(volutneerRequestDTO1);
+      const domainVr = mapCreateVolunteerRequestDtoToDomain(volutneerRequestDTO1);
       expect(domainVr.constructor.name).to.eq('VolunteerRequest');
       expect(domainVr.createdAt).to.eq(volutneerRequestDTO1.createdAt);
       expect(domainVr.name).to.eq(volutneerRequestDTO1.name);
@@ -85,6 +106,70 @@ describe('DTOs', function() {
       expect(domainVr.programId).to.eq(volutneerRequestDTO1.programId);
       expect(domainVr.skillToVolunteerRequest).to.containSubset(
         volutneerRequestDTO1.skills?.map(skillId => ({ skillId }))
+      );
+    });
+  });
+
+  describe('mapVolunteerRequestToReturnVolunteerRequestDTO', function() {
+    it('returns the dto the right way, with no volunteers if there are none in the domain object', async function() {
+      const returnDTO = mapVolunteerRequestToReturnVolunteerRequestDTO(returnVolunteerRequestMock);
+      expect(returnDTO.createdAt).to.eq(returnVolunteerRequestMock.createdAt);
+      expect(returnDTO.name).to.eq(returnVolunteerRequestMock.name);
+      expect(returnDTO.audience).to.eq(returnVolunteerRequestMock.audience);
+      expect(returnDTO.isPhysical).to.eq(returnVolunteerRequestMock.isPhysical);
+      expect(returnDTO.description).to.eq(returnVolunteerRequestMock.description);
+      expect(returnDTO.startDate).to.eq(returnVolunteerRequestMock.startDate);
+      expect(returnDTO.endDate).to.eq(returnVolunteerRequestMock.endDate);
+      expect(returnDTO.duration).to.eq(returnVolunteerRequestMock.duration);
+      expect(returnDTO.startTime).to.eq(returnVolunteerRequestMock.startTime);
+      expect(returnDTO.totalVolunteers).to.eq(returnVolunteerRequestMock.totalVolunteers);
+      expect(returnDTO.status).to.eq(returnVolunteerRequestMock.status);
+      expect(returnDTO.institutionId).to.eq(returnVolunteerRequestMock.institutionId);
+      expect(returnDTO.programId).to.eq(returnVolunteerRequestMock.programId);
+      expect(returnDTO.language).to.eq(returnVolunteerRequestMock.language);
+      expect(returnDTO.skills).to.containSubset(
+        returnVolunteerRequestMock.skillToVolunteerRequest.map(skillToRequest => ({
+          id: skillToRequest.skillId,
+          name: skillToRequest.skill.name,
+          type: skillToRequest.skill.type
+        }))
+      );
+      expect(returnDTO.volunteers).to.eq(undefined);
+    });
+
+    it('returns the dto the right way, with volunteers if there are in the domain object', async function() {
+      const returnDTO = mapVolunteerRequestToReturnVolunteerRequestDTO(returnVolunteerRequestWithVolunteersMock);
+      expect(returnDTO.createdAt).to.eq(returnVolunteerRequestWithVolunteersMock.createdAt);
+      expect(returnDTO.name).to.eq(returnVolunteerRequestWithVolunteersMock.name);
+      expect(returnDTO.audience).to.eq(returnVolunteerRequestWithVolunteersMock.audience);
+      expect(returnDTO.isPhysical).to.eq(returnVolunteerRequestWithVolunteersMock.isPhysical);
+      expect(returnDTO.description).to.eq(returnVolunteerRequestWithVolunteersMock.description);
+      expect(returnDTO.startDate).to.eq(returnVolunteerRequestWithVolunteersMock.startDate);
+      expect(returnDTO.endDate).to.eq(returnVolunteerRequestWithVolunteersMock.endDate);
+      expect(returnDTO.duration).to.eq(returnVolunteerRequestWithVolunteersMock.duration);
+      expect(returnDTO.startTime).to.eq(returnVolunteerRequestWithVolunteersMock.startTime);
+      expect(returnDTO.totalVolunteers).to.eq(returnVolunteerRequestWithVolunteersMock.totalVolunteers);
+      expect(returnDTO.status).to.eq(returnVolunteerRequestWithVolunteersMock.status);
+      expect(returnDTO.institutionId).to.eq(returnVolunteerRequestWithVolunteersMock.institutionId);
+      expect(returnDTO.programId).to.eq(returnVolunteerRequestWithVolunteersMock.programId);
+      expect(returnDTO.language).to.eq(returnVolunteerRequestWithVolunteersMock.language);
+      expect(returnDTO.skills).to.containSubset(
+        returnVolunteerRequestWithVolunteersMock.skillToVolunteerRequest.map(skillToRequest => ({
+          id: skillToRequest.skillId,
+          name: skillToRequest.skill.name,
+          type: skillToRequest.skill.type
+        }))
+      );
+      expect(returnDTO.volunteers).to.containSubset(
+        returnVolunteerRequestWithVolunteersMock.volunteerRequestToVolunteer.map(requestToVolunteer => ({
+          id: requestToVolunteer.volunteer.id,
+          email: requestToVolunteer.volunteer.email,
+          phone: requestToVolunteer.volunteer.phone,
+          firstName: requestToVolunteer.volunteer.firstName,
+          lastName: requestToVolunteer.volunteer.lastName,
+          userType: requestToVolunteer.volunteer.userType,
+          companyName: requestToVolunteer.volunteer.company.name
+        }))
       );
     });
   });

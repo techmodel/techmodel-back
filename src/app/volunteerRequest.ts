@@ -3,7 +3,7 @@ import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFo
 import logger from '../logger';
 import { RequestStatus, User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
-import { CreateVolunteerRequestDTO, volunteerRequestDtoToDomain } from './dto/volunteerRequest';
+import { CreateVolunteerRequestDTO, mapCreateVolunteerRequestDtoToDomain } from './dto/volunteerRequest';
 import { validateSchema, updateVolunteerRequestSchema, createVolunteerRequestSchema } from './schema.validators';
 import { userDecoded } from './user';
 
@@ -32,7 +32,7 @@ export const createVolunteerRequest = async (
   caller: userDecoded
 ): Promise<VolunteerRequest> => {
   const validatedVolunteerRequestDTO = validateSchema(createVolunteerRequestSchema, createVolunteerRequestDTO);
-  const volunteerRequest = volunteerRequestDtoToDomain(validatedVolunteerRequestDTO);
+  const volunteerRequest = mapCreateVolunteerRequestDtoToDomain(validatedVolunteerRequestDTO);
   if (
     caller.userType === UserType.PROGRAM_COORDINATOR &&
     (!userAndPayloadSameProgram(caller, volunteerRequest) || !userAndPayloadSameInstitution(caller, volunteerRequest))
