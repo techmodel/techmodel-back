@@ -3,6 +3,7 @@ import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFo
 import logger from '../logger';
 import { RequestStatus, User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
+import { CreateVolunteerRequestDTO, volunteerRequestDtoToDomain } from './dto/volunteerRequest';
 import { validateSchema, updateVolunteerRequestSchema, createVolunteerRequestSchema } from './schema.validators';
 import { userDecoded } from './user';
 
@@ -27,21 +28,22 @@ export const getVolunteerRequestsOfProgram = async (
 };
 
 export const createVolunteerRequest = async (
-  volunteerRequest: VolunteerRequest,
+  createVolunteerRequestDTO: CreateVolunteerRequestDTO,
   caller: userDecoded
 ): Promise<VolunteerRequest> => {
-  const payload = validateSchema(createVolunteerRequestSchema, volunteerRequest);
+  const validatedVolunteerRequestDTO = validateSchema(createVolunteerRequestSchema, createVolunteerRequestDTO);
+  const volunteerRequest = volunteerRequestDtoToDomain(validatedVolunteerRequestDTO);
   if (
     caller.userType === UserType.PROGRAM_COORDINATOR &&
-    (!userAndPayloadSameProgram(caller, payload) || !userAndPayloadSameInstitution(caller, payload))
+    (!userAndPayloadSameProgram(caller, volunteerRequest) || !userAndPayloadSameInstitution(caller, volunteerRequest))
   ) {
     throw new AuthorizationError('Coordinator cant create request for other program or institution');
   }
-  if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, payload)) {
+  if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, volunteerRequest)) {
     throw new AuthorizationError('Manager cant create request for other program');
   }
-  payload['status'] = RequestStatus.SENT;
-  return volunteerRequestRepository.save(payload);
+  volunteerRequest['status'] = RequestStatus.SENT;
+  return volunteerRequestRepository.save(volunteerRequest);
 };
 
 export const updateVolunteerRequest = async (

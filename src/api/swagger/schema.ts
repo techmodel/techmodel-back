@@ -106,10 +106,10 @@
  *           type: number
  *         programId:
  *           type: number
- *         skillToVolunteerRequest:
+ *         skills:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/skillToVolunteerRequest'
+ *             type: number
  *       required:
  *         - name
  *         - audience

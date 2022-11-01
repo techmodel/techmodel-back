@@ -90,7 +90,8 @@ export const createVolunteerRequestSchema = Joi.object({
     .valid(...Object.values(Language))
     .required(),
   programId: Joi.number().required(),
-  institutionId: Joi.number().required()
+  institutionId: Joi.number().required(),
+  skills: Joi.array().items(Joi.number())
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {

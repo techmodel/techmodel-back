@@ -33,6 +33,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
     institutionId?: number,
     startDate = new Date().toISOString()
   ): Promise<VolunteerRequest[]> {
+    // TODO: add join to the volunteers that are mapped to the request
     let qb = this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
@@ -54,6 +55,12 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .getRepository(VolunteerRequestToVolunteer)
       .insert({ volunteerId, volunteerRequestId: requestId });
     // TODO: handle concurrent inserts (it should be inside the transaction)
+    //  OR
+    //    we can use insert ... select ..., and that way we will insert only
+    //    when the select returns something, and the where clause in the select
+    //    will check that the request has a right number of assigns. when we get
+    //    back the result from the query we will check that something was inserted,
+    //    if it did not insert anything, then we will throw an error
   },
 
   async volunteerRequestsByVolunteerId(volunteerId: string): Promise<VolunteerRequest[]> {

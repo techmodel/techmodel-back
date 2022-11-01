@@ -18,6 +18,7 @@ import {
   VolunteerRequestToVolunteer
 } from '../src/models';
 import * as dfns from 'date-fns';
+import { CreateVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
 
 export const TEST_DATE_28_06_2022 = new Date('2022-06-28T15:20:21.470Z');
 export const TEST_DATE_20_06_2022 = dfns.subDays(TEST_DATE_28_06_2022, 8);
@@ -233,24 +234,6 @@ export const fullVolunteerRequest1 = {
   language: Language.RUSSIAN
 } as VolunteerRequest;
 
-export const volunteerRequestToCreate = {
-  id: 4,
-  createdAt: TEST_DATE_28_06_2022,
-  name: 'volunteerRequestToCreate',
-  audience: 12,
-  isPhysical: false,
-  description: 'volunteerRequestToCreate description',
-  startDate: TEST_DATE_NOW_PLUS_TWO_DAYS,
-  endDate: TEST_DATE_NOW_PLUS_FIVE_DAYS,
-  duration: '1 hour',
-  startTime: new Date(),
-  totalVolunteers: 3,
-  status: RequestStatus.SENT,
-  institutionId: institution1.id,
-  programId: programManager1.programId,
-  language: Language.HEBREW
-} as VolunteerRequest;
-
 export const volunteerRequestToUpdate = {
   id: 5,
   createdAt: TEST_DATE_28_06_2022,
@@ -373,3 +356,40 @@ export const pendingProgramCoordinator4SecondPart = {
   institutionId: institution1.id,
   createdAt: TEST_DATE_28_06_2022
 } as PendingProgramCoordinator;
+
+export const volunteerRequestToCreate = {
+  id: 4,
+  createdAt: TEST_DATE_28_06_2022,
+  name: 'volunteerRequestToCreate',
+  audience: 12,
+  isPhysical: false,
+  description: 'volunteerRequestToCreate description',
+  startDate: TEST_DATE_NOW_PLUS_TWO_DAYS,
+  endDate: TEST_DATE_NOW_PLUS_FIVE_DAYS,
+  duration: '1 hour',
+  startTime: new Date(),
+  totalVolunteers: 3,
+  status: RequestStatus.SENT,
+  institutionId: institution1.id,
+  programId: programManager1.programId,
+  language: Language.HEBREW,
+  skills: [skill1.id]
+} as CreateVolunteerRequestDTO;
+
+export const volutneerRequestDTO1: CreateVolunteerRequestDTO = {
+  createdAt: new Date(),
+  name: 'test5432',
+  audience: 14,
+  isPhysical: true,
+  description: 'another test',
+  startDate: new Date(),
+  endDate: new Date(),
+  duration: 'sometime',
+  startTime: new Date(),
+  totalVolunteers: 5,
+  status: RequestStatus.SENT,
+  institutionId: institution1.id,
+  programId: program1.id,
+  language: Language.ARABIC,
+  skills: [skill1.id, skill2.id]
+};

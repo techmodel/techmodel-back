@@ -44,8 +44,9 @@ import {
   volunteer3WithoutMappingsJwt
 } from './setup';
 import { VolunteerRequest } from '../src/models';
+import { CreateVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
 
-const vrToCreatePayload = (vr: VolunteerRequest): Partial<VolunteerRequest> => ({
+const vrToCreatePayload = (vr: CreateVolunteerRequestDTO): Partial<CreateVolunteerRequestDTO> => ({
   name: vr.name,
   audience: vr.audience,
   isPhysical: vr.isPhysical,
@@ -57,7 +58,8 @@ const vrToCreatePayload = (vr: VolunteerRequest): Partial<VolunteerRequest> => (
   totalVolunteers: vr.totalVolunteers,
   language: vr.language,
   institutionId: vr.institutionId,
-  programId: vr.programId
+  programId: vr.programId,
+  skills: vr.skills
 });
 
 describe('volunteerRequest', function() {
@@ -352,11 +354,18 @@ describe('volunteerRequest', function() {
         .set('Authorization', `Bearer ${programManager1Jwt}`)
         .send({ volunteerRequest: createPayload });
       expect(res.status).to.eq(200);
-      const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ name: volunteerRequestToCreate.name });
+      const newVolunteerRequest = await volunteerRequestRepository.findOne({
+        where: { name: volunteerRequestToCreate.name },
+        relations: ['skillToVolunteerRequest']
+      });
       if (!newVolunteerRequest) throw new Error('Volunteer request not found');
       expect(newVolunteerRequest.institutionId).to.eq(volunteerRequestToCreate.institutionId);
       expect(newVolunteerRequest.programId).to.eq(volunteerRequestToCreate.programId);
+      expect(newVolunteerRequest);
       expect(newVolunteerRequest.status).to.eq('sent');
+      expect(newVolunteerRequest.skillToVolunteerRequest[0].skillId).to.eq(
+        (volunteerRequestToCreate.skills as number[])[0]
+      );
     });
   });
 

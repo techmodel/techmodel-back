@@ -85,7 +85,13 @@ export class VolunteerRequest {
 
   @OneToMany(
     () => SkillToVolunteerRequest,
-    skillToVolunteerRequest => skillToVolunteerRequest.volunteerRequest
+    skillToVolunteerRequest => skillToVolunteerRequest.volunteerRequest,
+    /**
+     * cascade is set to `true` so that when we save volunteer requests
+     * with their skillToVolunteerRequest, it will be able to create them all together
+     * with links between each other (volunteerRequestId on the SkillToVolunteerRequest)
+     */
+    { cascade: true }
   )
   skillToVolunteerRequest: SkillToVolunteerRequest[];
 }
