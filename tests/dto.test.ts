@@ -44,6 +44,7 @@ import { volunteerRequestRepository } from '../src/repos';
 
 const returnVolunteerRequestMock: VolunteerRequest = {
   ...volunteerRequest1,
+  program: program1,
   skillToVolunteerRequest: [
     { ...skill1ToVolunteerRequest1, skill: skill1 },
     { ...skill2ToVolunteerRequest1, skill: skill2 }
@@ -101,7 +102,6 @@ describe('DTOs', function() {
       expect(domainVr.duration).to.eq(volutneerRequestDTO1.duration);
       expect(domainVr.startTime).to.eq(volutneerRequestDTO1.startTime);
       expect(domainVr.totalVolunteers).to.eq(volutneerRequestDTO1.totalVolunteers);
-      expect(domainVr.status).to.eq(volutneerRequestDTO1.status);
       expect(domainVr.institutionId).to.eq(volutneerRequestDTO1.institutionId);
       expect(domainVr.programId).to.eq(volutneerRequestDTO1.programId);
       expect(domainVr.skillToVolunteerRequest).to.containSubset(
@@ -113,19 +113,23 @@ describe('DTOs', function() {
   describe('mapVolunteerRequestToReturnVolunteerRequestDTO', function() {
     it('returns the dto the right way, with no volunteers if there are none in the domain object', async function() {
       const returnDTO = mapVolunteerRequestToReturnVolunteerRequestDTO(returnVolunteerRequestMock);
-      expect(returnDTO.createdAt).to.eq(returnVolunteerRequestMock.createdAt);
+      expect(returnDTO.createdAt).to.eq(returnVolunteerRequestMock.createdAt.toISOString());
       expect(returnDTO.name).to.eq(returnVolunteerRequestMock.name);
       expect(returnDTO.audience).to.eq(returnVolunteerRequestMock.audience);
       expect(returnDTO.isPhysical).to.eq(returnVolunteerRequestMock.isPhysical);
       expect(returnDTO.description).to.eq(returnVolunteerRequestMock.description);
-      expect(returnDTO.startDate).to.eq(returnVolunteerRequestMock.startDate);
-      expect(returnDTO.endDate).to.eq(returnVolunteerRequestMock.endDate);
+      expect(returnDTO.startDate).to.eq(returnVolunteerRequestMock.startDate.toISOString());
+      expect(returnDTO.endDate).to.eq(returnVolunteerRequestMock.endDate.toISOString());
       expect(returnDTO.duration).to.eq(returnVolunteerRequestMock.duration);
-      expect(returnDTO.startTime).to.eq(returnVolunteerRequestMock.startTime);
+      expect(returnDTO.startTime).to.eq(returnVolunteerRequestMock.startTime.toISOString());
       expect(returnDTO.totalVolunteers).to.eq(returnVolunteerRequestMock.totalVolunteers);
       expect(returnDTO.status).to.eq(returnVolunteerRequestMock.status);
       expect(returnDTO.institutionId).to.eq(returnVolunteerRequestMock.institutionId);
-      expect(returnDTO.programId).to.eq(returnVolunteerRequestMock.programId);
+      expect(returnDTO.program).to.eqls({
+        id: returnVolunteerRequestMock.program.id,
+        name: returnVolunteerRequestMock.program.name,
+        description: returnVolunteerRequestMock.program.description
+      });
       expect(returnDTO.language).to.eq(returnVolunteerRequestMock.language);
       expect(returnDTO.skills).to.containSubset(
         returnVolunteerRequestMock.skillToVolunteerRequest.map(skillToRequest => ({
@@ -139,19 +143,23 @@ describe('DTOs', function() {
 
     it('returns the dto the right way, with volunteers if there are in the domain object', async function() {
       const returnDTO = mapVolunteerRequestToReturnVolunteerRequestDTO(returnVolunteerRequestWithVolunteersMock);
-      expect(returnDTO.createdAt).to.eq(returnVolunteerRequestWithVolunteersMock.createdAt);
+      expect(returnDTO.createdAt).to.eq(returnVolunteerRequestWithVolunteersMock.createdAt.toISOString());
       expect(returnDTO.name).to.eq(returnVolunteerRequestWithVolunteersMock.name);
       expect(returnDTO.audience).to.eq(returnVolunteerRequestWithVolunteersMock.audience);
       expect(returnDTO.isPhysical).to.eq(returnVolunteerRequestWithVolunteersMock.isPhysical);
       expect(returnDTO.description).to.eq(returnVolunteerRequestWithVolunteersMock.description);
-      expect(returnDTO.startDate).to.eq(returnVolunteerRequestWithVolunteersMock.startDate);
-      expect(returnDTO.endDate).to.eq(returnVolunteerRequestWithVolunteersMock.endDate);
+      expect(returnDTO.startDate).to.eq(returnVolunteerRequestWithVolunteersMock.startDate.toISOString());
+      expect(returnDTO.endDate).to.eq(returnVolunteerRequestWithVolunteersMock.endDate.toISOString());
       expect(returnDTO.duration).to.eq(returnVolunteerRequestWithVolunteersMock.duration);
-      expect(returnDTO.startTime).to.eq(returnVolunteerRequestWithVolunteersMock.startTime);
+      expect(returnDTO.startTime).to.eq(returnVolunteerRequestWithVolunteersMock.startTime.toISOString());
       expect(returnDTO.totalVolunteers).to.eq(returnVolunteerRequestWithVolunteersMock.totalVolunteers);
       expect(returnDTO.status).to.eq(returnVolunteerRequestWithVolunteersMock.status);
       expect(returnDTO.institutionId).to.eq(returnVolunteerRequestWithVolunteersMock.institutionId);
-      expect(returnDTO.programId).to.eq(returnVolunteerRequestWithVolunteersMock.programId);
+      expect(returnDTO.program).to.eqls({
+        id: returnVolunteerRequestWithVolunteersMock.program.id,
+        name: returnVolunteerRequestWithVolunteersMock.program.name,
+        description: returnVolunteerRequestWithVolunteersMock.program.description
+      });
       expect(returnDTO.language).to.eq(returnVolunteerRequestWithVolunteersMock.language);
       expect(returnDTO.skills).to.containSubset(
         returnVolunteerRequestWithVolunteersMock.skillToVolunteerRequest.map(skillToRequest => ({

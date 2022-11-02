@@ -1,4 +1,5 @@
 import { Language, RequestStatus, SkillToVolunteerRequest, VolunteerRequest } from '../../models';
+import { ReturnProgramDTO } from './program';
 import { ReturnSkillDTO } from './skill';
 import { ReturnVolunteerDTO } from './volunteer';
 
@@ -13,7 +14,6 @@ export interface CreateVolunteerRequestDTO {
   duration: string;
   startTime: Date;
   totalVolunteers: number;
-  status: RequestStatus;
   institutionId: number;
   programId: number;
   language: Language;
@@ -32,7 +32,6 @@ export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestD
   domainVr.duration = vr.duration;
   domainVr.startTime = vr.startTime;
   domainVr.totalVolunteers = vr.totalVolunteers;
-  domainVr.status = vr.status;
   domainVr.institutionId = vr.institutionId;
   domainVr.language = vr.language;
   domainVr.programId = vr.programId;
@@ -48,19 +47,22 @@ export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestD
 };
 
 export interface ReturnVolunteerRequestDTO {
-  createdAt: Date;
+  id: number;
+  createdAt: string;
+  updatedAt: string;
   name: string;
   audience: number;
   isPhysical: boolean;
   description: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   duration: string;
-  startTime: Date;
+  startTime: string;
   totalVolunteers: number;
+  currentVolunteers: number;
   status: RequestStatus;
   institutionId: number;
-  programId: number;
+  program: ReturnProgramDTO;
   language: Language;
   skills?: ReturnSkillDTO[];
   volunteers?: ReturnVolunteerDTO[];
@@ -68,19 +70,26 @@ export interface ReturnVolunteerRequestDTO {
 
 export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequest): ReturnVolunteerRequestDTO => {
   const returnVolunteerRequestDTO: ReturnVolunteerRequestDTO = {
-    createdAt: vr.createdAt,
+    id: vr.id,
+    createdAt: vr.createdAt.toISOString(),
+    updatedAt: vr.updatedAt?.toISOString(),
     name: vr.name,
     audience: vr.audience,
     isPhysical: vr.isPhysical,
     description: vr.description,
-    startDate: vr.startDate,
-    endDate: vr.endDate,
+    startDate: vr.startDate.toISOString(),
+    endDate: vr.endDate.toISOString(),
     duration: vr.duration,
-    startTime: vr.startTime,
+    startTime: vr.startTime.toISOString(),
     totalVolunteers: vr.totalVolunteers,
+    currentVolunteers: vr.currentVolunteers,
     status: vr.status,
     institutionId: vr.institutionId,
-    programId: vr.programId,
+    program: {
+      id: vr.program.id,
+      name: vr.program.name,
+      description: vr.program.description
+    },
     language: vr.language
   };
   if (vr.skillToVolunteerRequest) {

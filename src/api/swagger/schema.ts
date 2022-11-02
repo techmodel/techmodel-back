@@ -72,10 +72,10 @@
  *           type: number
  *         language:
  *           type: string
- *         skillToVolunteerRequest:
+ *         skills:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/skillToVolunteerRequest'
+ *             type: number
  *     createVolunteerRequestPayload:
  *       type: object
  *       properties:
@@ -159,24 +159,10 @@
  *           type: number
  *         language:
  *           type: string
- *         skillToVolunteerRequest:
+ *         skills:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/skillToVolunteerRequest'
- *     skillToVolunteerRequest:
- *       type: object
- *       properties:
- *         id:
- *           type: number
- *           description: can be ignored, no real use for this id
- *         skillId:
- *           type: number
- *           description: can be ignored, use the id from the `skill` object
- *         volunteerRequestId:
- *           type: number
- *           description: can be ignored, use the id from the `volunteerRequest` object
- *         skill:
- *           $ref: '#/components/schemas/skill'
+ *             $ref: '#/components/schemas/skill'
  *     skill:
  *       type: object
  *       properties:

@@ -3,7 +3,12 @@ import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFo
 import logger from '../logger';
 import { RequestStatus, User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
-import { CreateVolunteerRequestDTO, mapCreateVolunteerRequestDtoToDomain } from './dto/volunteerRequest';
+import {
+  CreateVolunteerRequestDTO,
+  mapCreateVolunteerRequestDtoToDomain,
+  mapVolunteerRequestToReturnVolunteerRequestDTO,
+  ReturnVolunteerRequestDTO
+} from './dto/volunteerRequest';
 import { validateSchema, updateVolunteerRequestSchema, createVolunteerRequestSchema } from './schema.validators';
 import { userDecoded } from './user';
 
@@ -23,8 +28,9 @@ export const getVolunteerRequestsOfProgram = async (
   programId: number,
   institutionId?: number,
   startDate?: string
-): Promise<VolunteerRequest[]> => {
-  return volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
+): Promise<ReturnVolunteerRequestDTO[]> => {
+  const domainVrs = await volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
+  return domainVrs.map(vr => mapVolunteerRequestToReturnVolunteerRequestDTO(vr));
 };
 
 export const createVolunteerRequest = async (
@@ -46,6 +52,7 @@ export const createVolunteerRequest = async (
   return volunteerRequestRepository.save(volunteerRequest);
 };
 
+// add update dto to handle skill changes
 export const updateVolunteerRequest = async (
   id: number,
   volunteerRequestInfo: Partial<VolunteerRequest>,

@@ -387,7 +387,6 @@ export const volutneerRequestDTO1: CreateVolunteerRequestDTO = {
   duration: 'sometime',
   startTime: new Date(),
   totalVolunteers: 5,
-  status: RequestStatus.SENT,
   institutionId: institution1.id,
   programId: program1.id,
   language: Language.ARABIC,

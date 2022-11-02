@@ -34,6 +34,10 @@ import {
   programCoordinator3,
   programManager1,
   programManager2,
+  skill1,
+  skill1ToVolunteerRequest1,
+  skill2,
+  skill2ToVolunteerRequest1,
   volunteer1,
   volunteer2,
   volunteerRequest1,
@@ -86,7 +90,9 @@ describe('programs', function() {
         oldVolunteerRequest1,
         volunteerRequestInstitution1Program2
       ],
-      pendingProgramCoordinators: [pendingProgramCoordinator3SecondPart, pendingProgramCoordinator4SecondPart]
+      pendingProgramCoordinators: [pendingProgramCoordinator3SecondPart, pendingProgramCoordinator4SecondPart],
+      skills: [skill1, skill2],
+      skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
     });
   });
 
@@ -129,8 +135,8 @@ describe('programs', function() {
         .get(`/api/v1/programs/${program1.id}/volunteer-requests`)
         .set('Authorization', `Bearer ${programManager1Jwt}`);
       expect(res.body).to.eql([
-        expectedVolunteerRequest(volunteerRequest1, program1, 0),
-        expectedVolunteerRequest(fullVolunteerRequest1, program1, 0)
+        expectedVolunteerRequest(volunteerRequest1, program1, 0, [skill1, skill2]),
+        expectedVolunteerRequest(fullVolunteerRequest1, program1, 0, [])
       ]);
     });
 
@@ -138,14 +144,14 @@ describe('programs', function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/volunteer-requests`)
         .set('Authorization', `Bearer ${programCoordinator2Jwt}`);
-      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, program1, 0)]);
+      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, program1, 0, [])]);
     });
 
     it('returns volunteer requests that start after start date and related to a specific program if start date is passed', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/volunteer-requests?startDate=${new Date().toISOString()}`)
         .set('Authorization', `Bearer ${programCoordinator2Jwt}`);
-      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, program1, 0)]);
+      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, program1, 0, [])]);
     });
 
     it('returns 403 when target program does not equal to user program', async function() {
