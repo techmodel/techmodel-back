@@ -52,7 +52,8 @@ export const expectedVolunteerRequest = (
   vr: VolunteerRequest,
   program: Program,
   currentVolunteers: number,
-  skills: Skill[]
+  skills?: Skill[],
+  volunteers?: User[]
 ): ReturnVolunteerRequestDTO => {
   const returnedVolunteerRequest: ReturnVolunteerRequestDTO = {
     id: vr.id,
@@ -79,6 +80,17 @@ export const expectedVolunteerRequest = (
   };
   if (skills) {
     returnedVolunteerRequest.skills = skills.map(skill => ({ id: skill.id, name: skill.name, type: skill.type }));
+  }
+  if (volunteers) {
+    returnedVolunteerRequest.volunteers = volunteers.map(volunteer => ({
+      id: volunteer.id,
+      email: volunteer.email,
+      phone: volunteer.phone,
+      firstName: volunteer.firstName,
+      lastName: volunteer.lastName,
+      userType: volunteer.userType,
+      companyName: volunteer.company.name
+    }));
   }
   return returnedVolunteerRequest;
 };

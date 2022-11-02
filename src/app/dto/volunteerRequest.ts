@@ -92,14 +92,14 @@ export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequ
     },
     language: vr.language
   };
-  if (vr.skillToVolunteerRequest) {
+  if (vr.skillToVolunteerRequest && vr.skillToVolunteerRequest.length > 0) {
     returnVolunteerRequestDTO.skills = vr.skillToVolunteerRequest.map(skillToRequest => ({
       id: skillToRequest.skill.id,
       name: skillToRequest.skill.name,
       type: skillToRequest.skill.type
     }));
   }
-  if (vr.volunteerRequestToVolunteer) {
+  if (vr.volunteerRequestToVolunteer && vr.volunteerRequestToVolunteer.length > 0) {
     returnVolunteerRequestDTO.volunteers = vr.volunteerRequestToVolunteer.map(requestToVolunteer => ({
       id: requestToVolunteer.volunteer.id,
       email: requestToVolunteer.volunteer.email,

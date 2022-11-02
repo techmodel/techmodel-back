@@ -34,6 +34,7 @@ import {
 import app from '../src/server/server';
 import { volunteerRequestRepository } from '../src/repos';
 import {
+  expectedVolunteerRequest,
   HTTPError,
   pendingProgramManager3Jwt,
   programCoordinator1Jwt,
@@ -116,6 +117,16 @@ describe('volunteerRequest', function() {
         volunteer3WithoutMappings.id
       );
       expect(requestForVolunteer3.length).to.eq(0);
+    });
+  });
+
+  describe('relevant and open volunteer requests', function() {
+    it('returns only the relevant and open volunteer requests', async function() {
+      const res = await request(app).get(`/api/v1/volunteer-requests`);
+      expect(res.body).to.eql([
+        expectedVolunteerRequest(volunteerRequest1, program1, 2, [skill1, skill2]),
+        expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0)
+      ]);
     });
   });
 

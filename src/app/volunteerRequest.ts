@@ -20,8 +20,9 @@ const userAndPayloadSameInstitution = (user: Partial<User>, payload: any): boole
   return user.institutionId === payload.institutionId;
 };
 
-export const getRelevantAndOpenVolunteerRequests = async (): Promise<VolunteerRequest[]> => {
-  return volunteerRequestRepository.relevantAndOpen();
+export const getRelevantAndOpenVolunteerRequests = async (): Promise<ReturnVolunteerRequestDTO[]> => {
+  const domainVrs = await volunteerRequestRepository.relevantAndOpen();
+  return domainVrs.map(vr => mapVolunteerRequestToReturnVolunteerRequestDTO(vr));
 };
 
 export const getVolunteerRequestsOfProgram = async (
