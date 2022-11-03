@@ -131,7 +131,7 @@ describe('programs', function() {
     });
   });
 
-  describe.only('volunteer requests of a program', function() {
+  describe('volunteer requests of a program', function() {
     it('returns volunteer-requests open and related to the specific program if executed by manager', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/volunteer-requests`)

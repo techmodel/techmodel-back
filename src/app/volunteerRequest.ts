@@ -1,4 +1,5 @@
 import { UpdateResult } from 'typeorm';
+import { skillToVolunteerRequestRepository } from '../../tests/seed';
 import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFoundError } from '../exc';
 import logger from '../logger';
 import { RequestStatus, User, UserType, VolunteerRequest } from '../models';
@@ -6,8 +7,10 @@ import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
 import {
   CreateVolunteerRequestDTO,
   mapCreateVolunteerRequestDtoToDomain,
+  mapUpdateVolunteerRequestDtoToDomain,
   mapVolunteerRequestToReturnVolunteerRequestDTO,
-  ReturnVolunteerRequestDTO
+  ReturnVolunteerRequestDTO,
+  UpdateVolunteerRequestDTO
 } from './dto/volunteerRequest';
 import { validateSchema, updateVolunteerRequestSchema, createVolunteerRequestSchema } from './schema.validators';
 import { userDecoded } from './user';
@@ -56,7 +59,7 @@ export const createVolunteerRequest = async (
 // add update dto to handle skill changes
 export const updateVolunteerRequest = async (
   id: number,
-  volunteerRequestInfo: Partial<VolunteerRequest>,
+  volunteerRequestInfo: UpdateVolunteerRequestDTO,
   caller: userDecoded
 ): Promise<UpdateResult> => {
   if (!id) throw new BadRequestError('Missing Id to update volunteer request by');
@@ -71,9 +74,20 @@ export const updateVolunteerRequest = async (
   if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, targetVolunteerRequest)) {
     throw new AuthorizationError('Manager cant update request for other program');
   }
-  const payload = validateSchema(updateVolunteerRequestSchema, volunteerRequestInfo);
-  payload['updatedAt'] = new Date();
-  return volunteerRequestRepository.update({ id }, payload);
+  const validatedDTO = validateSchema(updateVolunteerRequestSchema, volunteerRequestInfo);
+  const updatePayload = mapUpdateVolunteerRequestDtoToDomain(validatedDTO);
+  updatePayload['updatedAt'] = new Date();
+  // handle skill insert independently because typeorm causes errors if its inside the update statement
+  if (validatedDTO.skills) {
+    await skillToVolunteerRequestRepository.delete({ volunteerRequestId: id });
+    await skillToVolunteerRequestRepository.save(
+      validatedDTO.skills.map(skill => ({
+        skillId: skill,
+        volunteerRequestId: id
+      }))
+    );
+  }
+  return volunteerRequestRepository.update({ id }, { ...updatePayload, skillToVolunteerRequest: undefined });
 };
 
 export const assignVolunteerToRequest = async (userId: string, volunteerRequestId: number): Promise<void> => {

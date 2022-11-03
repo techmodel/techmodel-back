@@ -45,7 +45,7 @@ import {
   volunteer3WithoutMappingsJwt
 } from './setup';
 import { VolunteerRequest } from '../src/models';
-import { CreateVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
+import { CreateVolunteerRequestDTO, UpdateVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
 
 const vrToCreatePayload = (vr: CreateVolunteerRequestDTO): Partial<CreateVolunteerRequestDTO> => ({
   name: vr.name,
@@ -381,7 +381,7 @@ describe('volunteerRequest', function() {
   });
 
   describe('Update volunteer request', () => {
-    const volunteerRequestUpdateData = { audience: 10 };
+    const volunteerRequestUpdateData: UpdateVolunteerRequestDTO = { audience: 10, skills: [skill1.id] };
     it('returns 400 when id is missing from request or equals 0', async () => {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/0`)
@@ -414,10 +414,15 @@ describe('volunteerRequest', function() {
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
         .set('Authorization', `Bearer ${programCoordinator2Jwt}`)
         .send({ volunteerRequestInfo: volunteerRequestUpdateData });
-      const updatedVolunteerRequest = await volunteerRequestRepository.findOneBy({ id: volunteerRequestToUpdate.id });
+      const updatedVolunteerRequest = await volunteerRequestRepository.findOne({
+        where: { id: volunteerRequestToUpdate.id },
+        relations: ['skillToVolunteerRequest', 'skillToVolunteerRequest.skill']
+      });
       if (!updatedVolunteerRequest) throw new Error('Volunteer request not found');
       expect(updatedVolunteerRequest.audience).to.equal(volunteerRequestUpdateData.audience);
       expect(updatedVolunteerRequest.updatedAt).to.be.greaterThan(volunteerRequestToUpdate.createdAt); // make sure `updatedAt` is updated
+      expect(updatedVolunteerRequest.skillToVolunteerRequest[0].skill.id).to.be.eq(skill1.id);
+      expect(updatedVolunteerRequest.skillToVolunteerRequest.length).to.be.eq(1);
       expect(res.status).to.eq(204);
     });
 

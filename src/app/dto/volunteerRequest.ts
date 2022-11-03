@@ -20,6 +20,8 @@ export interface CreateVolunteerRequestDTO {
   skills?: number[];
 }
 
+export type UpdateVolunteerRequestDTO = Partial<CreateVolunteerRequestDTO>;
+
 export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestDTO): VolunteerRequest => {
   const domainVr = new VolunteerRequest();
   domainVr.createdAt = vr.createdAt;
@@ -44,6 +46,10 @@ export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestD
     domainVr.skillToVolunteerRequest = skillsToVr;
   }
   return domainVr;
+};
+
+export const mapUpdateVolunteerRequestDtoToDomain = (vr: UpdateVolunteerRequestDTO): VolunteerRequest => {
+  return mapCreateVolunteerRequestDtoToDomain(vr as CreateVolunteerRequestDTO);
 };
 
 export interface ReturnVolunteerRequestDTO {
