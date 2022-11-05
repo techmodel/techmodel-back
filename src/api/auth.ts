@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { login, register } from '../app/user';
+import { CLIENT_URL } from '../config';
 import { User } from '../models';
 import { verifyGoogleAuthToken } from './middlewares';
 
@@ -24,10 +25,10 @@ const router = Router();
  */
 router.get('/login', verifyGoogleAuthToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.cookies.userId;
+    const { userId } = req.cookies;
     const loginResponse = await login(userId);
     const returnToUrl = loginResponse.isFound ? req.cookies['return-to-login'] : req.cookies['return-to-register'];
-    res.cookie('userToken', loginResponse);
+    res.cookie('user-data', loginResponse);
     res.redirect(returnToUrl);
   } catch (e) {
     next(e);
@@ -58,8 +59,12 @@ router.get('/login', verifyGoogleAuthToken, async (req: Request, res: Response, 
  */
 router.post('/register', verifyGoogleAuthToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = req.body.user as Partial<User>;
-    res.json(await register(user));
+    const userToCreate = req.body.user as Partial<User>;
+    const { userId } = req.cookies;
+    const user = { id: userId, ...userToCreate };
+    const loginResponse = await register(user);
+    res.cookie('user-data', loginResponse);
+    res.redirect(CLIENT_URL);
   } catch (e) {
     next(e);
   }
