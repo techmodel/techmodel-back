@@ -34,6 +34,7 @@ import {
 import app from '../src/server/server';
 import { volunteerRequestRepository } from '../src/repos';
 import {
+  expectedVolunteerRequest,
   HTTPError,
   pendingProgramManager3Jwt,
   programCoordinator1Jwt,
@@ -44,8 +45,9 @@ import {
   volunteer3WithoutMappingsJwt
 } from './setup';
 import { VolunteerRequest } from '../src/models';
+import { CreateVolunteerRequestDTO, UpdateVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
 
-const vrToCreatePayload = (vr: VolunteerRequest): Partial<VolunteerRequest> => ({
+const vrToCreatePayload = (vr: CreateVolunteerRequestDTO): Partial<CreateVolunteerRequestDTO> => ({
   name: vr.name,
   audience: vr.audience,
   isPhysical: vr.isPhysical,
@@ -57,7 +59,8 @@ const vrToCreatePayload = (vr: VolunteerRequest): Partial<VolunteerRequest> => (
   totalVolunteers: vr.totalVolunteers,
   language: vr.language,
   institutionId: vr.institutionId,
-  programId: vr.programId
+  programId: vr.programId,
+  skills: vr.skills
 });
 
 describe('volunteerRequest', function() {
@@ -114,6 +117,16 @@ describe('volunteerRequest', function() {
         volunteer3WithoutMappings.id
       );
       expect(requestForVolunteer3.length).to.eq(0);
+    });
+  });
+
+  describe('relevant and open volunteer requests', function() {
+    it('returns only the relevant and open volunteer requests', async function() {
+      const res = await request(app).get(`/api/v1/volunteer-requests`);
+      expect(res.body).to.eql([
+        expectedVolunteerRequest(volunteerRequest1, program1, 2, [skill1, skill2]),
+        expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0)
+      ]);
     });
   });
 
@@ -352,16 +365,23 @@ describe('volunteerRequest', function() {
         .set('Authorization', `Bearer ${programManager1Jwt}`)
         .send({ volunteerRequest: createPayload });
       expect(res.status).to.eq(200);
-      const newVolunteerRequest = await volunteerRequestRepository.findOneBy({ name: volunteerRequestToCreate.name });
+      const newVolunteerRequest = await volunteerRequestRepository.findOne({
+        where: { name: volunteerRequestToCreate.name },
+        relations: ['skillToVolunteerRequest']
+      });
       if (!newVolunteerRequest) throw new Error('Volunteer request not found');
       expect(newVolunteerRequest.institutionId).to.eq(volunteerRequestToCreate.institutionId);
       expect(newVolunteerRequest.programId).to.eq(volunteerRequestToCreate.programId);
+      expect(newVolunteerRequest);
       expect(newVolunteerRequest.status).to.eq('sent');
+      expect(newVolunteerRequest.skillToVolunteerRequest[0].skillId).to.eq(
+        (volunteerRequestToCreate.skills as number[])[0]
+      );
     });
   });
 
   describe('Update volunteer request', () => {
-    const volunteerRequestUpdateData = { audience: 10 };
+    const volunteerRequestUpdateData: UpdateVolunteerRequestDTO = { audience: 10, skills: [skill1.id] };
     it('returns 400 when id is missing from request or equals 0', async () => {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/0`)
@@ -394,10 +414,15 @@ describe('volunteerRequest', function() {
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
         .set('Authorization', `Bearer ${programCoordinator2Jwt}`)
         .send({ volunteerRequestInfo: volunteerRequestUpdateData });
-      const updatedVolunteerRequest = await volunteerRequestRepository.findOneBy({ id: volunteerRequestToUpdate.id });
+      const updatedVolunteerRequest = await volunteerRequestRepository.findOne({
+        where: { id: volunteerRequestToUpdate.id },
+        relations: ['skillToVolunteerRequest', 'skillToVolunteerRequest.skill']
+      });
       if (!updatedVolunteerRequest) throw new Error('Volunteer request not found');
       expect(updatedVolunteerRequest.audience).to.equal(volunteerRequestUpdateData.audience);
       expect(updatedVolunteerRequest.updatedAt).to.be.greaterThan(volunteerRequestToUpdate.createdAt); // make sure `updatedAt` is updated
+      expect(updatedVolunteerRequest.skillToVolunteerRequest[0].skill.id).to.be.eq(skill1.id);
+      expect(updatedVolunteerRequest.skillToVolunteerRequest.length).to.be.eq(1);
       expect(res.status).to.eq(204);
     });
 

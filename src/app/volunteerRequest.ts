@@ -1,8 +1,17 @@
 import { UpdateResult } from 'typeorm';
+import { skillToVolunteerRequestRepository } from '../../tests/seed';
 import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFoundError } from '../exc';
 import logger from '../logger';
 import { RequestStatus, User, UserType, VolunteerRequest } from '../models';
 import { volunteerRequestRepository } from '../repos/volunteerRequestRepo';
+import {
+  CreateVolunteerRequestDTO,
+  mapCreateVolunteerRequestDtoToDomain,
+  mapUpdateVolunteerRequestDtoToDomain,
+  mapVolunteerRequestToReturnVolunteerRequestDTO,
+  ReturnVolunteerRequestDTO,
+  UpdateVolunteerRequestDTO
+} from './dto/volunteerRequest';
 import { validateSchema, updateVolunteerRequestSchema, createVolunteerRequestSchema } from './schema.validators';
 import { userDecoded } from './user';
 
@@ -14,39 +23,43 @@ const userAndPayloadSameInstitution = (user: Partial<User>, payload: any): boole
   return user.institutionId === payload.institutionId;
 };
 
-export const getRelevantAndOpenVolunteerRequests = async (): Promise<VolunteerRequest[]> => {
-  return volunteerRequestRepository.relevantAndOpen();
+export const getRelevantAndOpenVolunteerRequests = async (): Promise<ReturnVolunteerRequestDTO[]> => {
+  const domainVrs = await volunteerRequestRepository.relevantAndOpen();
+  return domainVrs.map(vr => mapVolunteerRequestToReturnVolunteerRequestDTO(vr));
 };
 
 export const getVolunteerRequestsOfProgram = async (
   programId: number,
   institutionId?: number,
   startDate?: string
-): Promise<VolunteerRequest[]> => {
-  return volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
+): Promise<ReturnVolunteerRequestDTO[]> => {
+  const domainVrs = await volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
+  return domainVrs.map(vr => mapVolunteerRequestToReturnVolunteerRequestDTO(vr));
 };
 
 export const createVolunteerRequest = async (
-  volunteerRequest: VolunteerRequest,
+  createVolunteerRequestDTO: CreateVolunteerRequestDTO,
   caller: userDecoded
 ): Promise<VolunteerRequest> => {
-  const payload = validateSchema(createVolunteerRequestSchema, volunteerRequest);
+  const validatedVolunteerRequestDTO = validateSchema(createVolunteerRequestSchema, createVolunteerRequestDTO);
+  const volunteerRequest = mapCreateVolunteerRequestDtoToDomain(validatedVolunteerRequestDTO);
   if (
     caller.userType === UserType.PROGRAM_COORDINATOR &&
-    (!userAndPayloadSameProgram(caller, payload) || !userAndPayloadSameInstitution(caller, payload))
+    (!userAndPayloadSameProgram(caller, volunteerRequest) || !userAndPayloadSameInstitution(caller, volunteerRequest))
   ) {
     throw new AuthorizationError('Coordinator cant create request for other program or institution');
   }
-  if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, payload)) {
+  if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, volunteerRequest)) {
     throw new AuthorizationError('Manager cant create request for other program');
   }
-  payload['status'] = RequestStatus.SENT;
-  return volunteerRequestRepository.save(payload);
+  volunteerRequest['status'] = RequestStatus.SENT;
+  return volunteerRequestRepository.save(volunteerRequest);
 };
 
+// add update dto to handle skill changes
 export const updateVolunteerRequest = async (
   id: number,
-  volunteerRequestInfo: Partial<VolunteerRequest>,
+  volunteerRequestInfo: UpdateVolunteerRequestDTO,
   caller: userDecoded
 ): Promise<UpdateResult> => {
   if (!id) throw new BadRequestError('Missing Id to update volunteer request by');
@@ -61,9 +74,20 @@ export const updateVolunteerRequest = async (
   if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, targetVolunteerRequest)) {
     throw new AuthorizationError('Manager cant update request for other program');
   }
-  const payload = validateSchema(updateVolunteerRequestSchema, volunteerRequestInfo);
-  payload['updatedAt'] = new Date();
-  return volunteerRequestRepository.update({ id }, payload);
+  const validatedDTO = validateSchema(updateVolunteerRequestSchema, volunteerRequestInfo);
+  const updatePayload = mapUpdateVolunteerRequestDtoToDomain(validatedDTO);
+  updatePayload['updatedAt'] = new Date();
+  // handle skill insert independently because typeorm causes errors if its inside the update statement
+  if (validatedDTO.skills) {
+    await skillToVolunteerRequestRepository.delete({ volunteerRequestId: id });
+    await skillToVolunteerRequestRepository.save(
+      validatedDTO.skills.map(skill => ({
+        skillId: skill,
+        volunteerRequestId: id
+      }))
+    );
+  }
+  return volunteerRequestRepository.update({ id }, { ...updatePayload, skillToVolunteerRequest: undefined });
 };
 
 export const assignVolunteerToRequest = async (userId: string, volunteerRequestId: number): Promise<void> => {

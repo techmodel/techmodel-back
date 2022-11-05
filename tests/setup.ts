@@ -6,7 +6,7 @@ chai.use(chaiPromised);
 
 import * as jwt from 'jsonwebtoken';
 import { appDataSource } from '../src/dataSource';
-import { Program, User, VolunteerRequest } from '../src/models';
+import { Program, Skill, User, VolunteerRequest } from '../src/models';
 import { removeSeed } from './seed';
 import { JWT_SECRET } from '../src/config';
 import {
@@ -18,6 +18,7 @@ import {
   volunteer1,
   volunteer3WithoutMappings
 } from './mock';
+import { ReturnVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
 
 before(async () => {
   await appDataSource.initialize();
@@ -47,22 +48,50 @@ export const createTestJwt = (user: User): string => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
 };
 
-export const expectedVolunteerRequest = (vr: VolunteerRequest, program: Program, currentVolunteers: number): any => {
-  const returnedVolunteerRequest = {
-    ...vr,
+export const expectedVolunteerRequest = (
+  vr: VolunteerRequest,
+  program: Program,
+  currentVolunteers: number,
+  skills?: Skill[],
+  volunteers?: User[]
+): ReturnVolunteerRequestDTO => {
+  const returnedVolunteerRequest: ReturnVolunteerRequestDTO = {
+    id: vr.id,
     createdAt: vr.createdAt.toISOString(),
     updatedAt: vr.updatedAt.toISOString(),
+    name: vr.name,
+    audience: vr.audience,
+    isPhysical: vr.isPhysical,
+    description: vr.description,
     startDate: vr.startDate.toISOString(),
-    startTime: vr.startTime.toISOString(),
     endDate: vr.endDate.toISOString(),
-    skillToVolunteerRequest: vr.skillToVolunteerRequest || [],
+    duration: vr.duration,
+    startTime: vr.startTime.toISOString(),
+    totalVolunteers: vr.totalVolunteers,
     currentVolunteers: currentVolunteers || 0,
+    status: vr.status,
+    institutionId: vr.institutionId,
+    language: vr.language,
     program: {
       id: program.id,
       name: program.name,
       description: program.description
     }
   };
+  if (skills) {
+    returnedVolunteerRequest.skills = skills.map(skill => ({ id: skill.id, name: skill.name, type: skill.type }));
+  }
+  if (volunteers) {
+    returnedVolunteerRequest.volunteers = volunteers.map(volunteer => ({
+      id: volunteer.id,
+      email: volunteer.email,
+      phone: volunteer.phone,
+      firstName: volunteer.firstName,
+      lastName: volunteer.lastName,
+      userType: volunteer.userType,
+      companyName: volunteer.company.name
+    }));
+  }
   return returnedVolunteerRequest;
 };
 

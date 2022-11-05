@@ -62,7 +62,8 @@ export const updateVolunteerRequestSchema = Joi.object({
   duration: Joi.string(),
   startTime: Joi.date().min(subMinutes(new Date(), 1)),
   totalVolunteers: Joi.number().min(1),
-  language: Joi.string().valid(...Object.values(Language))
+  language: Joi.string().valid(...Object.values(Language)),
+  skills: Joi.array().items(Joi.number())
 });
 
 export const createVolunteerRequestSchema = Joi.object({
@@ -90,7 +91,8 @@ export const createVolunteerRequestSchema = Joi.object({
     .valid(...Object.values(Language))
     .required(),
   programId: Joi.number().required(),
-  institutionId: Joi.number().required()
+  institutionId: Joi.number().required(),
+  skills: Joi.array().items(Joi.number())
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {

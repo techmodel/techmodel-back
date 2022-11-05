@@ -53,7 +53,7 @@ describe('register', function() {
   this.beforeEach(async function() {
     sandbox = sinon.createSandbox();
     // disable logging
-    // sandbox.stub(logger);
+    sandbox.stub(logger);
     // seed db
     await seed({
       cities: [city1, city2],
