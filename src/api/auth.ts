@@ -27,7 +27,7 @@ router.get('/login', verifyGoogleAuthToken, async (req: Request, res: Response, 
     const userId = req.cookies.userId;
     const loginResponse = await login(userId);
     const returnToUrl = loginResponse.isFound ? req.cookies['return-to-login'] : req.cookies['return-to-register'];
-    res.cookie('userToken', loginResponse.userToken);
+    res.cookie('userToken', loginResponse);
     res.redirect(returnToUrl);
   } catch (e) {
     next(e);
