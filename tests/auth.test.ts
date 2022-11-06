@@ -4,7 +4,6 @@ import request from 'supertest';
 import logger from '../src/logger';
 import { User, UserType } from '../src/models';
 import { userRepository } from '../src/repos';
-import app from '../src/server/server';
 import {
   city1,
   city2,
@@ -27,6 +26,8 @@ import {
   programManager2Jwt,
   volunteer1Jwt
 } from './setup';
+import * as middlewares from '../src/api/middlewares';
+let app: Express.Application;
 
 const newUserPayload = {
   id: 'testid123143141234123543521351134',
@@ -54,6 +55,11 @@ describe('register', function() {
     sandbox = sinon.createSandbox();
     // disable logging
     sandbox.stub(logger);
+    // disable verifyGoogleAuthToken
+    const verifyGoogleAuthTokenStub = sandbox.stub(middlewares, 'verifyGoogleAuthToken').callsFake(async (req, res, next) => {
+      next() 
+    });
+    app = require('../src/server/server').default;    
     // seed db
     await seed({
       cities: [city1, city2],
@@ -83,7 +89,7 @@ describe('register', function() {
       const res = await request(app)
         .post(`/api/v1/auth/register`)
         .send({ user: newUserPayload });
-      expect(res.status).to.eq(200);
+      expect(res.status).to.eq(302);
       const newCreatedUser = (await userRepository.findOneBy({ id: newUserPayload.id })) as User;
       expect(newCreatedUser.userType).to.eq(UserType.PENDING);
     });
@@ -92,7 +98,7 @@ describe('register', function() {
       const res = await request(app)
         .post(`/api/v1/auth/register`)
         .send({ user: newUserPayload });
-      expect(res.status).to.eq(200);
+      expect(res.status).to.eq(302);
       const pendingCoordinatorsRes = await request(app)
         .get(`/api/v1/programs/${program1.id}/pending-coordinators`)
         .set('Authorization', `Bearer ${programManager1Jwt}`);
