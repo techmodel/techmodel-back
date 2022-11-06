@@ -2,11 +2,14 @@ import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { serializeError } from 'serialize-error';
 import { userDecoded } from '../app/user';
-import { JWT_SECRET } from '../config';
+import { JWT_SECRET, AUTH_CLIENT_ID, AUTH_CLIENT_SECRET, CLIENT_URL } from '../config';
 import { AppError, AuthenticationError, AuthorizationError } from '../exc';
 import logger from '../logger';
 import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(AUTH_CLIENT_ID, AUTH_CLIENT_SECRET, CLIENT_URL);
 
 const tokenValidation = (token: string): userDecoded | null => {
   try {
@@ -67,5 +70,26 @@ export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: 
   } else {
     res.status(500).json('Unknown Error');
     logger.error(serializeError(err));
+  }
+};
+
+export const verifyGoogleAuthToken = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const authCode = req.cookies['user-auth'];
+    if (!authCode) {
+      throw new AuthenticationError('No auth cookie found');
+    }
+    const { tokens } = await client.getToken(authCode);
+    const ticket = await client.verifyIdToken({
+      idToken: tokens.id_token!,
+      audience: AUTH_CLIENT_ID
+    });
+    const payload = ticket.getPayload()!;
+    const userId = payload['sub'];
+    req.cookies['userId'] = userId;
+  } catch (err) {
+    next(err);
+  } finally {
+    next();
   }
 };
