@@ -19,6 +19,14 @@ import {
   volunteer3WithoutMappings
 } from './mock';
 import { ReturnVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
+import sinon from 'sinon';
+import * as middlewares from "../src/api/middlewares";
+
+
+// disable verifyGoogleAuthToken
+sinon
+.stub(middlewares, 'verifyGoogleAuthToken')
+.callsFake(async (req, res, next) => next())
 
 before(async () => {
   await appDataSource.initialize();

@@ -6,7 +6,7 @@ import { subMinutes } from 'date-fns';
 
 const onlyNull = Joi.valid(null);
 const schemaId = Joi.string()
-  .min(30)
+  .min(20)
   .required();
 const schemaUserType = Joi.string().valid(...Object.values(UserType));
 const schemaCompanyId = Joi.when('userType', {

@@ -4,6 +4,7 @@ import request from 'supertest';
 import logger from '../src/logger';
 import { User, UserType } from '../src/models';
 import { userRepository } from '../src/repos';
+import app from "../src/server/server";
 import {
   city1,
   city2,
@@ -14,20 +15,12 @@ import {
   program1,
   program2,
   programCoordinator1,
-  programManager1,
-  volunteer1
+  programManager1
 } from './mock';
 import { removeSeed, seed } from './seed';
 import {
-  createTestJwt,
-  HTTPError,
-  programCoordinator1Jwt,
-  programManager1Jwt,
-  programManager2Jwt,
-  volunteer1Jwt
+  HTTPError, programManager1Jwt
 } from './setup';
-import * as middlewares from '../src/api/middlewares';
-let app: Express.Application;
 
 const newUserPayload = {
   id: 'testid123143141234123543521351134',
@@ -55,13 +48,6 @@ describe('register', function() {
     sandbox = sinon.createSandbox();
     // disable logging
     sandbox.stub(logger);
-    // disable verifyGoogleAuthToken
-    const verifyGoogleAuthTokenStub = sandbox
-      .stub(middlewares, 'verifyGoogleAuthToken')
-      .callsFake(async (req, res, next) => {
-        next();
-      });
-    app = require('../src/server/server').default;
     // seed db
     await seed({
       cities: [city1, city2],
