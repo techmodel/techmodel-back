@@ -14,6 +14,7 @@ jobs:
       SQL_DB_PASSWORD: ${{secrets.SQL_DB_PASSWORD}}
       SQL_DB_DATABASE: ${{secrets.SQL_DB_DATABASE}}
       JWT_SECRET: ${{secrets.JWT_SECRET}}
+      AUTH_CLIENT_SECRET: asdasgf # it doesnt really matter, just fill in so the app wont crash
     steps:
 
       - name: Check out code
@@ -43,7 +44,6 @@ jobs:
       SQL_DB_PASSWORD: ${{secrets.DEV_SQL_DB_PASSWORD}}
       SQL_DB_DATABASE: ${{secrets.DEV_SQL_DB_DATABASE}}
       JWT_SECRET: test # it doesnt really matter, just fill in so the app wont crash
-      CLIENT_URL: http://localhost:3000 # it doesnt really matter, just fill in so the app wont crash
       AUTH_CLIENT_SECRET: asdasgf # it doesnt really matter, just fill in so the app wont crash
     
     if: success() && github.ref == 'refs/heads/dev'

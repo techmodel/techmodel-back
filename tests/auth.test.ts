@@ -56,10 +56,12 @@ describe('register', function() {
     // disable logging
     sandbox.stub(logger);
     // disable verifyGoogleAuthToken
-    const verifyGoogleAuthTokenStub = sandbox.stub(middlewares, 'verifyGoogleAuthToken').callsFake(async (req, res, next) => {
-      next() 
-    });
-    app = require('../src/server/server').default;    
+    const verifyGoogleAuthTokenStub = sandbox
+      .stub(middlewares, 'verifyGoogleAuthToken')
+      .callsFake(async (req, res, next) => {
+        next();
+      });
+    app = require('../src/server/server').default;
     // seed db
     await seed({
       cities: [city1, city2],
