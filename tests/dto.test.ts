@@ -99,11 +99,15 @@ describe('DTOs', function() {
       expect(domainVr.description).to.eq(volutneerRequestDTO1.description);
       expect(domainVr.startDate).to.eq(volutneerRequestDTO1.startDate);
       expect(domainVr.endDate).to.eq(volutneerRequestDTO1.endDate);
-      expect(domainVr.duration).to.eq(volutneerRequestDTO1.duration);
+      expect(domainVr.durationTimeAmount).to.eq(volutneerRequestDTO1.durationTimeAmount);
+      expect(domainVr.durationTimeUnit).to.eq(volutneerRequestDTO1.durationTimeUnit);
+      expect(domainVr.frequencyTimeAmount).to.eq(volutneerRequestDTO1.frequencyTimeAmount);
+      expect(domainVr.frequencyTimeUnit).to.eq(volutneerRequestDTO1.frequencyTimeUnit);
       expect(domainVr.startTime).to.eq(volutneerRequestDTO1.startTime);
       expect(domainVr.totalVolunteers).to.eq(volutneerRequestDTO1.totalVolunteers);
       expect(domainVr.institutionId).to.eq(volutneerRequestDTO1.institutionId);
       expect(domainVr.programId).to.eq(volutneerRequestDTO1.programId);
+      expect(domainVr.creatorId).to.eq(volutneerRequestDTO1.creatorId);
       expect(domainVr.skillToVolunteerRequest).to.containSubset(
         volutneerRequestDTO1.skills?.map(skillId => ({ skillId }))
       );
@@ -120,7 +124,10 @@ describe('DTOs', function() {
       expect(returnDTO.description).to.eq(returnVolunteerRequestMock.description);
       expect(returnDTO.startDate).to.eq(returnVolunteerRequestMock.startDate.toISOString());
       expect(returnDTO.endDate).to.eq(returnVolunteerRequestMock.endDate.toISOString());
-      expect(returnDTO.duration).to.eq(returnVolunteerRequestMock.duration);
+      expect(returnDTO.durationTimeAmount).to.eq(returnVolunteerRequestMock.durationTimeAmount);
+      expect(returnDTO.durationTimeUnit).to.eq(returnVolunteerRequestMock.durationTimeUnit);
+      expect(returnDTO.frequencyTimeAmount).to.eq(returnVolunteerRequestMock.frequencyTimeAmount);
+      expect(returnDTO.frequencyTimeUnit).to.eq(returnVolunteerRequestMock.frequencyTimeUnit);
       expect(returnDTO.startTime).to.eq(returnVolunteerRequestMock.startTime.toISOString());
       expect(returnDTO.totalVolunteers).to.eq(returnVolunteerRequestMock.totalVolunteers);
       expect(returnDTO.status).to.eq(returnVolunteerRequestMock.status);
@@ -150,7 +157,10 @@ describe('DTOs', function() {
       expect(returnDTO.description).to.eq(returnVolunteerRequestWithVolunteersMock.description);
       expect(returnDTO.startDate).to.eq(returnVolunteerRequestWithVolunteersMock.startDate.toISOString());
       expect(returnDTO.endDate).to.eq(returnVolunteerRequestWithVolunteersMock.endDate.toISOString());
-      expect(returnDTO.duration).to.eq(returnVolunteerRequestWithVolunteersMock.duration);
+      expect(returnDTO.durationTimeAmount).to.eq(returnVolunteerRequestWithVolunteersMock.durationTimeAmount);
+      expect(returnDTO.durationTimeUnit).to.eq(returnVolunteerRequestWithVolunteersMock.durationTimeUnit);
+      expect(returnDTO.frequencyTimeAmount).to.eq(returnVolunteerRequestWithVolunteersMock.frequencyTimeAmount);
+      expect(returnDTO.frequencyTimeUnit).to.eq(returnVolunteerRequestWithVolunteersMock.frequencyTimeUnit);
       expect(returnDTO.startTime).to.eq(returnVolunteerRequestWithVolunteersMock.startTime.toISOString());
       expect(returnDTO.totalVolunteers).to.eq(returnVolunteerRequestWithVolunteersMock.totalVolunteers);
       expect(returnDTO.status).to.eq(returnVolunteerRequestWithVolunteersMock.status);

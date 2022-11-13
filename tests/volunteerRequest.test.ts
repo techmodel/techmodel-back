@@ -44,7 +44,7 @@ import {
   volunteer1Jwt,
   volunteer3WithoutMappingsJwt
 } from './setup';
-import { VolunteerRequest } from '../src/models';
+import { Audience, VolunteerRequest } from '../src/models';
 import { CreateVolunteerRequestDTO, UpdateVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
 
 const vrToCreatePayload = (vr: CreateVolunteerRequestDTO): Partial<CreateVolunteerRequestDTO> => ({
@@ -54,12 +54,16 @@ const vrToCreatePayload = (vr: CreateVolunteerRequestDTO): Partial<CreateVolunte
   description: vr.description,
   startDate: vr.startDate,
   endDate: vr.endDate,
-  duration: vr.duration,
+  durationTimeAmount: vr.durationTimeAmount,
+  durationTimeUnit: vr.durationTimeUnit,
+  frequencyTimeAmount: vr.frequencyTimeAmount,
+  frequencyTimeUnit: vr.frequencyTimeUnit,
   startTime: vr.startTime,
   totalVolunteers: vr.totalVolunteers,
   language: vr.language,
   institutionId: vr.institutionId,
   programId: vr.programId,
+  creatorId: vr.creatorId,
   skills: vr.skills
 });
 
@@ -353,9 +357,9 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .post(`/api/v1/volunteer-requests`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
-        .send({ volunteerRequest: { ...createPayload, creatorId: 'test' } });
+        .send({ volunteerRequest: { ...createPayload, blah: 'test' } });
       expect(res.status).to.eq(422);
-      expect((res.error as HTTPError).text).to.eq(`Error validating schema, "creatorId" is not allowed`);
+      expect((res.error as HTTPError).text).to.eq(`Error validating schema, "blah" is not allowed`);
     });
 
     it('successfully creates volunteer request', async () => {
@@ -374,6 +378,7 @@ describe('volunteerRequest', function() {
       expect(newVolunteerRequest.programId).to.eq(volunteerRequestToCreate.programId);
       expect(newVolunteerRequest);
       expect(newVolunteerRequest.status).to.eq('sent');
+      expect(newVolunteerRequest.creatorId).to.eq(volunteerRequestToCreate.creatorId);
       expect(newVolunteerRequest.skillToVolunteerRequest[0].skillId).to.eq(
         (volunteerRequestToCreate.skills as number[])[0]
       );
@@ -381,7 +386,7 @@ describe('volunteerRequest', function() {
   });
 
   describe('Update volunteer request', () => {
-    const volunteerRequestUpdateData: UpdateVolunteerRequestDTO = { audience: 10, skills: [skill1.id] };
+    const volunteerRequestUpdateData: UpdateVolunteerRequestDTO = { audience: Audience.MEDIUM, skills: [skill1.id] };
     it('returns 400 when id is missing from request or equals 0', async () => {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/0`)

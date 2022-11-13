@@ -5,6 +5,9 @@ import { SkillToVolunteerRequest } from './skillToVolunteerRequest';
 import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
 import { Institution } from './institution';
 import { Program } from './program';
+import { TimeUnit } from './timeUnit';
+import { Audience } from './audience';
+import { User } from './user';
 
 @Entity()
 export class VolunteerRequest {
@@ -21,7 +24,7 @@ export class VolunteerRequest {
   name: string;
 
   @Column()
-  audience: number;
+  audience: Audience;
 
   @Column()
   isPhysical: boolean;
@@ -36,7 +39,16 @@ export class VolunteerRequest {
   endDate: Date;
 
   @Column()
-  duration: string; // TODO: decide on the type of the column
+  durationTimeAmount: number;
+
+  @Column()
+  durationTimeUnit: TimeUnit;
+
+  @Column()
+  frequencyTimeAmount: number;
+
+  @Column()
+  frequencyTimeUnit: TimeUnit;
 
   @Column({ type: 'datetime' })
   startTime: Date;
@@ -55,6 +67,9 @@ export class VolunteerRequest {
 
   @Column()
   programId: number;
+
+  @Column()
+  creatorId: string;
 
   @ManyToOne(
     () => Institution,
@@ -94,4 +109,11 @@ export class VolunteerRequest {
     { cascade: true }
   )
   skillToVolunteerRequest: SkillToVolunteerRequest[];
+
+  @ManyToOne(
+    () => User,
+    user => user.createdVolunteerRequests
+  )
+  @JoinColumn({ foreignKeyConstraintName: 'FK_volunteer_request_created_by_id' })
+  creator: User;
 }

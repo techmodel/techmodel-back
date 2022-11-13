@@ -11,6 +11,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
       .leftJoinAndSelect('vr.program', 'program')
+      .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
       .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
       // filter out requests that are full
@@ -41,6 +42,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
       .leftJoinAndSelect('vr.program', 'program')
+      .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
       .andWhere('vr.startDate > :startDate', { startDate })
       .andWhere(`vr.programId = :programId`, { programId });

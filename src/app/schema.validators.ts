@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { ObjectValidationError } from '../exc';
-import { Language } from '../models';
+import { Audience, Language, TimeUnit } from '../models';
 import { UserType } from '../models/userType';
 import { subMinutes } from 'date-fns';
 
@@ -28,6 +28,8 @@ const schemaFirstName = Joi.string().min(2);
 const schemaLastName = Joi.string().min(2);
 const schemaPhone = Joi.string().min(10);
 const schemaEmail = Joi.string().email();
+const schemaTimeUnit = Joi.string().valid(...Object.values(TimeUnit));
+const schemaAudience = Joi.string().valid(...Object.values(Audience));
 
 export const createUserSchema = Joi.object({
   id: schemaId,
@@ -52,14 +54,17 @@ export const selfUpdateUserSchema = Joi.object({
 
 export const updateVolunteerRequestSchema = Joi.object({
   name: Joi.string().min(2),
-  audience: Joi.number().min(2),
+  audience: schemaAudience,
   isPhysical: Joi.boolean(),
   description: Joi.string()
     .min(2)
     .max(100),
   startDate: Joi.date().greater(new Date()),
   endDate: Joi.date().min(Joi.ref('startDate')),
-  duration: Joi.string(),
+  durationTimeAmount: Joi.number(),
+  durationTimeUnit: schemaTimeUnit,
+  frequencyTimeAmount: Joi.number(),
+  frequencyTimeUnit: schemaTimeUnit,
   startTime: Joi.date().min(subMinutes(new Date(), 1)),
   totalVolunteers: Joi.number().min(1),
   language: Joi.string().valid(...Object.values(Language)),
@@ -70,9 +75,7 @@ export const createVolunteerRequestSchema = Joi.object({
   name: Joi.string()
     .min(2)
     .required(),
-  audience: Joi.number()
-    .min(2)
-    .required(),
+  audience: schemaAudience,
   isPhysical: Joi.boolean().required(),
   description: Joi.string()
     .min(2)
@@ -80,7 +83,10 @@ export const createVolunteerRequestSchema = Joi.object({
     .required(),
   startDate: Joi.date().greater(new Date()),
   endDate: Joi.date().min(Joi.ref('startDate')),
-  duration: Joi.string(),
+  durationTimeAmount: Joi.number(),
+  durationTimeUnit: schemaTimeUnit,
+  frequencyTimeAmount: Joi.number(),
+  frequencyTimeUnit: schemaTimeUnit,
   startTime: Joi.date()
     .min(subMinutes(new Date(), 1))
     .required(),
@@ -92,6 +98,9 @@ export const createVolunteerRequestSchema = Joi.object({
     .required(),
   programId: Joi.number().required(),
   institutionId: Joi.number().required(),
+  creatorId: Joi.string()
+    .min(20)
+    .required(),
   skills: Joi.array().items(Joi.number())
 });
 

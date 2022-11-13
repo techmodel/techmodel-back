@@ -73,17 +73,31 @@ export const expectedVolunteerRequest = (
     description: vr.description,
     startDate: vr.startDate.toISOString(),
     endDate: vr.endDate.toISOString(),
-    duration: vr.duration,
+    durationTimeAmount: vr.durationTimeAmount,
+    durationTimeUnit: vr.durationTimeUnit,
+    frequencyTimeAmount: vr.frequencyTimeAmount,
+    frequencyTimeUnit: vr.frequencyTimeUnit,
     startTime: vr.startTime.toISOString(),
     totalVolunteers: vr.totalVolunteers,
     currentVolunteers: currentVolunteers || 0,
     status: vr.status,
     institutionId: vr.institutionId,
     language: vr.language,
+    creatorId: vr.creatorId,
     program: {
       id: program.id,
       name: program.name,
       description: program.description
+    },
+    creator: {
+      id: vr.creator.id,
+      email: vr.creator.email,
+      phone: vr.creator.phone,
+      firstName: vr.creator.firstName,
+      lastName: vr.creator.lastName,
+      userType: vr.creator.userType,
+      programId: vr.creator.programId!,
+      institutionId: vr.creator.institutionId
     }
   };
   if (skills) {
