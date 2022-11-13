@@ -114,6 +114,6 @@ export class VolunteerRequest {
     () => User,
     user => user.createdVolunteerRequests
   )
-  @JoinColumn({ foreignKeyConstraintName: 'FK_volunteer_request_created_by_id' })
+  @JoinColumn({ foreignKeyConstraintName: 'FK_volunteer_request_creator_id' })
   creator: User;
 }

@@ -182,6 +182,8 @@
  *           type: string
  *         creatorId:
  *           type: string
+ *         creator:
+ *           $ref: '#/components/schemas/creator'
  *         skills:
  *           type: array
  *           items:
@@ -253,6 +255,27 @@
  *         createdAt:
  *           type: string
  *           format: date-time
+ *         email:
+ *           type: string
+ *         phone:
+ *           type: string
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         userType:
+ *           type: string
+ *         institutionId:
+ *           type: string
+ *         programId:
+ *           type: string
+ *         companyId:
+ *           type: string
+ *     creator:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
  *         email:
  *           type: string
  *         phone:

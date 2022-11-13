@@ -99,7 +99,7 @@ export const volunteer1 = {
   email: 'volunteer1@gmail.com',
   phone: '111111111',
   userType: UserType.VOLUNTEER,
-  companyId: company1.id,
+  companyId: company1.id
 } as User;
 
 export const volunteer2 = {
