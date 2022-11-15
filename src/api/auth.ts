@@ -1,6 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { login, register } from '../app/user';
+import { CLIENT_URL } from '../config';
 import { User } from '../models';
+import { verifyGoogleAuthToken } from './middlewares';
 
 const router = Router();
 // TODO: add swagger description of the inputs required
@@ -8,7 +10,7 @@ const router = Router();
  * @openapi
  * paths:
  *   /api/v1/auth/login:
- *     post:
+ *     get:
  *       operationId: login
  *       responses:
  *         '200':
@@ -21,10 +23,13 @@ const router = Router();
  *           description: User ID of the user that is trying to log in
  *           required: true
  */
-router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/login', verifyGoogleAuthToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.body.userId as string;
-    res.json(await login(userId));
+    const { userId } = req.cookies;
+    const loginResponse = await login(userId);
+    const returnToUrl = loginResponse.isFound ? req.cookies['return-to-login'] : req.cookies['return-to-register'];
+    res.cookie('user-data', loginResponse);
+    res.redirect(returnToUrl);
   } catch (e) {
     next(e);
   }
@@ -52,11 +57,14 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
  *           required: true
  *           description: new user creation payload
  */
-router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/register', verifyGoogleAuthToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    //TODO: Validate google auth jwt
-    const user = req.body.user as Partial<User>;
-    res.json(await register(user));
+    const userToCreate = req.body.user as Partial<User>;
+    const { userId } = req.cookies;
+    const user = { id: userId, ...userToCreate };
+    const loginResponse = await register(user);
+    res.cookie('user-data', loginResponse);
+    res.redirect(CLIENT_URL);
   } catch (e) {
     next(e);
   }

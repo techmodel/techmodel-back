@@ -32,3 +32,5 @@ export const SQL_INSERT_RETRY_INTERVAL_MS = parseInt(getEnv('SQL_INSERT_RETRY_IN
 export const CLIENT_URL = getEnv('CLIENT_URL', `localhost:3000`);
 export const JWT_SECRET = getEnv('JWT_SECRET');
 export const API_PREFIX = '/api/v1';
+export const AUTH_CLIENT_ID = '1093567658034-vuvf95kebbmcf8dcrapb5fnue3bg3nq5.apps.googleusercontent.com';
+export const AUTH_CLIENT_SECRET = getEnv('AUTH_CLIENT_SECRET');
