@@ -44,7 +44,6 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
-      .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('vr.volunteerRequestToVolunteer', 'vrtv')
       .leftJoinAndSelect('vrtv.volunteer', 'vol')
       .leftJoinAndSelect('vol.company', 'company')
