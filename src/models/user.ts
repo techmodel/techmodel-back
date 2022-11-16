@@ -70,4 +70,10 @@ export class User {
     volunteerRequestToVolunteer => volunteerRequestToVolunteer.volunteer
   )
   volunteerRequestToVolunteer?: VolunteerRequestToVolunteer[];
+
+  @OneToMany(
+    () => VolunteerRequest,
+    volunteerRequest => volunteerRequest.creator
+  )
+  createdVolunteerRequests: VolunteerRequest[];
 }

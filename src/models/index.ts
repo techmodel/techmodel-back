@@ -15,3 +15,5 @@ export { RequestStatus } from './volunteerRequestStatus';
 export { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
 export { PendingProgramManager } from './pendingProgramManager';
 export { PendingProgramCoordinator } from './pendingProgramCoordinator';
+export { TimeUnit } from './timeUnit';
+export { Audience } from './audience';

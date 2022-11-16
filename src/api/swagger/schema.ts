@@ -63,7 +63,13 @@
  *         endDate:
  *           type: string
  *           format: date-time
- *         duration:
+ *         durationTimeAmount:
+ *           type: number
+ *         durationTimeUnit:
+ *           type: string
+ *         frequencyTimeAmount:
+ *           type: number
+ *         frequencyTimeUnit:
  *           type: string
  *         startTime:
  *           type: string
@@ -93,7 +99,13 @@
  *         endDate:
  *           type: string
  *           format: date-time
- *         duration:
+ *         durationTimeAmount:
+ *           type: number
+ *         durationTimeUnit:
+ *           type: string
+ *         frequencyTimeAmount:
+ *           type: number
+ *         frequencyTimeUnit:
  *           type: string
  *         startTime:
  *           type: string
@@ -106,6 +118,8 @@
  *           type: number
  *         programId:
  *           type: number
+ *         creatorId:
+ *           type: string
  *         skills:
  *           type: array
  *           items:
@@ -119,6 +133,7 @@
  *         - language
  *         - institutionId
  *         - programId
+ *         - creatorId
  *     volunteerRequest:
  *       type: object
  *       properties:
@@ -141,7 +156,13 @@
  *         endDate:
  *           type: string
  *           format: date-time
- *         duration:
+ *         durationTimeAmount:
+ *           type: number
+ *         durationTimeUnit:
+ *           type: string
+ *         frequencyTimeAmount:
+ *           type: number
+ *         frequencyTimeUnit:
  *           type: string
  *         startTime:
  *           type: string
@@ -159,6 +180,10 @@
  *           type: number
  *         language:
  *           type: string
+ *         creatorId:
+ *           type: string
+ *         creator:
+ *           $ref: '#/components/schemas/creator'
  *         skills:
  *           type: array
  *           items:
@@ -256,6 +281,27 @@
  *         createdAt:
  *           type: string
  *           format: date-time
+ *         email:
+ *           type: string
+ *         phone:
+ *           type: string
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         userType:
+ *           type: string
+ *         institutionId:
+ *           type: string
+ *         programId:
+ *           type: string
+ *         companyId:
+ *           type: string
+ *     creator:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
  *         email:
  *           type: string
  *         phone:

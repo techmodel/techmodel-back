@@ -1,4 +1,13 @@
-import { Language, RequestStatus, SkillToVolunteerRequest, VolunteerRequest } from '../../models';
+import {
+  Language,
+  RequestStatus,
+  SkillToVolunteerRequest,
+  VolunteerRequest,
+  TimeUnit,
+  Audience,
+  User
+} from '../../models';
+import { ReturnCreatorDTO } from './creator';
 import { ReturnProgramDTO } from './program';
 import { ReturnSkillDTO } from './skill';
 import { ReturnVolunteerDTO } from './volunteer';
@@ -6,18 +15,22 @@ import { ReturnVolunteerDTO } from './volunteer';
 export interface CreateVolunteerRequestDTO {
   createdAt: Date;
   name: string;
-  audience: number;
+  audience: Audience;
   isPhysical: boolean;
   description: string;
   startDate: Date;
   endDate: Date;
-  duration: string;
+  durationTimeAmount: number;
+  durationTimeUnit: TimeUnit;
+  frequencyTimeAmount: number;
+  frequencyTimeUnit: TimeUnit;
   startTime: Date;
   totalVolunteers: number;
   institutionId: number;
   programId: number;
   language: Language;
   skills?: number[];
+  creatorId: string;
 }
 
 export type UpdateVolunteerRequestDTO = Partial<CreateVolunteerRequestDTO>;
@@ -31,12 +44,16 @@ export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestD
   domainVr.description = vr.description;
   domainVr.startDate = vr.startDate;
   domainVr.endDate = vr.endDate;
-  domainVr.duration = vr.duration;
+  domainVr.durationTimeAmount = vr.durationTimeAmount;
+  domainVr.durationTimeUnit = vr.durationTimeUnit;
+  domainVr.frequencyTimeAmount = vr.frequencyTimeAmount;
+  domainVr.frequencyTimeUnit = vr.frequencyTimeUnit;
   domainVr.startTime = vr.startTime;
   domainVr.totalVolunteers = vr.totalVolunteers;
   domainVr.institutionId = vr.institutionId;
   domainVr.language = vr.language;
   domainVr.programId = vr.programId;
+  domainVr.creatorId = vr.creatorId;
   if (vr.skills) {
     const skillsToVr: SkillToVolunteerRequest[] = vr.skills.map(skillId => {
       const skillToVr = new SkillToVolunteerRequest();
@@ -57,12 +74,15 @@ export interface ReturnVolunteerRequestDTO {
   createdAt: string;
   updatedAt: string;
   name: string;
-  audience: number;
+  audience: Audience;
   isPhysical: boolean;
   description: string;
   startDate: string;
   endDate: string;
-  duration: string;
+  durationTimeAmount: number;
+  durationTimeUnit: TimeUnit;
+  frequencyTimeAmount: number;
+  frequencyTimeUnit: TimeUnit;
   startTime: string;
   totalVolunteers: number;
   currentVolunteers: number;
@@ -70,6 +90,8 @@ export interface ReturnVolunteerRequestDTO {
   institutionId: number;
   program: ReturnProgramDTO;
   language: Language;
+  creatorId: string;
+  creator?: ReturnCreatorDTO;
   skills?: ReturnSkillDTO[];
   volunteers?: ReturnVolunteerDTO[];
 }
@@ -85,7 +107,10 @@ export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequ
     description: vr.description,
     startDate: vr.startDate.toISOString(),
     endDate: vr.endDate.toISOString(),
-    duration: vr.duration,
+    durationTimeAmount: vr.durationTimeAmount,
+    durationTimeUnit: vr.durationTimeUnit,
+    frequencyTimeAmount: vr.frequencyTimeAmount,
+    frequencyTimeUnit: vr.frequencyTimeUnit,
     startTime: vr.startTime.toISOString(),
     totalVolunteers: vr.totalVolunteers,
     currentVolunteers: vr.currentVolunteers,
@@ -96,7 +121,18 @@ export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequ
       name: vr.program.name,
       description: vr.program.description
     },
-    language: vr.language
+    language: vr.language,
+    creatorId: vr.creatorId,
+    creator: {
+      id: vr.creator.id,
+      email: vr.creator.email,
+      phone: vr.creator.phone,
+      firstName: vr.creator.firstName,
+      lastName: vr.creator.lastName,
+      userType: vr.creator.userType,
+      programId: vr.creator.programId!,
+      institutionId: vr.creator.institutionId
+    }
   };
   if (vr.skillToVolunteerRequest && vr.skillToVolunteerRequest.length > 0) {
     returnVolunteerRequestDTO.skills = vr.skillToVolunteerRequest.map(skillToRequest => ({

@@ -4,7 +4,7 @@ import request from 'supertest';
 import logger from '../src/logger';
 import { User, UserType } from '../src/models';
 import { userRepository } from '../src/repos';
-import app from "../src/server/server";
+import app from '../src/server/server';
 import {
   city1,
   city2,
@@ -18,9 +18,7 @@ import {
   programManager1
 } from './mock';
 import { removeSeed, seed } from './seed';
-import {
-  HTTPError, programManager1Jwt
-} from './setup';
+import { HTTPError, programManager1Jwt } from './setup';
 
 const newUserPayload = {
   id: 'testid123143141234123543521351134',

@@ -1,4 +1,5 @@
 import {
+  Audience,
   City,
   Company,
   Institution,
@@ -12,6 +13,7 @@ import {
   RequestStatus,
   Skill,
   SkillToVolunteerRequest,
+  TimeUnit,
   User,
   UserType,
   VolunteerRequest,
@@ -90,7 +92,7 @@ export const company2 = {
 } as Company;
 
 export const volunteer1 = {
-  id: ''.padEnd(36, 'a'),
+  id: ''.padEnd(20, 'a'),
   firstName: 'volunteer1',
   lastName: 'volunteer1',
   createdAt: TEST_DATE_20_06_2022,
@@ -101,7 +103,7 @@ export const volunteer1 = {
 } as User;
 
 export const volunteer2 = {
-  id: ''.padEnd(36, 'b'),
+  id: ''.padEnd(20, 'b'),
   firstName: 'volunteer2',
   lastName: 'volunteer2',
   createdAt: TEST_DATE_20_06_2022,
@@ -112,7 +114,7 @@ export const volunteer2 = {
 } as User;
 
 export const volunteer3WithoutMappings = {
-  id: ''.padEnd(36, 'c'),
+  id: ''.padEnd(20, 'c'),
   firstName: 'volunteer3WithoutMappings',
   lastName: 'volunteer3WithoutMappings',
   createdAt: TEST_DATE_20_06_2022,
@@ -123,7 +125,7 @@ export const volunteer3WithoutMappings = {
 } as User;
 
 export const programManager1 = {
-  id: ''.padEnd(36, 'd'),
+  id: ''.padEnd(20, 'd'),
   firstName: 'prgoramManager1',
   lastName: 'prgoramManager1',
   createdAt: TEST_DATE_20_06_2022,
@@ -134,7 +136,7 @@ export const programManager1 = {
 } as User;
 
 export const programManager2 = {
-  id: ''.padEnd(36, 'e'),
+  id: ''.padEnd(20, 'e'),
   firstName: 'prgoramManager2',
   lastName: 'prgoramManager2',
   createdAt: TEST_DATE_20_06_2022,
@@ -145,7 +147,7 @@ export const programManager2 = {
 } as User;
 
 export const programCoordinator1 = {
-  id: ''.padEnd(36, 'f'),
+  id: ''.padEnd(20, 'f'),
   firstName: 'programCoordinator1',
   lastName: 'programCoordinator1',
   createdAt: TEST_DATE_20_06_2022,
@@ -157,7 +159,7 @@ export const programCoordinator1 = {
 } as User;
 
 export const programCoordinator2 = {
-  id: ''.padEnd(36, 'g'),
+  id: ''.padEnd(20, 'g'),
   firstName: 'programCoordinator2',
   lastName: 'programCoordinator2',
   createdAt: TEST_DATE_20_06_2022,
@@ -169,7 +171,7 @@ export const programCoordinator2 = {
 } as User;
 
 export const programCoordinator3 = {
-  id: ''.padEnd(20, 'f'),
+  id: ''.padEnd(20, 'h'),
   firstName: 'programCoordinator3',
   lastName: 'programCoordinator3',
   createdAt: TEST_DATE_20_06_2022,
@@ -184,90 +186,115 @@ export const volunteerRequest1 = {
   id: 1,
   createdAt: TEST_DATE_28_06_2022,
   name: 'volunteerRequest1',
-  audience: 12,
+  audience: Audience.MEDIUM,
   isPhysical: true,
   description: 'volunteerRequest1 description',
   startDate: TEST_DATE_NOW_PLUS_TWO_DAYS,
   endDate: TEST_DATE_NOW_PLUS_FIVE_DAYS,
-  duration: '1 hour',
+  durationTimeAmount: 1,
+  durationTimeUnit: TimeUnit.HOURS,
+  frequencyTimeAmount: 1,
+  frequencyTimeUnit: TimeUnit.MONTHS,
   startTime: new Date(),
   totalVolunteers: 4,
   status: RequestStatus.SENT,
   institutionId: institution1.id,
   programId: programManager1.programId,
-  language: Language.ARABIC
+  language: Language.ARABIC,
+  creatorId: programManager1.id,
+  creator: programManager1
 } as VolunteerRequest;
 
 export const oldVolunteerRequest1 = {
   id: 2,
   createdAt: TEST_DATE_28_06_2022,
   name: 'oldVolunteerRequest1',
-  audience: 12,
+  audience: Audience.SMALL,
   isPhysical: true,
   description: 'oldVolunteerRequest1 description',
   startDate: TEST_DATE_NOW_MINUS_FIVE_DAYS,
   endDate: TEST_DATE_NOW_MINUS_TWO_DAYS,
-  duration: '2 hour',
+  durationTimeAmount: 2,
+  durationTimeUnit: TimeUnit.HOURS,
+  frequencyTimeAmount: 2,
+  frequencyTimeUnit: TimeUnit.WEEKS,
   startTime: new Date(),
   totalVolunteers: 4,
   status: RequestStatus.SENT,
   institutionId: institution1.id,
   programId: programManager1.programId,
-  language: Language.HEBREW
+  language: Language.HEBREW,
+  creatorId: programManager1.id,
+  creator: programManager1
 } as VolunteerRequest;
 
 export const fullVolunteerRequest1 = {
   id: 3,
   createdAt: TEST_DATE_28_06_2022,
   name: 'fullVolunteerRequest1',
-  audience: 2,
+  audience: Audience.SMALL,
   isPhysical: true,
   description: 'fullVolunteerRequest1 description',
   startDate: TEST_DATE_NOW_PLUS_TWO_DAYS,
   endDate: TEST_DATE_NOW_PLUS_FIVE_DAYS,
-  duration: '1 hour',
+  durationTimeAmount: 2,
+  durationTimeUnit: TimeUnit.HOURS,
+  frequencyTimeAmount: 2,
+  frequencyTimeUnit: TimeUnit.WEEKS,
   startTime: new Date(),
   totalVolunteers: 1,
   status: RequestStatus.SENT,
   institutionId: institution2.id,
   programId: programManager1.programId,
-  language: Language.RUSSIAN
+  language: Language.RUSSIAN,
+  creatorId: programManager1.id,
+  creator: programManager1
 } as VolunteerRequest;
 
 export const volunteerRequestToUpdate = {
   id: 5,
   createdAt: TEST_DATE_28_06_2022,
   name: 'volunteerRequestToUpdate',
-  audience: 12,
+  audience: Audience.SMALL,
   isPhysical: false,
   description: 'volunteerRequestToUpdate description',
   startDate: TEST_DATE_NOW_PLUS_TWO_DAYS,
   endDate: TEST_DATE_NOW_PLUS_FIVE_DAYS,
-  duration: '1 hour',
+  durationTimeAmount: 2,
+  durationTimeUnit: TimeUnit.HOURS,
+  frequencyTimeAmount: 2,
+  frequencyTimeUnit: TimeUnit.WEEKS,
   startTime: new Date(),
   totalVolunteers: 3,
   status: RequestStatus.SENT,
   institutionId: programCoordinator2.institutionId,
   programId: programCoordinator2.programId,
-  language: Language.HEBREW
+  language: Language.HEBREW,
+  creatorId: programCoordinator2.id,
+  creator: programCoordinator2
 } as VolunteerRequest;
 
 export const volunteerRequestInstitution1Program2 = {
   id: 324,
   createdAt: TEST_DATE_28_06_2022,
   name: 'volunteerRequestInstitution1Program2',
-  audience: 12,
+  audience: Audience.SMALL,
   isPhysical: true,
   description: 'volunteerRequestInstitution1Program2 description',
   startDate: TEST_DATE_NOW_PLUS_TWO_DAYS,
   endDate: TEST_DATE_NOW_PLUS_FIVE_DAYS,
-  duration: '1 hour',
+  durationTimeAmount: 2,
+  durationTimeUnit: TimeUnit.HOURS,
+  frequencyTimeAmount: 2,
+  frequencyTimeUnit: TimeUnit.WEEKS,
   startTime: new Date(),
   totalVolunteers: 4,
   status: RequestStatus.SENT,
   institutionId: institution2.id,
   programId: program2.id,
-  language: Language.ARABIC
+  language: Language.ARABIC,
+  creatorId: programManager2.id,
+  creator: programManager2
 } as VolunteerRequest;
 
 export const volunteerRequest1ToVolunteer1 = {
@@ -361,34 +388,43 @@ export const volunteerRequestToCreate = {
   id: 4,
   createdAt: TEST_DATE_28_06_2022,
   name: 'volunteerRequestToCreate',
-  audience: 12,
+  audience: Audience.XL,
   isPhysical: false,
   description: 'volunteerRequestToCreate description',
   startDate: TEST_DATE_NOW_PLUS_TWO_DAYS,
   endDate: TEST_DATE_NOW_PLUS_FIVE_DAYS,
-  duration: '1 hour',
+  durationTimeAmount: 30,
+  durationTimeUnit: TimeUnit.MINUTES,
+  frequencyTimeAmount: 5,
+  frequencyTimeUnit: TimeUnit.MONTHS,
   startTime: new Date(),
   totalVolunteers: 3,
   status: RequestStatus.SENT,
   institutionId: institution1.id,
   programId: programManager1.programId,
   language: Language.HEBREW,
-  skills: [skill1.id]
+  skills: [skill1.id],
+  creatorId: programManager1.id,
+  creator: programManager1
 } as CreateVolunteerRequestDTO;
 
 export const volutneerRequestDTO1: CreateVolunteerRequestDTO = {
   createdAt: new Date(),
   name: 'test5432',
-  audience: 14,
+  audience: Audience.LARGE,
   isPhysical: true,
   description: 'another test',
   startDate: new Date(),
   endDate: new Date(),
-  duration: 'sometime',
+  durationTimeAmount: 3,
+  durationTimeUnit: TimeUnit.HOURS,
+  frequencyTimeAmount: 3,
+  frequencyTimeUnit: TimeUnit.MONTHS,
   startTime: new Date(),
   totalVolunteers: 5,
   institutionId: institution1.id,
   programId: program1.id,
   language: Language.ARABIC,
-  skills: [skill1.id, skill2.id]
+  skills: [skill1.id, skill2.id],
+  creatorId: programCoordinator1.id
 };
