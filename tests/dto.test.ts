@@ -146,6 +146,16 @@ describe('DTOs', function() {
         }))
       );
       expect(returnDTO.volunteers).to.eq(undefined);
+      expect(returnDTO.creator).to.eqls({
+        id: returnVolunteerRequestMock.creator.id,
+        email: returnVolunteerRequestMock.creator.email,
+        phone: returnVolunteerRequestMock.creator.phone,
+        firstName: returnVolunteerRequestMock.creator.firstName,
+        lastName: returnVolunteerRequestMock.creator.lastName,
+        userType: returnVolunteerRequestMock.creator.userType,
+        programId: returnVolunteerRequestMock.creator.programId!,
+        institutionId: returnVolunteerRequestMock.creator.institutionId
+      });
     });
 
     it('returns the dto the right way, with volunteers if there are in the domain object', async function() {
@@ -189,6 +199,16 @@ describe('DTOs', function() {
           companyName: requestToVolunteer.volunteer.company.name
         }))
       );
+      expect(returnDTO.creator).to.eqls({
+        id: returnVolunteerRequestWithVolunteersMock.creator.id,
+        email: returnVolunteerRequestWithVolunteersMock.creator.email,
+        phone: returnVolunteerRequestWithVolunteersMock.creator.phone,
+        firstName: returnVolunteerRequestWithVolunteersMock.creator.firstName,
+        lastName: returnVolunteerRequestWithVolunteersMock.creator.lastName,
+        userType: returnVolunteerRequestWithVolunteersMock.creator.userType,
+        programId: returnVolunteerRequestWithVolunteersMock.creator.programId!,
+        institutionId: returnVolunteerRequestWithVolunteersMock.creator.institutionId
+      });
     });
   });
 
