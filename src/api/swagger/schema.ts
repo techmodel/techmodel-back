@@ -188,6 +188,15 @@
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/skill'
+ *     programVolunteerRequest:
+ *       description: volunteer request as a program manager/coordinator sees them
+ *       allOf:
+ *         - $ref: '#/components/schemas/volunteerRequest'
+ *         - properties:
+ *             volunteers:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/volunteer'
  *     skill:
  *       type: object
  *       properties:
@@ -196,6 +205,23 @@
  *         name:
  *           type: string
  *         type:
+ *           type: string
+ *     volunteer:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: number
+ *         email:
+ *           type: string
+ *         phone:
+ *           type: string
+ *         firstName:
+ *           type: string
+ *         lastName:
+ *           type: string
+ *         userType:
+ *           type: string
+ *         companyName:
  *           type: string
  *     city:
  *       type: object

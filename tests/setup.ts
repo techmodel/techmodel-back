@@ -97,10 +97,10 @@ export const expectedVolunteerRequest = (
       institutionId: vr.creator.institutionId
     }
   };
-  if (skills) {
+  if (skills && skills.length != 0) {
     returnedVolunteerRequest.skills = skills.map(skill => ({ id: skill.id, name: skill.name, type: skill.type }));
   }
-  if (volunteers) {
+  if (volunteers && volunteers.length != 0) {
     returnedVolunteerRequest.volunteers = volunteers.map(volunteer => ({
       id: volunteer.id,
       email: volunteer.email,

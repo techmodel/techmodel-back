@@ -54,7 +54,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/volunteerRequest'
+ *                 $ref: '#/components/schemas/programVolunteerRequest'
  *     parameters:
  *       - in: query
  *         name: startDate

@@ -141,14 +141,13 @@ describe('programs', function() {
           volunteerRequest1,
           program1,
           2,
-          [skill1, skill2]
-          // TODO: uncomment when working on returning data about volunteers for program requests
-          // [
-          //   { ...volunteer1, company: company1 },
-          //   { ...volunteer2, company: company2 }
-          // ]
+          [skill1, skill2],
+          [
+            { ...volunteer1, company: company1 },
+            { ...volunteer2, company: company2 }
+          ]
         ),
-        expectedVolunteerRequest(fullVolunteerRequest1, program1, 1)
+        expectedVolunteerRequest(fullVolunteerRequest1, program1, 1, [], [{ ...volunteer1, company: company1 }])
       ]);
     });
 
@@ -156,14 +155,18 @@ describe('programs', function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/volunteer-requests`)
         .set('Authorization', `Bearer ${programCoordinator2Jwt}`);
-      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, program1, 1)]);
+      expect(res.body).to.eql([
+        expectedVolunteerRequest(fullVolunteerRequest1, program1, 1, [], [{ ...volunteer1, company: company1 }])
+      ]);
     });
 
     it('returns volunteer requests that start after start date and related to a specific program if start date is passed', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/volunteer-requests?startDate=${new Date().toISOString()}`)
         .set('Authorization', `Bearer ${programCoordinator2Jwt}`);
-      expect(res.body).to.eql([expectedVolunteerRequest(fullVolunteerRequest1, program1, 1)]);
+      expect(res.body).to.eql([
+        expectedVolunteerRequest(fullVolunteerRequest1, program1, 1, [], [{ ...volunteer1, company: company1 }])
+      ]);
     });
 
     it('returns 403 when target program does not equal to user program', async function() {
