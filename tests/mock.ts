@@ -52,7 +52,7 @@ export const institution1 = {
   address: 'address1',
   locationId: location1.id,
   cityId: city1.id,
-  populationType: PopulationType.JEWISH_SECULAR,
+  populationType: PopulationType.SECULAR,
   institutionType: InstitutionType.ELEMENTARY
 } as Institution;
 
@@ -63,7 +63,7 @@ export const institution2 = {
   address: 'address2',
   locationId: location1.id,
   cityId: city2.id,
-  populationType: PopulationType.JEWISH_SECULAR,
+  populationType: PopulationType.SECULAR,
   institutionType: InstitutionType.HIGH
 } as Institution;
 
@@ -246,7 +246,7 @@ export const fullVolunteerRequest1 = {
   status: RequestStatus.SENT,
   institutionId: institution2.id,
   programId: programManager1.programId,
-  language: Language.RUSSIAN,
+  language: Language.FRENCH,
   creatorId: programManager1.id,
   creator: programManager1
 } as VolunteerRequest;
