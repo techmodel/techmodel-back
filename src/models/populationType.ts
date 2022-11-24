@@ -1,5 +1,5 @@
 export enum PopulationType {
-  ULTRA_ORTHODOX = 'ultra-orthodox',
+  ULTRA_ORTHODOX = 'ultra_orthodox',
   RELIGIOUS = 'religious',
   SECULAR = 'secular',
   ETHIOPIAN = 'ethiopian',
@@ -7,5 +7,6 @@ export enum PopulationType {
   DRUSE = 'druse',
   CHRISTIAN = 'christian',
   WOMEN = 'women',
-  SOLDIER = 'soldier'
+  SOLDIER = 'soldier',
+  OTHER = 'other'
 }

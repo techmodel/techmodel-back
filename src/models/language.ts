@@ -3,5 +3,6 @@ export enum Language {
   ENGLISH = 'english',
   ARABIC = 'arabic',
   FRENCH = 'french',
-  YIDDISH = 'yiddish'
+  YIDDISH = 'yiddish',
+  OTHER = 'other'
 }
