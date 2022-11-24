@@ -29,6 +29,7 @@ import {
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
 } from './tests/mock';
+import { readdir, readFile } from 'fs/promises';
 
 if (SQL_DB_HOST != 'localhost') {
   throw Error(
@@ -57,6 +58,7 @@ const InitDataSource = new DataSource({
 InitDataSource.initialize()
   .then(async () => {
     console.log('initialized with new schema');
+    const sqlFileNames = await readdir('src/sql');
     // initialize appDataSource to perform seeding
     await appDataSource.initialize();
     // seed db
@@ -73,6 +75,10 @@ InitDataSource.initialize()
       skills: [skill1, skill2],
       skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
     });
+    await Promise.all(sqlFileNames.map(async sqlFileName => {
+      const sqlFile = await readFile(`src/sql/${sqlFileName}`)
+      return await appDataSource.query(sqlFile.toString())
+    }))
     console.log('preformed seeding');
     throw 'done';
   })

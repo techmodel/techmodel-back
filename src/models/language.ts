@@ -2,5 +2,7 @@ export enum Language {
   HEBREW = 'hebrew',
   ENGLISH = 'english',
   ARABIC = 'arabic',
-  RUSSIAN = 'russian'
+  FRENCH = 'french',
+  YIDDISH = 'yiddish',
+  OTHER = 'other'
 }

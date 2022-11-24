@@ -1,9 +1,12 @@
 export enum PopulationType {
-  JEWISH_SECULAR = 'jewish_secular'
-  // TODO: add the rest of the values
-  // 'יהודית-חילונית',
-  // 'יהודית-דתית',
-  // 'יהודית-חרדית',
-  // 'ערבית',
-  // 'דרוזית'
+  ULTRA_ORTHODOX = 'ultra_orthodox',
+  RELIGIOUS = 'religious',
+  SECULAR = 'secular',
+  ETHIOPIAN = 'ethiopian',
+  ARAB = 'arab',
+  DRUSE = 'druse',
+  CHRISTIAN = 'christian',
+  WOMEN = 'women',
+  SOLDIER = 'soldier',
+  OTHER = 'other'
 }

@@ -18,7 +18,8 @@
     "lint": "eslint . --ext .ts --fix",
     "prettier-format": "prettier --config .prettierrc \"src/**/*.ts\" --write",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js --dataSource ./src/dataSource.ts",
-    "typeorm-dev": "./node_modules/dotenv-cli/cli.js npm run typeorm"
+    "typeorm-dev": "./node_modules/dotenv-cli/cli.js npm run typeorm",
+    "read-excel": "ts-node src/excel-reader.ts"
   },
   "repository": {
     "type": "git",
@@ -41,7 +42,8 @@
     "swagger-ui-express": "^4.4.0",
     "typeorm": "^0.3.7",
     "typescript": "^4.7.4",
-    "winston": "^3.7.2"
+    "winston": "^3.7.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
