@@ -1,13 +1,14 @@
+import { writeFile } from 'fs/promises';
 import { readFile, utils } from 'xlsx';
 
-const formatArrayToSqlInsert = (tableName: string, values: string[][]): string => {
+const formatArrayToSqlInsert = async (tableName: string, values: string[][]): Promise<void> => {
   const sqlFormattedArray = values
     .map(valueGroup => `(${valueGroup.map(value => `N'${value.replace(`'`, `''`).trim()}'`).join(',')})`)
     .join(', ');
-  return `INSERT INTO ${tableName} VALUES ${sqlFormattedArray}`;
+  await writeFile(`src/sql/${tableName}.sql`, `INSERT INTO ${tableName} VALUES ${sqlFormattedArray}`);
 };
 
-const excelToSqlStatements = () => {
+const excelToSqlStatements = async () => {
   const workbook = readFile(process.argv[2]);
 
   const locationSheet = workbook.Sheets[workbook.SheetNames[0]]; //מחוזות וערים;
@@ -22,11 +23,11 @@ const excelToSqlStatements = () => {
     return skill.name.map((name: string) => [name, skill.type]);
   });
 
-  return [
+  return await Promise.all([
     formatArrayToSqlInsert('location', locations),
     formatArrayToSqlInsert('city', cities),
     formatArrayToSqlInsert('skill', skills)
-  ];
+  ]);
 };
 
-console.log(excelToSqlStatements());
+excelToSqlStatements();
