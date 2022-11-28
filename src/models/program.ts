@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProgramToInstitution } from './programToInstitution';
 import { User } from './user';
 import { VolunteerRequest } from './volunteerRequest';
 
@@ -24,4 +25,10 @@ export class Program {
     volunteerRequest => volunteerRequest.program
   )
   volunteerRequests?: VolunteerRequest[];
+
+  @OneToMany(
+    () => ProgramToInstitution,
+    programToInstitution => programToInstitution.institution
+  )
+  programToInstitution?: ProgramToInstitution[];
 }

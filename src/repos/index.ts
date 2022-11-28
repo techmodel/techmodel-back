@@ -8,7 +8,8 @@ import {
   PendingProgramManager,
   Program,
   Skill,
-  User
+  User,
+  ProgramToInstitution
 } from '../models';
 
 export { volunteerRequestRepository } from './volunteerRequestRepo';
@@ -21,3 +22,4 @@ export const programRepository = appDataSource.getRepository(Program);
 export const skillRepository = appDataSource.getRepository(Skill);
 export const pendingProgramCoordinatorRepository = appDataSource.getRepository(PendingProgramCoordinator);
 export const pendingProgramManagerRepository = appDataSource.getRepository(PendingProgramManager);
+export const programToInstitutionRepository = appDataSource.getRepository(ProgramToInstitution);

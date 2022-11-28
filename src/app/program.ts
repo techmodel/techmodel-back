@@ -2,7 +2,12 @@ import { appDataSource } from '../dataSource';
 import { CannotPerformOperationError, NotFoundError } from '../exc';
 import logger from '../logger';
 import { PendingProgramCoordinator, Program, User, UserType } from '../models';
-import { pendingProgramCoordinatorRepository, programRepository, userRepository } from '../repos';
+import {
+  pendingProgramCoordinatorRepository,
+  programRepository,
+  programToInstitutionRepository,
+  userRepository
+} from '../repos';
 import { userDecoded } from './user';
 
 export const getPrograms = (): Promise<Program[]> => {
@@ -57,4 +62,17 @@ export const denyPendingCoordinator = async (programId: number, pendingUserId: s
     await transactionalEntityManager.delete(PendingProgramCoordinator, targetPendingCoordinator.id);
     await transactionalEntityManager.delete(User, pendingUserId);
   });
+};
+
+export const programRelatedInstitutions = async (programId: number): Promise<number[]> => {
+  const res = await programToInstitutionRepository.find({ where: { programId } });
+  return res.map(mapping => mapping.institutionId);
+};
+
+export const addInstitutionToProgram = async (programId: number, institutionId: number): Promise<void> => {
+  await programToInstitutionRepository.save({ programId, institutionId });
+};
+
+export const deleteInstitutionToProgram = async (programId: number, institutionId: number): Promise<void> => {
+  await programToInstitutionRepository.delete({ programId, institutionId });
 };

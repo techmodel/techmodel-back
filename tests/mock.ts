@@ -10,6 +10,7 @@ import {
   PendingProgramManager,
   PopulationType,
   Program,
+  ProgramToInstitution,
   RequestStatus,
   Skill,
   SkillToVolunteerRequest,
@@ -428,3 +429,13 @@ export const volutneerRequestDTO1: CreateVolunteerRequestDTO = {
   skills: [skill1.id, skill2.id],
   creatorId: programCoordinator1.id
 };
+
+export const program1ToInstitution1 = {
+  programId: program1.id,
+  institutionId: institution1.id
+} as ProgramToInstitution;
+
+export const program1ToInstitution2 = {
+  programId: program1.id,
+  institutionId: institution2.id
+} as ProgramToInstitution;
