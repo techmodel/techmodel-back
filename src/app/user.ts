@@ -2,7 +2,7 @@ import * as jwt from 'jsonwebtoken';
 import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
 import { appDataSource } from '../dataSource';
-import { AuthorizationError, BadRequestError, CannotPerformOperationError, NotFoundError } from '../exc';
+import { AuthorizationError, CannotPerformOperationError, NotFoundError } from '../exc';
 import { PendingProgramCoordinator, User, UserType } from '../models';
 import { userRepository } from '../repos';
 import { createUserSchema, selfUpdateUserSchema, validateSchema } from './schema.validators';
@@ -12,6 +12,8 @@ type loginResponse = {
   isFound: boolean;
   userToken: string;
   userType: UserType | null;
+  userImage: string | null;
+  userIdToken: string;
 };
 
 export type userDecoded = {
@@ -24,10 +26,10 @@ export type userDecoded = {
   exp: number;
 };
 
-export const login = async (userId: string): Promise<loginResponse> => {
+export const login = async (userId: string, userImage: string, userIdToken: string): Promise<loginResponse> => {
   const user = await userRepository.findOneBy({ id: userId });
   if (!userId || !user) {
-    return { userDetails: null, isFound: false, userToken: '', userType: null };
+    return { userDetails: null, isFound: false, userToken: '', userType: null, userImage, userIdToken };
   }
   const tokenData: Partial<userDecoded> = {
     userType: user.userType,
@@ -38,7 +40,7 @@ export const login = async (userId: string): Promise<loginResponse> => {
     companyId: user.companyId || undefined
   };
   const token = jwt.sign(tokenData, JWT_SECRET, { expiresIn: '1d' });
-  return { userDetails: user, isFound: true, userToken: token, userType: user.userType };
+  return { userDetails: user, isFound: true, userToken: token, userType: user.userType, userImage, userIdToken };
 };
 
 const registerCoordinator = async (user: Partial<User>): Promise<void> => {
@@ -58,7 +60,7 @@ const registerCoordinator = async (user: Partial<User>): Promise<void> => {
   });
 };
 
-export const register = async (user: Partial<User>): Promise<loginResponse> => {
+export const register = async (user: Partial<User>, userImage: string, userIdToken: string): Promise<loginResponse> => {
   const validatedUser = validateSchema(createUserSchema, user);
   if (validatedUser.userType === UserType.PROGRAM_COORDINATOR) {
     await registerCoordinator(validatedUser);
@@ -66,7 +68,7 @@ export const register = async (user: Partial<User>): Promise<loginResponse> => {
     await userRepository.save(validatedUser);
   }
   const userId = user.id as string;
-  return login(userId);
+  return login(userId, userImage, userIdToken);
 };
 
 export const updateUserInfo = (id: string, userInfo: Partial<User>): Promise<UpdateResult> => {

@@ -73,7 +73,7 @@ export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: 
   }
 };
 
-export const verifyGoogleAuthToken = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyGoogleAuthTokenLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authCode = req.cookies['user-auth'];
     if (!authCode) {
@@ -86,7 +86,32 @@ export const verifyGoogleAuthToken = async (req: Request, res: Response, next: N
     });
     const payload = ticket.getPayload()!;
     const userId = payload['sub'];
+    const userImage = payload['picture'];
     req.cookies['userId'] = userId;
+    req.cookies['userImage'] = userImage;
+    req.cookies['userIdToken'] = tokens.id_token!;
+  } catch (err) {
+    next(err);
+  } finally {
+    next();
+  }
+};
+export const verifyGoogleAuthTokenRegister = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) {
+      throw new AuthenticationError('No id token found');
+    }
+    const ticket = await client.verifyIdToken({
+      idToken: idToken,
+      audience: AUTH_CLIENT_ID
+    });
+    const payload = ticket.getPayload()!;
+    const userId = payload['sub'];
+    const userImage = payload['picture'];
+    req.cookies['userId'] = userId;
+    req.cookies['userImage'] = userImage;
+    req.cookies['userIdToken'] = idToken; // TODO: remove id token from cookies.
   } catch (err) {
     next(err);
   } finally {
