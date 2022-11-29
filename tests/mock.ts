@@ -53,7 +53,7 @@ export const institution1 = {
   locationId: location1.id,
   cityId: city1.id,
   populationType: PopulationType.SECULAR,
-  institutionType: InstitutionType.ELEMENTARY
+  institutionType: InstitutionType.ELEMENTARY_SCHOOL
 } as Institution;
 
 export const institution2 = {
@@ -64,7 +64,7 @@ export const institution2 = {
   locationId: location1.id,
   cityId: city2.id,
   populationType: PopulationType.SECULAR,
-  institutionType: InstitutionType.HIGH
+  institutionType: InstitutionType.HIGH_SCHOOL
 } as Institution;
 
 export const program1 = {
