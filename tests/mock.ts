@@ -386,7 +386,6 @@ export const pendingProgramCoordinator4SecondPart = {
 } as PendingProgramCoordinator;
 
 export const volunteerRequestToCreate = {
-  id: 4,
   createdAt: TEST_DATE_28_06_2022,
   name: 'volunteerRequestToCreate',
   audience: Audience.XL,

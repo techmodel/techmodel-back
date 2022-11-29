@@ -431,6 +431,37 @@ describe('volunteerRequest', function() {
       expect(res.status).to.eq(204);
     });
 
+    it('sending empty skill list will remove all mapped skills', async () => {
+      const createPayload = vrToCreatePayload(volunteerRequestToCreate);
+      let res = await request(app)
+        .post(`/api/v1/volunteer-requests`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send({ volunteerRequest: createPayload });
+      expect(res.status).to.eq(200);
+      const newVolunteerRequest = await volunteerRequestRepository.findOne({
+        where: { name: volunteerRequestToCreate.name },
+        relations: ['skillToVolunteerRequest']
+      });
+      if (!newVolunteerRequest) {
+        throw new Error('no volunteer request found');
+      }
+      expect(newVolunteerRequest.skillToVolunteerRequest.length).to.eq(1);
+
+      res = await request(app)
+        .put(`/api/v1/volunteer-requests/${newVolunteerRequest.id}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send({ volunteerRequestInfo: { skills: [] } });
+
+      const updatedVolunteerRequest = await volunteerRequestRepository.findOne({
+        where: { name: volunteerRequestToCreate.name },
+        relations: ['skillToVolunteerRequest']
+      });
+      if (!updatedVolunteerRequest) {
+        throw new Error('no volunteer request found');
+      }
+      expect(updatedVolunteerRequest.skillToVolunteerRequest.length).to.eq(0);
+    });
+
     it('returns 403 when pending user trying to perform action', async function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
