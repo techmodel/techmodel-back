@@ -1,6 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { login, register } from '../app/user';
-import { CLIENT_URL } from '../config';
 import { User } from '../models';
 import { verifyGoogleAuthTokenLogin, verifyGoogleAuthTokenRegister } from './middlewares';
 
