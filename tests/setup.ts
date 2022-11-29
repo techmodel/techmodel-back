@@ -23,7 +23,8 @@ import sinon from 'sinon';
 import * as middlewares from '../src/api/middlewares';
 
 // disable verifyGoogleAuthToken
-sinon.stub(middlewares, 'verifyGoogleAuthToken').callsFake(async (req, res, next) => next());
+sinon.stub(middlewares, 'verifyGoogleAuthTokenLogin').callsFake(async (req, res, next) => next());
+sinon.stub(middlewares, 'verifyGoogleAuthTokenRegister').callsFake(async (req, res, next) => next());
 
 before(async () => {
   await appDataSource.initialize();
