@@ -9,7 +9,7 @@ const app = express();
 
 app.disable('x-powered-by');
 
-app.use(cors({ origin: CLIENT_URL }));
+app.use(cors({ origin: [CLIENT_URL, 'localhost:3000'] }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
