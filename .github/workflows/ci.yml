@@ -116,7 +116,7 @@ jobs:
         run: docker push ${{secrets.CI_REG_PATH}}/techmodel-backend:latest
 
   buildAppAndPublishProd:
-    needs: runMigrations
+    needs: runMigrationsProd
     runs-on: ubuntu-latest
     
     if: success() && github.ref == 'refs/heads/master'
