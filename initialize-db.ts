@@ -16,6 +16,8 @@ import {
   institution1,
   location1,
   program1,
+  program1ToInstitution1,
+  program1ToInstitution2,
   programManager1,
   skill1,
   skill1ToVolunteerRequest1,
@@ -73,12 +75,15 @@ InitDataSource.initialize()
       volunteerRequests: [volunteerRequest1],
       volunteerRequestToVolunteers: [volunteerRequest1ToVolunteer1, volunteerRequest1ToVolunteer2],
       skills: [skill1, skill2],
-      skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
+      skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1],
+      programToInstitutions: [program1ToInstitution1]
     });
-    await Promise.all(sqlFileNames.map(async sqlFileName => {
-      const sqlFile = await readFile(`src/sql/${sqlFileName}`)
-      return await appDataSource.query(sqlFile.toString())
-    }))
+    await Promise.all(
+      sqlFileNames.map(async sqlFileName => {
+        const sqlFile = await readFile(`src/sql/${sqlFileName}`);
+        return await appDataSource.query(sqlFile.toString());
+      })
+    );
     console.log('preformed seeding');
     throw 'done';
   })
