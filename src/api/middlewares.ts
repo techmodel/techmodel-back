@@ -68,7 +68,7 @@ export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: 
     res.status(err.status).send(err.message);
     logger.error(err.message);
   } else {
-    res.status(500).json('Internal Server Error, check logs');
+    res.status(500).json('Internal server error, check backend logs');
     logger.error(serializeError(err));
   }
 };
