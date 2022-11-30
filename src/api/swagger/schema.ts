@@ -52,7 +52,7 @@
  *         name:
  *           type: string
  *         audience:
- *           type: number
+ *           $ref: '#/components/schemas/audience'
  *         isPhysical:
  *           type: boolean
  *         description:
@@ -88,7 +88,7 @@
  *         name:
  *           type: string
  *         audience:
- *           type: number
+ *           $ref: '#/components/schemas/audience'
  *         isPhysical:
  *           type: boolean
  *         description:
@@ -145,7 +145,7 @@
  *         name:
  *           type: string
  *         audience:
- *           type: number
+ *           $ref: '#/components/schemas/audience'
  *         isPhysical:
  *           type: boolean
  *         description:
@@ -273,6 +273,9 @@
  *         createdAt:
  *           type: string
  *           format: date-time
+ *     audience:
+ *       type: string
+ *       enum: [small, medium, large, xLarge]
  *     user:
  *       type: object
  *       properties:
@@ -319,3 +322,5 @@
  *         companyId:
  *           type: string
  */
+
+// TODO: change schema for audience
