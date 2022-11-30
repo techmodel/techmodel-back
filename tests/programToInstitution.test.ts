@@ -102,7 +102,7 @@ describe('programToInstitution', function() {
         .post(`/api/v1/programs/${program1.id}/institutions`)
         .set('Authorization', `Bearer ${programManager1Jwt}`)
         .send({ institutionId: institution1.id });
-      expect((res.error as HTTPError).text).to.eq('"Unknown Error"');
+      expect((res.error as HTTPError).text).to.eq('"Internal Server Error"');
       expect(res.status).to.eq(500);
     });
   });
