@@ -119,7 +119,10 @@ router.put(
  *         - in: body
  *           name: newInstitutionId
  *           schema:
- *             type: number
+ *             type: object
+ *             properties:
+ *               newInstitutionId:
+ *                 type: number
  *           required: true
  *           description: the institution id the user will be changed to
  *         - in: path

@@ -3,6 +3,7 @@ import { ObjectValidationError } from '../exc';
 import { Audience, Language, TimeUnit } from '../models';
 import { UserType } from '../models/userType';
 import { subMinutes } from 'date-fns';
+import logger from '../logger';
 
 const onlyNull = Joi.valid(null);
 const schemaId = Joi.string()
@@ -105,6 +106,7 @@ export const createVolunteerRequestSchema = Joi.object({
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {
+  logger.info(objectToValidate);
   const { error } = schema.validate(objectToValidate);
 
   if (error) {
