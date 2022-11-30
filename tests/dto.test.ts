@@ -92,7 +92,6 @@ describe('DTOs', function() {
     it('should return a proper domain volunteer request object', async function() {
       const domainVr = mapCreateVolunteerRequestDtoToDomain(volutneerRequestDTO1);
       expect(domainVr.constructor.name).to.eq('VolunteerRequest');
-      expect(domainVr.createdAt).to.eq(volutneerRequestDTO1.createdAt);
       expect(domainVr.name).to.eq(volutneerRequestDTO1.name);
       expect(domainVr.audience).to.eq(volutneerRequestDTO1.audience);
       expect(domainVr.isPhysical).to.eq(volutneerRequestDTO1.isPhysical);

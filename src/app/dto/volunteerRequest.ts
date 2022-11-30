@@ -13,7 +13,6 @@ import { ReturnSkillDTO } from './skill';
 import { ReturnVolunteerDTO } from './volunteer';
 
 export interface CreateVolunteerRequestDTO {
-  createdAt: Date;
   name: string;
   audience: Audience;
   isPhysical: boolean;
@@ -37,7 +36,6 @@ export type UpdateVolunteerRequestDTO = Partial<CreateVolunteerRequestDTO>;
 
 export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestDTO): VolunteerRequest => {
   const domainVr = new VolunteerRequest();
-  domainVr.createdAt = vr.createdAt;
   domainVr.name = vr.name;
   domainVr.audience = vr.audience;
   domainVr.isPhysical = vr.isPhysical;

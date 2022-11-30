@@ -386,7 +386,6 @@ export const pendingProgramCoordinator4SecondPart = {
 } as PendingProgramCoordinator;
 
 export const volunteerRequestToCreate = {
-  createdAt: TEST_DATE_28_06_2022,
   name: 'volunteerRequestToCreate',
   audience: Audience.XL,
   isPhysical: false,
@@ -409,7 +408,6 @@ export const volunteerRequestToCreate = {
 } as CreateVolunteerRequestDTO;
 
 export const volutneerRequestDTO1: CreateVolunteerRequestDTO = {
-  createdAt: new Date(),
   name: 'test5432',
   audience: Audience.LARGE,
   isPhysical: true,

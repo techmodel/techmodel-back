@@ -53,6 +53,7 @@ export const createVolunteerRequest = async (
     throw new AuthorizationError('Manager cant create request for other program');
   }
   volunteerRequest['status'] = RequestStatus.SENT;
+  volunteerRequest['createdAt'] = new Date();
   return volunteerRequestRepository.save(volunteerRequest);
 };
 
