@@ -89,20 +89,20 @@ describe('DTOs', function() {
   });
 
   describe('mapCreateVolunteerRequestDtoToDomain', function() {
-    it('should return a proper domain volunteer request object', async function() {
+    it.only('should return a proper domain volunteer request object', async function() {
       const domainVr = mapCreateVolunteerRequestDtoToDomain(volutneerRequestDTO1);
       expect(domainVr.constructor.name).to.eq('VolunteerRequest');
       expect(domainVr.name).to.eq(volutneerRequestDTO1.name);
       expect(domainVr.audience).to.eq(volutneerRequestDTO1.audience);
       expect(domainVr.isPhysical).to.eq(volutneerRequestDTO1.isPhysical);
       expect(domainVr.description).to.eq(volutneerRequestDTO1.description);
-      expect(domainVr.startDate).to.eq(volutneerRequestDTO1.startDate);
-      expect(domainVr.endDate).to.eq(volutneerRequestDTO1.endDate);
+      expect(domainVr.startDate.toISOString()).to.eq(volutneerRequestDTO1.startDate.toISOString());
+      expect(domainVr.endDate.toISOString()).to.eq(volutneerRequestDTO1.endDate.toISOString());
       expect(domainVr.durationTimeAmount).to.eq(volutneerRequestDTO1.durationTimeAmount);
       expect(domainVr.durationTimeUnit).to.eq(volutneerRequestDTO1.durationTimeUnit);
       expect(domainVr.frequencyTimeAmount).to.eq(volutneerRequestDTO1.frequencyTimeAmount);
       expect(domainVr.frequencyTimeUnit).to.eq(volutneerRequestDTO1.frequencyTimeUnit);
-      expect(domainVr.startTime).to.eq(volutneerRequestDTO1.startTime);
+      expect(domainVr.startTime.toISOString()).to.eq(volutneerRequestDTO1.startTime.toISOString());
       expect(domainVr.totalVolunteers).to.eq(volutneerRequestDTO1.totalVolunteers);
       expect(domainVr.institutionId).to.eq(volutneerRequestDTO1.institutionId);
       expect(domainVr.programId).to.eq(volutneerRequestDTO1.programId);
