@@ -8,7 +8,7 @@ import {
   User
 } from '../../models';
 import { ReturnCreatorDTO } from './creator';
-import { ReturnProgramDTO } from './program';
+import { ReturnVRProgramDTO } from './program';
 import { ReturnSkillDTO } from './skill';
 import { ReturnVolunteerDTO } from './volunteer';
 
@@ -86,7 +86,7 @@ export interface ReturnVolunteerRequestDTO {
   currentVolunteers: number;
   status: RequestStatus;
   institutionId: number;
-  program: ReturnProgramDTO;
+  program: ReturnVRProgramDTO;
   language: Language;
   creatorId: string;
   creator?: ReturnCreatorDTO;
