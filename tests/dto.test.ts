@@ -89,7 +89,7 @@ describe('DTOs', function() {
   });
 
   describe('mapCreateVolunteerRequestDtoToDomain', function() {
-    it.only('should return a proper domain volunteer request object', async function() {
+    it('should return a proper domain volunteer request object', async function() {
       const domainVr = mapCreateVolunteerRequestDtoToDomain(volutneerRequestDTO1);
       expect(domainVr.constructor.name).to.eq('VolunteerRequest');
       expect(domainVr.name).to.eq(volutneerRequestDTO1.name);
