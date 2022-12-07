@@ -1,12 +1,4 @@
-import {
-  Language,
-  RequestStatus,
-  SkillToVolunteerRequest,
-  VolunteerRequest,
-  TimeUnit,
-  Audience,
-  User
-} from '../../models';
+import { Language, RequestStatus, SkillToVolunteerRequest, VolunteerRequest, TimeUnit, Audience } from '../../models';
 import { ReturnCreatorDTO } from './creator';
 import { ReturnVRProgramDTO } from './program';
 import { ReturnSkillDTO } from './skill';
@@ -40,13 +32,19 @@ export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestD
   domainVr.audience = vr.audience;
   domainVr.isPhysical = vr.isPhysical;
   domainVr.description = vr.description;
-  domainVr.startDate = new Date(vr.startDate);
-  domainVr.endDate = new Date(vr.endDate);
+  if (vr.startDate) {
+    domainVr.startDate = new Date(vr.startDate);
+  }
+  if (vr.endDate) {
+    domainVr.endDate = new Date(vr.endDate);
+  }
   domainVr.durationTimeAmount = vr.durationTimeAmount;
   domainVr.durationTimeUnit = vr.durationTimeUnit;
   domainVr.frequencyTimeAmount = vr.frequencyTimeAmount;
   domainVr.frequencyTimeUnit = vr.frequencyTimeUnit;
-  domainVr.startTime = new Date(vr.startTime);
+  if (vr.startTime) {
+    domainVr.startTime = new Date(vr.startTime);
+  }
   domainVr.totalVolunteers = vr.totalVolunteers;
   domainVr.institutionId = vr.institutionId;
   domainVr.language = vr.language;

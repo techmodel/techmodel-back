@@ -28,7 +28,7 @@ export class Program {
 
   @OneToMany(
     () => ProgramToInstitution,
-    programToInstitution => programToInstitution.institution
+    programToInstitution => programToInstitution.program
   )
   programToInstitution?: ProgramToInstitution[];
 }

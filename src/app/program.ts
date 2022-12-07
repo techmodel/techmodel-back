@@ -8,10 +8,13 @@ import {
   programToInstitutionRepository,
   userRepository
 } from '../repos';
+import { mapPrgoramToProgramDTO, ReturnProgramDTO } from './dto/program';
 import { userDecoded } from './user';
 
-export const getPrograms = (): Promise<Program[]> => {
-  return programRepository.find();
+export const getPrograms = async (): Promise<ReturnProgramDTO[]> => {
+  const programs = await programRepository.find({ relations: ['programToInstitution'] });
+  logger.info(programs);
+  return programs.map(program => mapPrgoramToProgramDTO(program));
 };
 
 export const getCoordinators = (programId: number): Promise<User[]> => {

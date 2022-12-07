@@ -6,7 +6,7 @@ chai.use(chaiPromised);
 
 import * as jwt from 'jsonwebtoken';
 import { appDataSource } from '../src/dataSource';
-import { Program, Skill, User, VolunteerRequest } from '../src/models';
+import { Program, ProgramToInstitution, Skill, User, VolunteerRequest } from '../src/models';
 import { removeSeed } from './seed';
 import { JWT_SECRET } from '../src/config';
 import {
@@ -21,6 +21,7 @@ import {
 import { ReturnVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
 import sinon from 'sinon';
 import * as middlewares from '../src/api/middlewares';
+import { ReturnProgramDTO } from '../src/app/dto/program';
 
 // disable verifyGoogleAuthToken
 sinon.stub(middlewares, 'verifyGoogleAuthTokenLogin').callsFake(async (req, res, next) => next());
@@ -113,6 +114,15 @@ export const expectedVolunteerRequest = (
     }));
   }
   return returnedVolunteerRequest;
+};
+
+export const expectedProgram = (program: Program, linkedInstitutions: ProgramToInstitution[]): ReturnProgramDTO => {
+  return {
+    id: program.id,
+    name: program.name,
+    description: program.description,
+    institutionIds: linkedInstitutions.map(mapping => mapping.institutionId)
+  };
 };
 
 export const volunteer1Jwt = createTestJwt(volunteer1);

@@ -270,9 +270,10 @@
  *           type: string
  *         description:
  *           type: string
- *         createdAt:
- *           type: string
- *           format: date-time
+ *         institutionIds:
+ *           type: array
+ *           items:
+ *             type: number
  *     audience:
  *       type: string
  *       enum: [small, medium, large, xLarge]

@@ -1,46 +1,32 @@
 import chai, { expect } from 'chai';
 import chaiSubset from 'chai-subset';
 chai.use(chaiSubset);
-import request from 'supertest';
 import sinon, { SinonSandbox } from 'sinon';
 import {
   company1,
   company2,
-  fullVolunteerRequest1,
-  institution1,
-  institution2,
-  location1,
-  oldVolunteerRequest1,
   program1,
+  program1ToInstitution1,
+  program1ToInstitution2,
   program2,
-  programCoordinator1,
-  programCoordinator2,
-  programManager1,
-  programManager2,
   skill1,
   skill1ToVolunteerRequest1,
   skill2,
   skill2ToVolunteerRequest1,
   volunteer1,
   volunteer2,
-  volunteer3WithoutMappings,
   volunteerRequest1,
   volunteerRequest1ToVolunteer1,
-  volunteerRequest1ToVolunteer2,
-  volunteerRequestToCreate,
-  volunteerRequestToUpdate,
-  volunteerRequestToVolunteers
+  volunteerRequest1ToVolunteer2
 } from './mock';
 import logger from '../src/logger';
-import { removeSeed, seed } from './seed';
-import { city1, city2, volutneerRequestDTO1 } from './mock';
-import app from '../src/server/server';
+import { volutneerRequestDTO1 } from './mock';
 import {
   mapCreateVolunteerRequestDtoToDomain,
   mapVolunteerRequestToReturnVolunteerRequestDTO
 } from '../src/app/dto/volunteerRequest';
-import { VolunteerRequest } from '../src/models';
-import { volunteerRequestRepository } from '../src/repos';
+import { Program, VolunteerRequest } from '../src/models';
+import { mapPrgoramToProgramDTO } from '../src/app/dto/program';
 
 const returnVolunteerRequestMock: VolunteerRequest = {
   ...volunteerRequest1,
@@ -59,6 +45,11 @@ const returnVolunteerRequestWithVolunteersMock: VolunteerRequest = {
   ]
 };
 
+const domainProgramWith2InstitutionsMock: Program = {
+  ...program1,
+  programToInstitution: [program1ToInstitution1, program1ToInstitution2]
+};
+
 describe('DTOs', function() {
   let sandbox: SinonSandbox = (null as unknown) as SinonSandbox;
 
@@ -66,25 +57,25 @@ describe('DTOs', function() {
     sandbox = sinon.createSandbox();
     // disable logging
     sandbox.stub(logger);
-    await seed({
-      cities: [city1, city2],
-      locations: [location1],
-      institutions: [institution1, institution2],
-      programs: [program1, program2],
-      companies: [company1, company2],
-      users: [
-        volunteer1,
-        volunteer2,
-        programManager1,
-        volunteer3WithoutMappings,
-        programCoordinator1,
-        programManager2,
-        programCoordinator2
-      ],
-      volunteerRequests: [volunteerRequest1, oldVolunteerRequest1, fullVolunteerRequest1, volunteerRequestToUpdate],
-      volunteerRequestToVolunteers: volunteerRequestToVolunteers,
-      skills: [skill1, skill2],
-      skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
+  });
+
+  describe('mapPrgoramToProgramDTO', function() {
+    it('should return proper program DTO object', async function() {
+      const dtoProgram = mapPrgoramToProgramDTO(domainProgramWith2InstitutionsMock);
+      expect(dtoProgram.id).to.eq(domainProgramWith2InstitutionsMock.id);
+      expect(dtoProgram.name).to.eq(domainProgramWith2InstitutionsMock.name);
+      expect(dtoProgram.description).to.eq(domainProgramWith2InstitutionsMock.description);
+      expect(dtoProgram.institutionIds).to.eql(
+        domainProgramWith2InstitutionsMock.programToInstitution?.map(mapping => mapping.institutionId)
+      );
+    });
+
+    it('should return empty list if no institutions are mapped', async function() {
+      const dtoProgram = mapPrgoramToProgramDTO(program2);
+      expect(dtoProgram.id).to.eq(program2.id);
+      expect(dtoProgram.name).to.eq(program2.name);
+      expect(dtoProgram.description).to.eq(program2.description);
+      expect(dtoProgram.institutionIds).to.eql([]);
     });
   });
 
@@ -213,6 +204,5 @@ describe('DTOs', function() {
 
   this.afterEach(async function() {
     sandbox.restore();
-    await removeSeed();
   });
 });
