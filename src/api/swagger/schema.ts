@@ -3,6 +3,21 @@
  *
  * components:
  *   schemas:
+ *     createInstitutionPayload:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *         address:
+ *           type: string
+ *         locationId:
+ *           type: number
+ *         cityId:
+ *           type: number
+ *         populationType:
+ *           type: string
+ *         institutionType:
+ *           type: string
  *     updateUserInfoPayload:
  *       type: object
  *       properties:

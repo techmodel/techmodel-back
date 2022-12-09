@@ -22,6 +22,7 @@ import {
 } from '../src/models';
 import * as dfns from 'date-fns';
 import { CreateVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
+import { CreateInstitutionDTO } from '../src/app/dto/institution';
 
 export const TEST_DATE_28_06_2022 = new Date('2022-06-28T15:20:21.470Z');
 export const TEST_DATE_20_06_2022 = dfns.subDays(TEST_DATE_28_06_2022, 8);
@@ -436,3 +437,12 @@ export const program1ToInstitution2 = {
   programId: program1.id,
   institutionId: institution2.id
 } as ProgramToInstitution;
+
+export const createInstitutionDTO1: CreateInstitutionDTO = {
+  name: 'inst1',
+  address: 'somewhere',
+  locationId: 1,
+  cityId: 1,
+  populationType: PopulationType.RELIGIOUS,
+  institutionType: InstitutionType.ELEMENTARY
+};

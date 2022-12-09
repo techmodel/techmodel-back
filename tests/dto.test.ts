@@ -5,6 +5,7 @@ import sinon, { SinonSandbox } from 'sinon';
 import {
   company1,
   company2,
+  createInstitutionDTO1,
   program1,
   program1ToInstitution1,
   program1ToInstitution2,
@@ -27,6 +28,7 @@ import {
 } from '../src/app/dto/volunteerRequest';
 import { Program, VolunteerRequest } from '../src/models';
 import { mapPrgoramToProgramDTO } from '../src/app/dto/program';
+import { mapCreateInstitutionDtoToDomain } from '../src/app/dto/institution';
 
 const returnVolunteerRequestMock: VolunteerRequest = {
   ...volunteerRequest1,
@@ -101,6 +103,19 @@ describe('DTOs', function() {
       expect(domainVr.skillToVolunteerRequest).to.containSubset(
         volutneerRequestDTO1.skills?.map(skillId => ({ skillId }))
       );
+    });
+  });
+
+  describe('mapCreateInstitutionDtoToDomain', function() {
+    it('should return a proper domain institution object', async function() {
+      const domainVr = mapCreateInstitutionDtoToDomain(createInstitutionDTO1);
+      expect(domainVr.constructor.name).to.eq('Institution');
+      expect(domainVr.name).to.eq(createInstitutionDTO1.name);
+      expect(domainVr.address).to.eq(createInstitutionDTO1.address);
+      expect(domainVr.locationId).to.eq(createInstitutionDTO1.locationId);
+      expect(domainVr.cityId).to.eq(createInstitutionDTO1.cityId);
+      expect(domainVr.populationType).to.eq(createInstitutionDTO1.populationType);
+      expect(domainVr.institutionType).to.eq(createInstitutionDTO1.institutionType);
     });
   });
 
