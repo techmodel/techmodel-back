@@ -338,5 +338,3 @@
  *         companyId:
  *           type: string
  */
-
-// TODO: change schema for audience

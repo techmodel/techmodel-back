@@ -34,7 +34,6 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
     institutionId?: number,
     startDate = new Date().toISOString()
   ): Promise<VolunteerRequest[]> {
-    // TODO: add join to the volunteers that are mapped to the request
     let qb = this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
