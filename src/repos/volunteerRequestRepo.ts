@@ -3,7 +3,7 @@ import { NotFoundError } from '../exc';
 import { RequestStatus, VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
 
 export const volunteerRequestRepository = appDataSource.getRepository(VolunteerRequest).extend({
-  async relevantAndOpen(): Promise<VolunteerRequest[]> {
+  async relevantAndOpen(volunteerId: string): Promise<VolunteerRequest[]> {
     return await this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
@@ -14,13 +14,15 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
       .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
-      // filter out requests that are full
+      // filter out requests that are full and current user is assigned to them
       .andWhere(qb => {
         const subQuery = qb
           .subQuery()
           .select('vr.id')
           .from(VolunteerRequest, 'vr')
           .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
+          .where(`vrtv.volunteerId != '${volunteerId}'`)
+          .orWhere('vrtv.volunteerId is null')
           .groupBy('vr.id, vr.totalVolunteers')
           .having('COUNT(*) < vr.totalVolunteers')
           .getQuery();

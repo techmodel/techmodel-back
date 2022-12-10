@@ -44,7 +44,7 @@ router.get(
       if (userId != (req as DecodedRequest).userDecoded.userId) {
         throw new AuthorizationError('Trying to access different user info');
       }
-      res.send(getVolunteerRequestsByUser(userId));
+      res.send(await getVolunteerRequestsByUser(userId));
     } catch (e) {
       next(e);
     }
