@@ -78,6 +78,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('stvr.skill', 'skill')
+      .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
       .andWhere('vrtv.volunteerId = :volunteerId', { volunteerId })
       .getMany();
