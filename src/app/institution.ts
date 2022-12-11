@@ -7,9 +7,10 @@ export const getInstitutions = (): Promise<Institution[]> => {
   return institutionRepository.find();
 };
 
-export const createInstitution = async (newInstitutionDto: CreateInstitutionDTO): Promise<void> => {
+export const createInstitution = async (newInstitutionDto: CreateInstitutionDTO): Promise<number> => {
   const validatedInstitutionDTO = validateSchema(createInstitutionSchema, newInstitutionDto);
   const domainInstitution = mapCreateInstitutionDtoToDomain(validatedInstitutionDTO);
   domainInstitution.createdAt = new Date();
   await institutionRepository.save(domainInstitution);
+  return domainInstitution.id;
 };

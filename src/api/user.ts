@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express';
+import { mapVolunteerRequestToReturnVolunteerRequestDTO } from '../app/dto/volunteerRequest';
 import { updateUserInfo, updateUserInstitutionId } from '../app/user';
 import { getVolunteerRequestsByUser } from '../app/volunteerRequest';
 import { AuthorizationError } from '../exc';
@@ -44,7 +45,8 @@ router.get(
       if (userId != (req as DecodedRequest).userDecoded.userId) {
         throw new AuthorizationError('Trying to access different user info');
       }
-      res.send(await getVolunteerRequestsByUser(userId));
+      const domainVrs = await getVolunteerRequestsByUser(userId);
+      res.send(domainVrs.map(vr => mapVolunteerRequestToReturnVolunteerRequestDTO(vr)));
     } catch (e) {
       next(e);
     }
