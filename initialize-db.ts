@@ -76,16 +76,20 @@ InitDataSource.initialize()
       skills: [skill1, skill2],
       skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
     });
-    await Promise.all(sqlFileNames.map(async sqlFileName => {
-      if (!sqlFileName.isDirectory()) {
-        const sqlFile = await readFile(`src/sql/${sqlFileName.name}`)
-        return await appDataSource.query(sqlFile.toString())
-      }
-    }))
-    await Promise.all(institutionSqlFileNames.map(async sqlFileName => {
-      const sqlFile = await readFile(`src/sql/institutions/${sqlFileName}`)
-      return await appDataSource.query(sqlFile.toString())
-    }))
+    await Promise.all(
+      sqlFileNames.map(async sqlFileName => {
+        if (!sqlFileName.isDirectory()) {
+          const sqlFile = await readFile(`src/sql/${sqlFileName.name}`);
+          return await appDataSource.query(sqlFile.toString());
+        }
+      })
+    );
+    await Promise.all(
+      institutionSqlFileNames.map(async sqlFileName => {
+        const sqlFile = await readFile(`src/sql/institutions/${sqlFileName}`);
+        return await appDataSource.query(sqlFile.toString());
+      })
+    );
     console.log('preformed seeding');
     throw 'done';
   })
