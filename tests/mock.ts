@@ -10,6 +10,7 @@ import {
   PendingProgramManager,
   PopulationType,
   Program,
+  ProgramToInstitution,
   RequestStatus,
   Skill,
   SkillToVolunteerRequest,
@@ -21,6 +22,7 @@ import {
 } from '../src/models';
 import * as dfns from 'date-fns';
 import { CreateVolunteerRequestDTO } from '../src/app/dto/volunteerRequest';
+import { CreateInstitutionDTO } from '../src/app/dto/institution';
 
 export const TEST_DATE_28_06_2022 = new Date('2022-06-28T15:20:21.470Z');
 export const TEST_DATE_20_06_2022 = dfns.subDays(TEST_DATE_28_06_2022, 8);
@@ -385,8 +387,6 @@ export const pendingProgramCoordinator4SecondPart = {
 } as PendingProgramCoordinator;
 
 export const volunteerRequestToCreate = {
-  id: 4,
-  createdAt: TEST_DATE_28_06_2022,
   name: 'volunteerRequestToCreate',
   audience: Audience.XL,
   isPhysical: false,
@@ -409,7 +409,6 @@ export const volunteerRequestToCreate = {
 } as CreateVolunteerRequestDTO;
 
 export const volutneerRequestDTO1: CreateVolunteerRequestDTO = {
-  createdAt: new Date(),
   name: 'test5432',
   audience: Audience.LARGE,
   isPhysical: true,
@@ -427,4 +426,23 @@ export const volutneerRequestDTO1: CreateVolunteerRequestDTO = {
   language: Language.ARABIC,
   skills: [skill1.id, skill2.id],
   creatorId: programCoordinator1.id
+};
+
+export const program1ToInstitution1 = {
+  programId: program1.id,
+  institutionId: institution1.id
+} as ProgramToInstitution;
+
+export const program1ToInstitution2 = {
+  programId: program1.id,
+  institutionId: institution2.id
+} as ProgramToInstitution;
+
+export const createInstitutionDTO1: CreateInstitutionDTO = {
+  name: 'inst1',
+  address: 'somewhere',
+  locationId: 1,
+  cityId: 1,
+  populationType: PopulationType.RELIGIOUS,
+  institutionType: InstitutionType.ELEMENTARY
 };

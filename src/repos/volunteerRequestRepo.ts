@@ -3,7 +3,7 @@ import { NotFoundError } from '../exc';
 import { RequestStatus, VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
 
 export const volunteerRequestRepository = appDataSource.getRepository(VolunteerRequest).extend({
-  async relevantAndOpen(): Promise<VolunteerRequest[]> {
+  async relevantAndOpen(volunteerId: string): Promise<VolunteerRequest[]> {
     return await this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
@@ -22,6 +22,8 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
           .select('vr.id')
           .from(VolunteerRequest, 'vr')
           .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
+          .where(`vrtv.volunteerId != '${volunteerId}'`)
+          .orWhere('vrtv.volunteerId is null')
           .groupBy('vr.id, vr.totalVolunteers')
           .having('COUNT(*) < vr.totalVolunteers')
           .getQuery();
@@ -35,7 +37,6 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
     institutionId?: number,
     startDate = new Date().toISOString()
   ): Promise<VolunteerRequest[]> {
-    // TODO: add join to the volunteers that are mapped to the request
     let qb = this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
@@ -79,6 +80,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('stvr.skill', 'skill')
+      .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
       .andWhere('vrtv.volunteerId = :volunteerId', { volunteerId })
       .getMany();

@@ -3,6 +3,7 @@ import { City } from './city';
 import { InstitutionType } from './institutionType';
 import { Location } from './location';
 import { PopulationType } from './populationType';
+import { ProgramToInstitution } from './programToInstitution';
 import { User } from './user';
 import { VolunteerRequest } from './volunteerRequest';
 
@@ -61,5 +62,10 @@ export class Institution {
     volunteerRequest => volunteerRequest.program
   )
   volunteerRequests?: VolunteerRequest[];
-  //TODO: Check this
+
+  @OneToMany(
+    () => ProgramToInstitution,
+    programToInstitution => programToInstitution.institution
+  )
+  programToInstitution?: ProgramToInstitution[];
 }

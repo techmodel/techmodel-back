@@ -23,8 +23,10 @@ const userAndPayloadSameInstitution = (user: Partial<User>, payload: any): boole
   return user.institutionId === payload.institutionId;
 };
 
-export const getRelevantAndOpenVolunteerRequests = async (): Promise<ReturnVolunteerRequestDTO[]> => {
-  const domainVrs = await volunteerRequestRepository.relevantAndOpen();
+export const getRelevantAndOpenVolunteerRequests = async (
+  volunteerId: string
+): Promise<ReturnVolunteerRequestDTO[]> => {
+  const domainVrs = await volunteerRequestRepository.relevantAndOpen(volunteerId);
   return domainVrs.map(vr => mapVolunteerRequestToReturnVolunteerRequestDTO(vr));
 };
 
@@ -53,6 +55,7 @@ export const createVolunteerRequest = async (
     throw new AuthorizationError('Manager cant create request for other program');
   }
   volunteerRequest['status'] = RequestStatus.SENT;
+  volunteerRequest['createdAt'] = new Date();
   return volunteerRequestRepository.save(volunteerRequest);
 };
 

@@ -29,9 +29,10 @@ const router = Router();
  *                 items:
  *                   $ref: '#/components/schemas/volunteerRequest'
  */
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/', authMiddleware(UserType.VOLUNTEER), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.json(await getRelevantAndOpenVolunteerRequests());
+    const { userId } = (req as DecodedRequest).userDecoded;
+    res.json(await getRelevantAndOpenVolunteerRequests(userId));
   } catch (e) {
     next(e);
   }
@@ -66,7 +67,7 @@ router.post(
   authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { volunteerRequest } = req.body;
+      const volunteerRequest = req.body;
       const { userDecoded } = req as DecodedRequest;
       res.json(await createVolunteerRequest(volunteerRequest, userDecoded));
     } catch (e) {
@@ -110,7 +111,7 @@ router.put(
   authMiddleware([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER]),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { volunteerRequestInfo } = req.body;
+      const volunteerRequestInfo = req.body;
       const id = +req.params.id;
       const { userDecoded } = req as DecodedRequest;
       await updateVolunteerRequest(id, volunteerRequestInfo, userDecoded);

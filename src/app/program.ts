@@ -2,11 +2,19 @@ import { appDataSource } from '../dataSource';
 import { CannotPerformOperationError, NotFoundError } from '../exc';
 import logger from '../logger';
 import { PendingProgramCoordinator, Program, User, UserType } from '../models';
-import { pendingProgramCoordinatorRepository, programRepository, userRepository } from '../repos';
+import {
+  pendingProgramCoordinatorRepository,
+  programRepository,
+  programToInstitutionRepository,
+  userRepository
+} from '../repos';
+import { mapPrgoramToProgramDTO, ReturnProgramDTO } from './dto/program';
 import { userDecoded } from './user';
 
-export const getPrograms = (): Promise<Program[]> => {
-  return programRepository.find();
+export const getPrograms = async (): Promise<ReturnProgramDTO[]> => {
+  const programs = await programRepository.find({ relations: ['programToInstitution'] });
+  logger.info(programs);
+  return programs.map(program => mapPrgoramToProgramDTO(program));
 };
 
 export const getCoordinators = (programId: number): Promise<User[]> => {
@@ -57,4 +65,17 @@ export const denyPendingCoordinator = async (programId: number, pendingUserId: s
     await transactionalEntityManager.delete(PendingProgramCoordinator, targetPendingCoordinator.id);
     await transactionalEntityManager.delete(User, pendingUserId);
   });
+};
+
+export const programRelatedInstitutions = async (programId: number): Promise<number[]> => {
+  const res = await programToInstitutionRepository.find({ where: { programId } });
+  return res.map(mapping => mapping.institutionId);
+};
+
+export const addInstitutionToProgram = async (programId: number, institutionId: number): Promise<void> => {
+  await programToInstitutionRepository.save({ programId, institutionId });
+};
+
+export const deleteInstitutionToProgram = async (programId: number, institutionId: number): Promise<void> => {
+  await programToInstitutionRepository.delete({ programId, institutionId });
 };

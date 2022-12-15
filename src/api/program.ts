@@ -1,13 +1,16 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
   acceptPendingCoordinator,
+  addInstitutionToProgram,
+  deleteInstitutionToProgram,
   denyPendingCoordinator,
   getCoordinators,
   getPendingCoordinators,
-  getPrograms
+  getPrograms,
+  programRelatedInstitutions
 } from '../app/program';
 import { getVolunteerRequestsOfProgram } from '../app/volunteerRequest';
-import { AuthorizationError } from '../exc';
+import { AuthorizationError, BadRequestError } from '../exc';
 import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
@@ -260,6 +263,146 @@ router.delete(
         throw new AuthorizationError('Trying to access another program data');
       }
       res.json(await denyPendingCoordinator(callerProgramId, pendingUserId));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/programs/{programId}/institutions:
+ *    get:
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: returns list of institution ids related to the program
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: number
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: program id
+ */
+router.get(
+  '/:programId/institutions',
+  authMiddleware([UserType.PROGRAM_MANAGER, UserType.PROGRAM_COORDINATOR]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { programId: callerProgramId } = (req as DecodedRequest).userDecoded;
+      const pathProgramId = parseInt(req.params.programId, 10);
+      if (pathProgramId != callerProgramId) {
+        throw new AuthorizationError('Trying to access another program data');
+      }
+      res.json(await programRelatedInstitutions(callerProgramId));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/programs/{programId}/institutions:
+ *    post:
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: maps institution to a program
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: number
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: program id
+ *       - in: body
+ *         name: institutionId
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: id of the institution
+ */
+router.post(
+  '/:programId/institutions',
+  authMiddleware([UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { programId: callerProgramId } = (req as DecodedRequest).userDecoded;
+      const pathProgramId = parseInt(req.params.programId, 10);
+      if (pathProgramId != callerProgramId) {
+        throw new AuthorizationError('Trying to access another program data');
+      }
+      const { institutionId } = req.body;
+      res.json(await addInstitutionToProgram(callerProgramId, institutionId));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/programs/{programId}/institutions/{institutionId}:
+ *    delete:
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: returns list of institution ids related to the program
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: number
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: program id
+ *       - in: path
+ *         name: institutionId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: institution id to delete
+ */
+router.delete(
+  '/:programId/institutions/:institutionId',
+  authMiddleware([UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { programId: callerProgramId } = (req as DecodedRequest).userDecoded;
+      const pathProgramId = parseInt(req.params.programId, 10);
+      const institutionId = parseInt(req.params.institutionId, 10);
+      if (pathProgramId != callerProgramId) {
+        throw new AuthorizationError('Trying to access another program data');
+      }
+      if (!institutionId) {
+        throw new BadRequestError('institution id is missing');
+      }
+      res.json(await deleteInstitutionToProgram(callerProgramId, institutionId));
     } catch (e) {
       next(e);
     }

@@ -1,19 +1,10 @@
-import {
-  Language,
-  RequestStatus,
-  SkillToVolunteerRequest,
-  VolunteerRequest,
-  TimeUnit,
-  Audience,
-  User
-} from '../../models';
+import { Language, RequestStatus, SkillToVolunteerRequest, VolunteerRequest, TimeUnit, Audience } from '../../models';
 import { ReturnCreatorDTO } from './creator';
-import { ReturnProgramDTO } from './program';
+import { ReturnVRProgramDTO } from './program';
 import { ReturnSkillDTO } from './skill';
 import { ReturnVolunteerDTO } from './volunteer';
 
 export interface CreateVolunteerRequestDTO {
-  createdAt: Date;
   name: string;
   audience: Audience;
   isPhysical: boolean;
@@ -37,18 +28,23 @@ export type UpdateVolunteerRequestDTO = Partial<CreateVolunteerRequestDTO>;
 
 export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestDTO): VolunteerRequest => {
   const domainVr = new VolunteerRequest();
-  domainVr.createdAt = vr.createdAt;
   domainVr.name = vr.name;
   domainVr.audience = vr.audience;
   domainVr.isPhysical = vr.isPhysical;
   domainVr.description = vr.description;
-  domainVr.startDate = vr.startDate;
-  domainVr.endDate = vr.endDate;
+  if (vr.startDate) {
+    domainVr.startDate = new Date(vr.startDate);
+  }
+  if (vr.endDate) {
+    domainVr.endDate = new Date(vr.endDate);
+  }
   domainVr.durationTimeAmount = vr.durationTimeAmount;
   domainVr.durationTimeUnit = vr.durationTimeUnit;
   domainVr.frequencyTimeAmount = vr.frequencyTimeAmount;
   domainVr.frequencyTimeUnit = vr.frequencyTimeUnit;
-  domainVr.startTime = vr.startTime;
+  if (vr.startTime) {
+    domainVr.startTime = new Date(vr.startTime);
+  }
   domainVr.totalVolunteers = vr.totalVolunteers;
   domainVr.institutionId = vr.institutionId;
   domainVr.language = vr.language;
@@ -88,7 +84,7 @@ export interface ReturnVolunteerRequestDTO {
   currentVolunteers: number;
   status: RequestStatus;
   institutionId: number;
-  program: ReturnProgramDTO;
+  program: ReturnVRProgramDTO;
   language: Language;
   creatorId: string;
   creator?: ReturnCreatorDTO;

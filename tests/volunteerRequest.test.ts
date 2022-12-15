@@ -126,12 +126,24 @@ describe('volunteerRequest', function() {
 
   describe('relevant and open volunteer requests', function() {
     it('returns only the relevant and open volunteer requests', async function() {
-      const res = await request(app).get(`/api/v1/volunteer-requests`);
+      const res = await request(app)
+        .get(`/api/v1/volunteer-requests`)
+        .set('Authorization', `Bearer ${volunteer1Jwt}`);
       expect(res.body).to.eql([
         expectedVolunteerRequest(volunteerRequest1, program1, 2, [skill1, skill2]),
         expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0)
       ]);
     });
+    //TODO: Add test to test this doesn't return requests the user is assigned to
+    // it(`returns only the relevant and open volunteer requests that user isn't assigned to`, async function() {
+    //   const res = await request(app)
+    //   .get(`/api/v1/volunteer-requests`)
+    //   .set('Authorization', `Bearer ${volunteer1Jwt}`);
+    //   expect(res.body).to.eql([
+    //     expectedVolunteerRequest(volunteerRequest1, program1, 2, [skill1, skill2]),
+    //     expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0)
+    //   ]);
+    // });
   });
 
   describe('assign volunteer to volunteer request', function() {
@@ -357,7 +369,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .post(`/api/v1/volunteer-requests`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
-        .send({ volunteerRequest: { ...createPayload, blah: 'test' } });
+        .send({ ...createPayload, blah: 'test' });
       expect(res.status).to.eq(422);
       expect((res.error as HTTPError).text).to.eq(`Error validating schema, "blah" is not allowed`);
     });
@@ -367,7 +379,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .post(`/api/v1/volunteer-requests`)
         .set('Authorization', `Bearer ${programManager1Jwt}`)
-        .send({ volunteerRequest: createPayload });
+        .send(createPayload);
       expect(res.status).to.eq(200);
       const newVolunteerRequest = await volunteerRequestRepository.findOne({
         where: { name: volunteerRequestToCreate.name },
@@ -391,7 +403,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/0`)
         .set('Authorization', `Bearer ${programManager1Jwt}`)
-        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+        .send(volunteerRequestUpdateData);
       expect(res.status).to.eq(400);
       expect((res.error as HTTPError).text).to.eq(`Missing Id to update volunteer request by`);
     });
@@ -400,7 +412,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
         .set('Authorization', `Bearer ${programManager2Jwt}`)
-        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+        .send(volunteerRequestUpdateData);
       expect(res.status).to.eq(403);
       expect((res.error as HTTPError).text).to.eq(`Manager cant update request for other program`);
     });
@@ -409,7 +421,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
         .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
-        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+        .send(volunteerRequestUpdateData);
       expect(res.status).to.eq(403);
       expect((res.error as HTTPError).text).to.eq(`Coordinator cant update request for other program or institution`);
     });
@@ -418,7 +430,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
         .set('Authorization', `Bearer ${programCoordinator2Jwt}`)
-        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+        .send(volunteerRequestUpdateData);
       const updatedVolunteerRequest = await volunteerRequestRepository.findOne({
         where: { id: volunteerRequestToUpdate.id },
         relations: ['skillToVolunteerRequest', 'skillToVolunteerRequest.skill']
@@ -431,11 +443,42 @@ describe('volunteerRequest', function() {
       expect(res.status).to.eq(204);
     });
 
+    it('sending empty skill list will remove all mapped skills', async () => {
+      const createPayload = vrToCreatePayload(volunteerRequestToCreate);
+      let res = await request(app)
+        .post(`/api/v1/volunteer-requests`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send(createPayload);
+      expect(res.status).to.eq(200);
+      const newVolunteerRequest = await volunteerRequestRepository.findOne({
+        where: { name: volunteerRequestToCreate.name },
+        relations: ['skillToVolunteerRequest']
+      });
+      if (!newVolunteerRequest) {
+        throw new Error('no volunteer request found');
+      }
+      expect(newVolunteerRequest.skillToVolunteerRequest.length).to.eq(1);
+
+      res = await request(app)
+        .put(`/api/v1/volunteer-requests/${newVolunteerRequest.id}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send({ skills: [] });
+
+      const updatedVolunteerRequest = await volunteerRequestRepository.findOne({
+        where: { name: volunteerRequestToCreate.name },
+        relations: ['skillToVolunteerRequest']
+      });
+      if (!updatedVolunteerRequest) {
+        throw new Error('no volunteer request found');
+      }
+      expect(updatedVolunteerRequest.skillToVolunteerRequest.length).to.eq(0);
+    });
+
     it('returns 403 when pending user trying to perform action', async function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
         .set('Authorization', `Bearer ${pendingProgramManager3Jwt}`)
-        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+        .send(volunteerRequestUpdateData);
       expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
       expect(res.status).to.eq(403);
     });
@@ -444,7 +487,7 @@ describe('volunteerRequest', function() {
       const res = await request(app)
         .put(`/api/v1/volunteer-requests/${volunteerRequestToUpdate.id}`)
         .set('Authorization', `Bearer ${volunteer1Jwt}`)
-        .send({ volunteerRequestInfo: volunteerRequestUpdateData });
+        .send(volunteerRequestUpdateData);
       expect((res.error as HTTPError).text).to.eq('You are not authorized to perform this action');
       expect(res.status).to.eq(403);
     });

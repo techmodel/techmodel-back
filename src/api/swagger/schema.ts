@@ -3,6 +3,21 @@
  *
  * components:
  *   schemas:
+ *     createInstitutionPayload:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *         address:
+ *           type: string
+ *         locationId:
+ *           type: number
+ *         cityId:
+ *           type: number
+ *         populationType:
+ *           type: string
+ *         institutionType:
+ *           type: string
  *     updateUserInfoPayload:
  *       type: object
  *       properties:
@@ -52,7 +67,7 @@
  *         name:
  *           type: string
  *         audience:
- *           type: number
+ *           $ref: '#/components/schemas/audience'
  *         isPhysical:
  *           type: boolean
  *         description:
@@ -88,7 +103,7 @@
  *         name:
  *           type: string
  *         audience:
- *           type: number
+ *           $ref: '#/components/schemas/audience'
  *         isPhysical:
  *           type: boolean
  *         description:
@@ -145,7 +160,7 @@
  *         name:
  *           type: string
  *         audience:
- *           type: number
+ *           $ref: '#/components/schemas/audience'
  *         isPhysical:
  *           type: boolean
  *         description:
@@ -270,9 +285,13 @@
  *           type: string
  *         description:
  *           type: string
- *         createdAt:
- *           type: string
- *           format: date-time
+ *         institutionIds:
+ *           type: array
+ *           items:
+ *             type: number
+ *     audience:
+ *       type: string
+ *       enum: [small, medium, large, xLarge]
  *     user:
  *       type: object
  *       properties:

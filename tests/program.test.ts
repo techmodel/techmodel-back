@@ -5,6 +5,7 @@ import sinon, { SinonSandbox } from 'sinon';
 import logger from '../src/logger';
 import { removeSeed, seed } from './seed';
 import {
+  expectedProgram,
   expectedVolunteerRequest,
   HTTPError,
   programCoordinator1Jwt,
@@ -28,6 +29,8 @@ import {
   pendingProgramCoordinator4,
   pendingProgramCoordinator4SecondPart,
   program1,
+  program1ToInstitution1,
+  program1ToInstitution2,
   program2,
   programCoordinator1,
   programCoordinator2,
@@ -94,13 +97,17 @@ describe('programs', function() {
       volunteerRequestToVolunteers: volunteerRequestToVolunteers,
       pendingProgramCoordinators: [pendingProgramCoordinator3SecondPart, pendingProgramCoordinator4SecondPart],
       skills: [skill1, skill2],
-      skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1]
+      skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1],
+      programToInstitutions: [program1ToInstitution1, program1ToInstitution2]
     });
   });
 
   it('returns list of programs', async function() {
     const res = await request(app).get(`/api/v1/programs`);
-    expect(res.body).to.eql([program1, program2]);
+    expect(res.body).to.eql([
+      expectedProgram(program1, [program1ToInstitution1, program1ToInstitution2]),
+      expectedProgram(program2, [])
+    ]);
   });
 
   describe('coordinators of a program', function() {

@@ -61,6 +61,36 @@ jobs:
 
       - name: Run migrations against DEV sql server
         run: npm run typeorm migration:run
+
+  runMigrationsProd:
+    needs: test
+    runs-on: self-hosted
+
+    env:
+      APP_PORT: 4000 # it doesnt really matter, just fill in so the app wont crash
+      SQL_DB_HOST: ${{secrets.PROD_SQL_DB_HOST}}
+      SQL_DB_PORT: ${{secrets.PROD_SQL_DB_PORT}}
+      SQL_DB_USERNAME: ${{secrets.PROD_SQL_DB_USERNAME}}
+      SQL_DB_PASSWORD: ${{secrets.PROD_SQL_DB_PASSWORD}}
+      SQL_DB_DATABASE: ${{secrets.PROD_SQL_DB_DATABASE}}
+      JWT_SECRET: test # it doesnt really matter, just fill in so the app wont crash
+      AUTH_CLIENT_SECRET: asdasgf # it doesnt really matter, just fill in so the app wont crash
+    
+    if: success() && github.ref == 'refs/heads/master'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Setup node14/npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run migrations against Prod sql server
+        run: npm run typeorm migration:run
       
   buildAppAndPublish:
     needs: runMigrations
@@ -84,3 +114,26 @@ jobs:
 
       - name: Publish the Docker image
         run: docker push ${{secrets.CI_REG_PATH}}/techmodel-backend:latest
+
+  buildAppAndPublishProd:
+    needs: runMigrationsProd
+    runs-on: ubuntu-latest
+    
+    if: success() && github.ref == 'refs/heads/master'
+    steps:
+    
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build the Docker image
+        run: docker build -t ${{secrets.CI_REG_PATH}}/techmodel-backend-prod:latest .
+
+      - name: Login to ACR
+        uses: docker/login-action@v2
+        with:
+          registry: ${{secrets.CI_REG_PATH}}
+          username: ${{secrets.CI_REG_USERNAME}}
+          password: ${{secrets.CI_REG_PASSWORD}}
+
+      - name: Publish the Docker image
+        run: docker push ${{secrets.CI_REG_PATH}}/techmodel-backend-prod:latest

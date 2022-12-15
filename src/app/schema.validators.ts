@@ -1,14 +1,17 @@
 import Joi from 'joi';
 import { ObjectValidationError } from '../exc';
-import { Audience, Language, TimeUnit } from '../models';
+import { Audience, InstitutionType, Language, PopulationType, TimeUnit } from '../models';
 import { UserType } from '../models/userType';
 import { subMinutes } from 'date-fns';
+import logger from '../logger';
 
 const onlyNull = Joi.valid(null);
 const schemaId = Joi.string()
   .min(20)
   .required();
 const schemaUserType = Joi.string().valid(...Object.values(UserType));
+const schemaPopulationType = Joi.string().valid(...Object.values(PopulationType));
+const schemaInstitutionType = Joi.string().valid(...Object.values(InstitutionType));
 const schemaCompanyId = Joi.when('userType', {
   is: UserType.VOLUNTEER,
   then: Joi.number(),
@@ -30,6 +33,15 @@ const schemaPhone = Joi.string().min(10);
 const schemaEmail = Joi.string().email();
 const schemaTimeUnit = Joi.string().valid(...Object.values(TimeUnit));
 const schemaAudience = Joi.string().valid(...Object.values(Audience));
+
+export const createInstitutionSchema = Joi.object({
+  name: Joi.string().min(2),
+  address: Joi.string().min(2),
+  locationId: Joi.number(),
+  cityId: Joi.number(),
+  populationType: schemaPopulationType,
+  institutionType: schemaInstitutionType
+});
 
 export const createUserSchema = Joi.object({
   id: schemaId,
@@ -105,6 +117,7 @@ export const createVolunteerRequestSchema = Joi.object({
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {
+  logger.info(objectToValidate);
   const { error } = schema.validate(objectToValidate);
 
   if (error) {

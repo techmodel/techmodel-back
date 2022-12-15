@@ -1,8 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { login, register } from '../app/user';
-import { CLIENT_URL } from '../config';
 import { User } from '../models';
-import { verifyGoogleAuthToken } from './middlewares';
+import { verifyGoogleAuthTokenLogin, verifyGoogleAuthTokenRegister } from './middlewares';
 
 const router = Router();
 // TODO: add swagger description of the inputs required
@@ -23,10 +22,10 @@ const router = Router();
  *           description: User ID of the user that is trying to log in
  *           required: true
  */
-router.get('/login', verifyGoogleAuthToken, async (req: Request, res: Response, next: NextFunction) => {
+router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.cookies;
-    const loginResponse = await login(userId);
+    const { userId, userImage, userIdToken } = req.cookies;
+    const loginResponse = await login(userId, userImage, userIdToken);
     const returnToUrl = loginResponse.isFound ? req.cookies['return-to-login'] : req.cookies['return-to-register'];
     res.cookie('user-data', loginResponse);
     res.redirect(returnToUrl);
@@ -57,14 +56,13 @@ router.get('/login', verifyGoogleAuthToken, async (req: Request, res: Response, 
  *           required: true
  *           description: new user creation payload
  */
-router.post('/register', verifyGoogleAuthToken, async (req: Request, res: Response, next: NextFunction) => {
+router.post('/register', verifyGoogleAuthTokenRegister, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userToCreate = req.body.user as Partial<User>;
-    const { userId } = req.cookies;
+    const { userId, userImage, userIdToken } = req.cookies;
     const user = { id: userId, ...userToCreate };
-    const loginResponse = await register(user);
-    res.cookie('user-data', loginResponse);
-    res.redirect(CLIENT_URL);
+    const loginResponse = await register(user, userImage, userIdToken);
+    res.json(loginResponse);
   } catch (e) {
     next(e);
   }

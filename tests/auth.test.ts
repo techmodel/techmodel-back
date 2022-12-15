@@ -75,7 +75,7 @@ describe('register', function() {
       const res = await request(app)
         .post(`/api/v1/auth/register`)
         .send({ user: newUserPayload });
-      expect(res.status).to.eq(302);
+      expect(res.status).to.eq(200);
       const newCreatedUser = (await userRepository.findOneBy({ id: newUserPayload.id })) as User;
       expect(newCreatedUser.userType).to.eq(UserType.PENDING);
     });
@@ -84,7 +84,7 @@ describe('register', function() {
       const res = await request(app)
         .post(`/api/v1/auth/register`)
         .send({ user: newUserPayload });
-      expect(res.status).to.eq(302);
+      expect(res.status).to.eq(200);
       const pendingCoordinatorsRes = await request(app)
         .get(`/api/v1/programs/${program1.id}/pending-coordinators`)
         .set('Authorization', `Bearer ${programManager1Jwt}`);
