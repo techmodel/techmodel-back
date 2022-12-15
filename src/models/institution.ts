@@ -45,11 +45,11 @@ export class Institution {
   })
   city: City;
 
-  @Column({ type: 'varchar' })
-  populationType: PopulationType;
+  @Column({ type: 'varchar', nullable: true })
+  populationType: PopulationType | null;
 
-  @Column({ type: 'varchar' })
-  institutionType: InstitutionType;
+  @Column({ type: 'varchar', nullable: true })
+  institutionType: InstitutionType | null;
 
   @OneToMany(
     () => User,
