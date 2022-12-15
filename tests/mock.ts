@@ -444,5 +444,5 @@ export const createInstitutionDTO1: CreateInstitutionDTO = {
   locationId: 1,
   cityId: 1,
   populationType: PopulationType.RELIGIOUS,
-  institutionType: InstitutionType.ELEMENTARY
+  institutionType: InstitutionType.ELEMENTARY_SCHOOL
 };
