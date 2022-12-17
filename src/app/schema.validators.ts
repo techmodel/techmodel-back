@@ -2,7 +2,7 @@ import Joi from 'joi';
 import { ObjectValidationError } from '../exc';
 import { Audience, InstitutionType, Language, PopulationType, TimeUnit } from '../models';
 import { UserType } from '../models/userType';
-import { subMinutes } from 'date-fns';
+import { startOfDay } from 'date-fns';
 import logger from '../logger';
 
 const onlyNull = Joi.valid(null);
@@ -71,13 +71,13 @@ export const updateVolunteerRequestSchema = Joi.object({
   description: Joi.string()
     .min(2)
     .max(100),
-  startDate: Joi.date().greater(new Date()),
+  startDate: Joi.date().greater(startOfDay(new Date())),
   endDate: Joi.date().min(Joi.ref('startDate')),
   durationTimeAmount: Joi.number(),
   durationTimeUnit: schemaTimeUnit,
   frequencyTimeAmount: Joi.number(),
   frequencyTimeUnit: schemaTimeUnit,
-  startTime: Joi.date().min(subMinutes(new Date(), 1)),
+  startTime: Joi.date().min(startOfDay(new Date())),
   totalVolunteers: Joi.number().min(1),
   language: Joi.string().valid(...Object.values(Language)),
   skills: Joi.array().items(Joi.number())
@@ -93,14 +93,14 @@ export const createVolunteerRequestSchema = Joi.object({
     .min(2)
     .max(100)
     .required(),
-  startDate: Joi.date().greater(new Date()),
+  startDate: Joi.date().greater(startOfDay(new Date())),
   endDate: Joi.date().min(Joi.ref('startDate')),
   durationTimeAmount: Joi.number(),
   durationTimeUnit: schemaTimeUnit,
   frequencyTimeAmount: Joi.number(),
   frequencyTimeUnit: schemaTimeUnit,
   startTime: Joi.date()
-    .min(subMinutes(new Date(), 1))
+    .min(startOfDay(new Date()))
     .required(),
   totalVolunteers: Joi.number()
     .min(1)
