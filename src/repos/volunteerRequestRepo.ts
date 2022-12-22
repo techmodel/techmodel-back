@@ -10,11 +10,13 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       // populate vr.currentVolunteers
       .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
+      .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
       .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
       .andWhere(`vr.status = :status`, { status: 'sent' })
+      .andWhere(`(vrtv.volunteerId != '${volunteerId}' OR vrtv.volunteerId is null)`)
       // filter out requests that are full
       .andWhere(qb => {
         const subQuery = qb
@@ -22,10 +24,8 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
           .select('vr.id')
           .from(VolunteerRequest, 'vr')
           .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
-          .where(`vrtv.volunteerId != '${volunteerId}'`)
-          .orWhere('vrtv.volunteerId is null')
           .groupBy('vr.id, vr.totalVolunteers')
-          .having('COUNT(*) < vr.totalVolunteers')
+          .andHaving('COUNT(vrtv.volunteerRequestId) < vr.totalVolunteers')
           .getQuery();
         return 'vr.id IN ' + subQuery;
       })

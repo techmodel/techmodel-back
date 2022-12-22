@@ -1,11 +1,11 @@
 export enum InstitutionType {
-  PRIMARY_SCHOOL = 'PRIMARY_SCHOOL',
+  MIDDLE_SCHOOL = 'middle_school',
   ELEMENTARY_SCHOOL = 'elementary_school',
   HIGH_SCHOOL = 'high_school',
-  MOVEMENT = 'movement'
-  // TODO: add the rest of the options
-  // 'יסודי',
-  // 'ביניים',
-  // 'תיכון',
-  // 'תנועת נוער',
+  ASHCOLE_PICE = 'ashcolePice',
+  COMMUNITY_CENTER = 'communityCenter',
+  YOUTH_VILLAGE = 'youthVillage',
+  BOARDING_SCHOOL = 'boardingSchool',
+  SEMINARY = 'seminary',
+  OTHER = 'other'
 }
