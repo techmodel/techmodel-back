@@ -83,6 +83,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
       .andWhere('vrtv.volunteerId = :volunteerId', { volunteerId })
+      .andWhere(`vr.status = :status`, { status: 'sent' })
       .getMany();
   },
 
