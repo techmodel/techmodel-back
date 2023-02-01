@@ -1,19 +1,21 @@
 import { appDataSource } from '../dataSource';
 import { NotFoundError } from '../exc';
 import { RequestStatus, VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
-
 export const volunteerRequestRepository = appDataSource.getRepository(VolunteerRequest).extend({
-  async relevantAndOpen(): Promise<VolunteerRequest[]> {
+  async relevantAndOpen(volunteerId: string): Promise<VolunteerRequest[]> {
     return await this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
       // populate vr.currentVolunteers
       .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
+      .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
       .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
+      .andWhere(`vr.status = :status`, { status: 'sent' })
+      .andWhere(`(vrtv.volunteerId != '${volunteerId}' OR vrtv.volunteerId is null)`)
       // filter out requests that are full
       .andWhere(qb => {
         const subQuery = qb
@@ -22,7 +24,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
           .from(VolunteerRequest, 'vr')
           .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
           .groupBy('vr.id, vr.totalVolunteers')
-          .having('COUNT(*) < vr.totalVolunteers')
+          .andHaving('COUNT(vrtv.volunteerRequestId) < vr.totalVolunteers')
           .getQuery();
         return 'vr.id IN ' + subQuery;
       })
@@ -47,7 +49,8 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vrtv.volunteer', 'vol')
       .leftJoinAndSelect('vol.company', 'company')
       .andWhere('vr.startDate > :startDate', { startDate })
-      .andWhere(`vr.programId = :programId`, { programId });
+      .andWhere(`vr.programId = :programId`, { programId })
+      .andWhere(`vr.status = :status`, { status: 'sent' });
     if (institutionId) {
       qb = qb.andWhere(`vr.institutionId = :institutionId`, { institutionId });
     }
@@ -76,8 +79,10 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('stvr.skill', 'skill')
+      .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
       .andWhere('vrtv.volunteerId = :volunteerId', { volunteerId })
+      .andWhere(`vr.status = :status`, { status: 'sent' })
       .getMany();
   },
 

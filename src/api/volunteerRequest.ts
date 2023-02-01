@@ -29,9 +29,10 @@ const router = Router();
  *                 items:
  *                   $ref: '#/components/schemas/volunteerRequest'
  */
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/', authMiddleware(UserType.VOLUNTEER), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.json(await getRelevantAndOpenVolunteerRequests());
+    const { userId } = (req as DecodedRequest).userDecoded;
+    res.json(await getRelevantAndOpenVolunteerRequests(userId));
   } catch (e) {
     next(e);
   }

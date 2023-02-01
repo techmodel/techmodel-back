@@ -60,7 +60,8 @@ const InitDataSource = new DataSource({
 InitDataSource.initialize()
   .then(async () => {
     console.log('initialized with new schema');
-    const sqlFileNames = await readdir('src/sql');
+    const sqlFileNames = await readdir('src/sql', { withFileTypes: true });
+    const institutionSqlFileNames = await readdir(`src/sql/institutions`);
     // initialize appDataSource to perform seeding
     await appDataSource.initialize();
     // seed db
@@ -80,7 +81,15 @@ InitDataSource.initialize()
     });
     await Promise.all(
       sqlFileNames.map(async sqlFileName => {
-        const sqlFile = await readFile(`src/sql/${sqlFileName}`);
+        if (!sqlFileName.isDirectory()) {
+          const sqlFile = await readFile(`src/sql/${sqlFileName.name}`);
+          return await appDataSource.query(sqlFile.toString());
+        }
+      })
+    );
+    await Promise.all(
+      institutionSqlFileNames.map(async sqlFileName => {
+        const sqlFile = await readFile(`src/sql/institutions/${sqlFileName}`);
         return await appDataSource.query(sqlFile.toString());
       })
     );

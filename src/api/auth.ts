@@ -73,8 +73,8 @@ router.get('/logout', verifyGoogleAuthTokenLogin, async (req: Request, res: Resp
 router.post('/register', verifyGoogleAuthTokenRegister, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userToCreate = req.body.user as Partial<User>;
-    const { userId, userImage, userIdToken } = req.cookies;
-    const user = { id: userId, ...userToCreate };
+    const { userId, userImage, userIdToken, userEmail } = req.cookies;
+    const user = { id: userId, email: userEmail, ...userToCreate };
     const loginResponse = await register(user, userImage, userIdToken);
     res.json(loginResponse);
   } catch (e) {

@@ -109,8 +109,10 @@ export const verifyGoogleAuthTokenRegister = async (req: Request, res: Response,
     const payload = ticket.getPayload()!;
     const userId = payload['sub'];
     const userImage = payload['picture'];
+    const userEmail = payload['email'];
     req.cookies['userId'] = userId;
     req.cookies['userImage'] = userImage;
+    req.cookies['userEmail'] = userEmail;
     req.cookies['userIdToken'] = idToken; // TODO: remove id token from cookies.
   } catch (err) {
     next(err);
