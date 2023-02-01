@@ -34,6 +34,20 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
   }
 });
 
+router.get('/logout', verifyGoogleAuthTokenLogin, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const returnToUrl = req.cookies['return-to-login'];
+    res.clearCookie('user-data');
+    if (returnToUrl) {
+      res.redirect(returnToUrl);
+      return;
+    }
+    res.end();
+  } catch (e) {
+    next(e);
+  }
+});
+
 /**
  * @openapi
  * paths:
