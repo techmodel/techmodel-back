@@ -93,6 +93,12 @@
  *           type: number
  *         language:
  *           type: string
+ *         meetingUrl:
+ *           type: string
+ *         genericUrl:
+ *           type: string
+ *         dateFlexible:
+ *           type: boolean
  *         skills:
  *           type: array
  *           items:
@@ -135,6 +141,12 @@
  *           type: number
  *         creatorId:
  *           type: string
+ *         meetingUrl:
+ *           type: string
+ *         genericUrl:
+ *           type: string
+ *         dateFlexible:
+ *           type: boolean
  *         skills:
  *           type: array
  *           items:

@@ -12,6 +12,9 @@ export class Company {
   @Column()
   description: string;
 
+  @Column()
+  url: string;
+
   @OneToMany(
     () => User,
     user => user.company

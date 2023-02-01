@@ -32,6 +32,12 @@ export class VolunteerRequest {
   @Column()
   description: string;
 
+  @Column()
+  meetingUrl: string;
+
+  @Column()
+  genericUrl: string;
+
   @Column({ type: 'datetime' })
   startDate: Date;
 
@@ -49,6 +55,9 @@ export class VolunteerRequest {
 
   @Column()
   frequencyTimeUnit: TimeUnit;
+
+  @Column()
+  dateFlexible: boolean;
 
   @Column({ type: 'datetime' })
   startTime: Date;

@@ -80,7 +80,10 @@ export const updateVolunteerRequestSchema = Joi.object({
   startTime: Joi.date().min(startOfDay(new Date())),
   totalVolunteers: Joi.number().min(1),
   language: Joi.string().valid(...Object.values(Language)),
-  skills: Joi.array().items(Joi.number())
+  skills: Joi.array().items(Joi.number()),
+  meetingUrl: Joi.string().max(1500),
+  genericUrl: Joi.string().max(1500),
+  dateFlexible: Joi.boolean()
 });
 
 export const createVolunteerRequestSchema = Joi.object({
@@ -91,7 +94,7 @@ export const createVolunteerRequestSchema = Joi.object({
   isPhysical: Joi.boolean().required(),
   description: Joi.string()
     .min(2)
-    .max(100)
+    .max(500)
     .required(),
   startDate: Joi.date().greater(startOfDay(new Date())),
   endDate: Joi.date().min(Joi.ref('startDate')),
@@ -113,7 +116,10 @@ export const createVolunteerRequestSchema = Joi.object({
   creatorId: Joi.string()
     .min(20)
     .required(),
-  skills: Joi.array().items(Joi.number())
+  skills: Joi.array().items(Joi.number()),
+  meetingUrl: Joi.string().max(1500),
+  genericUrl: Joi.string().max(1500),
+  dateFlexible: Joi.boolean()
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {

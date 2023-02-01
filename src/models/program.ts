@@ -14,6 +14,9 @@ export class Program {
   @Column()
   description: string;
 
+  @Column()
+  url: string;
+
   @OneToMany(
     () => User,
     user => user.company
