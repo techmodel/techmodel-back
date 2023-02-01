@@ -14,8 +14,8 @@ export class Program {
   @Column()
   description: string;
 
-  @Column()
-  url: string;
+  @Column({ nullable: true })
+  programUrl: string;
 
   @OneToMany(
     () => User,

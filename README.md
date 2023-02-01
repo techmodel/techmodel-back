@@ -49,6 +49,7 @@ Then, to run the application do:
    we do this because we want our database to be clean
 4. run `npm run typeorm-dev migration:run` to get the local database up to date with the current migrations
 5. run `npm run typeorm-dev migration:generate ./src/migrations/**migration name**` to create a new migration that contains the diff
+6. run `npm run typeorm-dev migration:run` again to apply the new migration
 
 Resources for TypeORM:
 

@@ -12,8 +12,8 @@ export class Company {
   @Column()
   description: string;
 
-  @Column()
-  url: string;
+  @Column({ nullable: true })
+  companyUrl: string;
 
   @OneToMany(
     () => User,

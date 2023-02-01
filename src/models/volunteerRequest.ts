@@ -32,10 +32,10 @@ export class VolunteerRequest {
   @Column()
   description: string;
 
-  @Column()
+  @Column({ nullable: true })
   meetingUrl: string;
 
-  @Column()
+  @Column({ nullable: true })
   genericUrl: string;
 
   @Column({ type: 'datetime' })
@@ -44,19 +44,19 @@ export class VolunteerRequest {
   @Column({ type: 'datetime' })
   endDate: Date;
 
-  @Column()
+  @Column({ nullable: true })
   durationTimeAmount: number;
 
-  @Column()
+  @Column({ nullable: true })
   durationTimeUnit: TimeUnit;
 
-  @Column()
+  @Column({ nullable: true })
   frequencyTimeAmount: number;
 
-  @Column()
+  @Column({ nullable: true })
   frequencyTimeUnit: TimeUnit;
 
-  @Column()
+  @Column({ nullable: true })
   dateFlexible: boolean;
 
   @Column({ type: 'datetime' })
