@@ -1,3 +1,4 @@
+import { volunteerRequestToVolunteerRepository } from '../../tests/seed';
 import { appDataSource } from '../dataSource';
 import { NotFoundError } from '../exc';
 import { RequestStatus, VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
@@ -101,5 +102,22 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
 
   async setVolunteerRequestAsDeleted(requestId: number): Promise<void> {
     await this.update({ id: requestId }, { status: RequestStatus.DELETED, updatedAt: new Date() });
+  },
+
+  async unassignFromOpenRequests(volunteerId: string): Promise<void> {
+    const today = new Date().toISOString();
+    const mappingsToDelete = await volunteerRequestToVolunteerRepository
+      .createQueryBuilder('vrtv')
+      .innerJoinAndSelect('vrtv.volunteerRequest', 'vr')
+      .where('vrtv.volunteerId = :volunteerId', { volunteerId })
+      .andWhere('vr.startDate >= :today', { today })
+      .select('vrtv.id')
+      .getMany();
+    const idsToDelete = mappingsToDelete.map(mapping => mapping.id);
+    await volunteerRequestToVolunteerRepository
+      .createQueryBuilder('vrtv')
+      .delete()
+      .whereInIds(idsToDelete)
+      .execute();
   }
 });

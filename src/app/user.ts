@@ -1,10 +1,11 @@
 import * as jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 import { UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
 import { appDataSource } from '../dataSource';
 import { AuthorizationError, CannotPerformOperationError, NotFoundError } from '../exc';
 import { PendingProgramCoordinator, User, UserType } from '../models';
-import { userRepository } from '../repos';
+import { userRepository, volunteerRequestRepository } from '../repos';
 import { createUserSchema, selfUpdateUserSchema, validateSchema } from './schema.validators';
 
 type loginResponse = {
@@ -89,4 +90,16 @@ export const updateUserInstitutionId = async (
     throw new AuthorizationError('Trying to access different program coordinator');
   }
   await userRepository.update({ id: targetUserId }, { institutionId: newInstitutionId });
+};
+
+export const removePersonalInfo = async (caller: userDecoded): Promise<void> => {
+  if (caller.userType == UserType.VOLUNTEER) {
+    await volunteerRequestRepository.unassignFromOpenRequests(caller.userId);
+  }
+  const newEmail = `${uuidv4()}@delete.techmodel`;
+  const newPhone = uuidv4();
+  await userRepository.update(
+    { id: caller.userId },
+    { email: newEmail, phone: newPhone, firstName: 'deleted', lastName: 'deleted' }
+  );
 };
