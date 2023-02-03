@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { login, register } from '../app/user';
 import { User } from '../models';
 import { verifyGoogleAuthTokenLogin, verifyGoogleAuthTokenRegister } from './middlewares';
+import { BACKEND_DOMAIN } from '../config';
 
 const router = Router();
 // TODO: add swagger description of the inputs required
@@ -34,9 +35,19 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
   }
 });
 
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/auth/logout:
+ *     get:
+ *       operationId: logout
+ *       responses:
+ *         '200':
+ *           description: Successfully logged out user
+ */
 router.get('/logout', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.clearCookie('user-data', { path: '/', domain: 'localhost' });
+    res.clearCookie('user-data', { path: '/', domain: BACKEND_DOMAIN });
     res.end();
   } catch (e) {
     next(e);
