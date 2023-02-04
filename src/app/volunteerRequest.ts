@@ -123,13 +123,6 @@ export const deleteVolunteerFromRequest = async (
   if (!targetVolunteerRequest) {
     throw new NotFoundError('Volunteer request not found');
   }
-  logger.info({
-    ci: caller.institutionId,
-    cp: caller.programId,
-    vri: targetVolunteerRequest.institutionId,
-    vrp: targetVolunteerRequest.programId
-  });
-
   if (caller.userType === UserType.PROGRAM_MANAGER && !userAndPayloadSameProgram(caller, targetVolunteerRequest)) {
     throw new AuthorizationError('As a program manager, you are not allowed to delete this volunteer');
   }

@@ -13,7 +13,6 @@ import { userDecoded } from './user';
 
 export const getPrograms = async (): Promise<ReturnProgramDTO[]> => {
   const programs = await programRepository.find({ relations: ['programToInstitution'] });
-  logger.info(programs);
   return programs.map(program => mapPrgoramToProgramDTO(program));
 };
 
