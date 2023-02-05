@@ -59,6 +59,27 @@ router.get('/logout', async (req: Request, res: Response, next: NextFunction) =>
 /**
  * @openapi
  * paths:
+ *   /api/v1/auth/logout2:
+ *     get:
+ *       operationId: logout
+ *       responses:
+ *         '200':
+ *           description: Successfully logged out user
+ */
+router.get('/logout2', async (req: Request, res: Response, next: NextFunction) => {
+  // eslint-disable-next-line no-console
+  console.log('working');
+  try {
+    res.clearCookie('user-data', { path: '/', domain: BACKEND_DOMAIN });
+    res.end();
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * @openapi
+ * paths:
  *   /api/v1/auth/register:
  *     post:
  *       operationId: register
