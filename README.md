@@ -56,3 +56,26 @@ Resources for TypeORM:
 - datasource - https://typeorm.io/data-source
 - custom repository - https://typeorm.io/custom-repository
 - set foreign key number without fetching entity - https://github.com/typeorm/typeorm/issues/586
+
+// TODO: check if can add grafana easily
+/\*\*
+
+- for each company:
+- - how many volunteers
+- - how many related programs
+- - how many related institutions
+- - how many related unique volunteer requets
+- - how many hours volunteered
+- - how many students affected
+-
+- for each program:
+- - how many related institutions
+- - how many coordinators
+- - how many volunteer requests opened/closed
+- - how many volunteers
+-
+- for each institution:
+- - how many volunteers
+- - how many vr opened/closed
+- - how many
+    \*/
