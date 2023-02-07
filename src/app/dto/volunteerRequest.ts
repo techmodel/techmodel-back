@@ -115,7 +115,8 @@ export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequ
     program: {
       id: vr.program.id,
       name: vr.program.name,
-      description: vr.program.description
+      description: vr.program.description,
+      programUrl: vr.program.programUrl
     },
     language: vr.language,
     creatorId: vr.creatorId,

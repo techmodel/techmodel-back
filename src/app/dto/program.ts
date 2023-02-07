@@ -4,6 +4,7 @@ export interface ReturnVRProgramDTO {
   id: number;
   name: string;
   description: string;
+  programUrl: string;
 }
 
 export interface ReturnProgramDTO {
@@ -11,6 +12,7 @@ export interface ReturnProgramDTO {
   name: string;
   description: string;
   institutionIds: number[];
+  programUrl: string;
 }
 
 export const mapPrgoramToProgramDTO = (program: Program): ReturnProgramDTO => {
@@ -22,6 +24,7 @@ export const mapPrgoramToProgramDTO = (program: Program): ReturnProgramDTO => {
     id: program.id,
     name: program.name,
     description: program.description,
-    institutionIds: relatedInstitutions
+    institutionIds: relatedInstitutions,
+    programUrl: program.programUrl
   };
 };
