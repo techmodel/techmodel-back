@@ -38,7 +38,7 @@ export const programRepository = appDataSource.getRepository(Program).extend({
             inner join volunteer_request_to_volunteer vrtv
                 on users.id = vrtv.volunteerId
             inner join volunteer_request vr
-                on vr.id = vrtv.id
+                on vr.id = vrtv.volunteerRequestId
             where vr.programId = $1
             group by users.id
         ) alias

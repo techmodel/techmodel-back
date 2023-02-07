@@ -370,7 +370,7 @@ describe('programs', function() {
         coordinators: 2,
         vrOpen: 1,
         vrClosed: 2,
-        volunteers: 0
+        volunteers: 2
       });
     });
     it('throws 403 if the user is not program manager', async function() {
@@ -399,6 +399,6 @@ describe('programs', function() {
 
   this.afterEach(async function() {
     sandbox.restore();
-    await removeSeed();
+    // await removeSeed();
   });
 });
