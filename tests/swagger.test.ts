@@ -17,9 +17,9 @@ describe('api', function() {
     sandbox.restore();
   });
 
-  describe('/swagger', function() {
+  describe('/api/v1/swagger', function() {
     it('should return OK status', async () => {
-      const response = await request(app).get('/swagger');
+      const response = await request(app).get('/api/v1/swagger');
       expect(response.status).to.be.oneOf([200, 301]);
     });
   });
