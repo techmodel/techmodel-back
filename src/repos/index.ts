@@ -6,11 +6,15 @@ import {
   Location,
   PendingProgramCoordinator,
   PendingProgramManager,
-  Program,
   Skill,
   User,
   ProgramToInstitution
 } from '../models';
+
+export enum DuplicateErrorNumbers {
+  indexConstraint = 2601,
+  uniqueConstraint = 2627
+}
 
 export { volunteerRequestRepository } from './volunteerRequestRepo';
 export { programRepository } from './programRepo';

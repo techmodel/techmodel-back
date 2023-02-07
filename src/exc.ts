@@ -62,3 +62,10 @@ export class BadRequestError extends AppError {
     Object.setPrototypeOf(this, BadRequestError.prototype);
   }
 }
+
+export class DuplicateValueError extends AppError {
+  constructor(m: string, status = 409) {
+    super(m, status);
+    Object.setPrototypeOf(this, DuplicateValueError.prototype);
+  }
+}
