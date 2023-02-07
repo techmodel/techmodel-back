@@ -90,6 +90,9 @@ export interface ReturnVolunteerRequestDTO {
   creator?: ReturnCreatorDTO;
   skills?: ReturnSkillDTO[];
   volunteers?: ReturnVolunteerDTO[];
+  dateFlexible: boolean;
+  meetingUrl: string;
+  genericUrl: string;
 }
 
 export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequest): ReturnVolunteerRequestDTO => {
@@ -129,7 +132,10 @@ export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequ
       userType: vr.creator.userType,
       programId: vr.creator.programId!,
       institutionId: vr.creator.institutionId
-    }
+    },
+    dateFlexible: vr.dateFlexible,
+    genericUrl: vr.genericUrl,
+    meetingUrl: vr.meetingUrl
   };
   if (vr.skillToVolunteerRequest && vr.skillToVolunteerRequest.length > 0) {
     returnVolunteerRequestDTO.skills = vr.skillToVolunteerRequest.map(skillToRequest => ({
