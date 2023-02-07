@@ -38,10 +38,10 @@ export class VolunteerRequest {
   @Column({ nullable: true })
   genericUrl: string;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: true })
   startDate: Date;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: true })
   endDate: Date;
 
   @Column({ nullable: true })
@@ -59,7 +59,7 @@ export class VolunteerRequest {
   @Column({ nullable: true })
   dateFlexible: boolean;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: true })
   startTime: Date;
 
   @Column()

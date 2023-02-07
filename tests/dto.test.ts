@@ -140,7 +140,8 @@ describe('DTOs', function() {
       expect(returnDTO.program).to.eqls({
         id: returnVolunteerRequestMock.program.id,
         name: returnVolunteerRequestMock.program.name,
-        description: returnVolunteerRequestMock.program.description
+        description: returnVolunteerRequestMock.program.description,
+        programUrl: null
       });
       expect(returnDTO.language).to.eq(returnVolunteerRequestMock.language);
       expect(returnDTO.skills).to.containSubset(
@@ -183,7 +184,8 @@ describe('DTOs', function() {
       expect(returnDTO.program).to.eqls({
         id: returnVolunteerRequestWithVolunteersMock.program.id,
         name: returnVolunteerRequestWithVolunteersMock.program.name,
-        description: returnVolunteerRequestWithVolunteersMock.program.description
+        description: returnVolunteerRequestWithVolunteersMock.program.description,
+        programUrl: null
       });
       expect(returnDTO.language).to.eq(returnVolunteerRequestWithVolunteersMock.language);
       expect(returnDTO.skills).to.containSubset(
