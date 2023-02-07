@@ -399,6 +399,6 @@ describe('programs', function() {
 
   this.afterEach(async function() {
     sandbox.restore();
-    // await removeSeed();
+    await removeSeed();
   });
 });
