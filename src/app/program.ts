@@ -1,7 +1,6 @@
 import { appDataSource } from '../dataSource';
 import { CannotPerformOperationError, NotFoundError } from '../exc';
-import logger from '../logger';
-import { PendingProgramCoordinator, Program, User, UserType } from '../models';
+import { PendingProgramCoordinator, User, UserType } from '../models';
 import {
   pendingProgramCoordinatorRepository,
   programRepository,
@@ -9,7 +8,6 @@ import {
   userRepository
 } from '../repos';
 import { mapPrgoramToProgramDTO, ReturnProgramDTO } from './dto/program';
-import { userDecoded } from './user';
 
 export const getPrograms = async (): Promise<ReturnProgramDTO[]> => {
   const programs = await programRepository.find({ relations: ['programToInstitution'] });

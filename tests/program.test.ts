@@ -358,7 +358,7 @@ describe('programs', function() {
     });
   });
 
-  describe.only('stats', function() {
+  describe('stats', function() {
     it('returns stats if program manger requests it', async function() {
       const res = await request(app)
         .get(`/api/v1/programs/${program1.id}/stats`)
