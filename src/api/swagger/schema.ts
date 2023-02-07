@@ -264,6 +264,10 @@
  *           type: number
  *         name:
  *           type: string
+ *         description:
+ *           type: string
+ *         companyUrl:
+ *           type: string
  *     institution:
  *       type: object
  *       properties:
@@ -296,6 +300,8 @@
  *         name:
  *           type: string
  *         description:
+ *           type: string
+ *         programUrl:
  *           type: string
  *         institutionIds:
  *           type: array
