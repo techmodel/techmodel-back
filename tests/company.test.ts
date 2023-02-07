@@ -19,8 +19,8 @@ describe('companies', function() {
     });
   });
 
-  it('returns list of companies', async function() {
-    it('returns list of programs', async function() {
+  describe('returns list of companies', function() {
+    it('returns list of companies', async function() {
       const res = await request(app).get(`/api/v1/companies`);
       expect(res.body).to.eql([company1, company2]);
     });

@@ -78,3 +78,7 @@ export const addInstitutionToProgram = async (programId: number, institutionId: 
 export const deleteInstitutionToProgram = async (programId: number, institutionId: number): Promise<void> => {
   await programToInstitutionRepository.delete({ programId, institutionId });
 };
+
+export const getProgramStats = async (programId: number): Promise<any> => {
+  return programRepository.stats(programId);
+};
