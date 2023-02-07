@@ -153,7 +153,7 @@ export const setVolunteerRequestAsDeleted = async (caller: userDecoded, requestI
   if (
     caller.userType === UserType.PROGRAM_COORDINATOR &&
     (!userAndPayloadSameProgram(caller, targetVolunteerRequest) ||
-      userAndPayloadSameInstitution(caller, targetVolunteerRequest))
+      !userAndPayloadSameInstitution(caller, targetVolunteerRequest))
   ) {
     throw new AuthorizationError('As a program coordinator, you are not allowed to delete this request');
   }

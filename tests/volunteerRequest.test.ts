@@ -304,6 +304,24 @@ describe('volunteerRequest', function() {
       expect(targetVolunteerRequest.updatedAt).to.be.greaterThan(volunteerRequest1.updatedAt);
     });
 
+    it('chagnes the status of the volunteer request to `deleted` and updates `updatedAt` when coordinator performs', async function() {
+      let targetVolunteerRequest = await volunteerRequestRepository.requestById(volunteerRequest1.id);
+      if (!targetVolunteerRequest) {
+        throw new Error('Volunteer request not found');
+      }
+      expect(targetVolunteerRequest.status).to.eq('sent');
+      const res = await request(app)
+        .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
+      expect(res.status).to.eq(200);
+      targetVolunteerRequest = await volunteerRequestRepository.requestById(volunteerRequest1.id);
+      if (!targetVolunteerRequest) {
+        throw new Error('Volunteer request not found');
+      }
+      expect(targetVolunteerRequest.status).to.eq('deleted');
+      expect(targetVolunteerRequest.updatedAt).to.be.greaterThan(volunteerRequest1.updatedAt);
+    });
+
     it('returns 422 when trying to delete old request', async function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${oldVolunteerRequest1.id}`)
@@ -331,11 +349,11 @@ describe('volunteerRequest', function() {
     it('returns 403 when as a program coordinator trying to delete request he did not created', async function() {
       const res = await request(app)
         .delete(`/api/v1/volunteer-requests/${volunteerRequest1.id}`)
-        .set('Authorization', `Bearer ${programCoordinator1Jwt}`);
+        .set('Authorization', `Bearer ${programCoordinator2Jwt}`);
+      expect(res.status).to.eq(403);
       expect((res.error as HTTPError).text).to.eq(
         'As a program coordinator, you are not allowed to delete this request'
       );
-      expect(res.status).to.eq(403);
     });
 
     it('returns 403 when as a program manager trying to delete a volunteer request where the request is not from the program', async function() {
