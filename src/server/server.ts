@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 app.use(API_PREFIX, routes);
 
-app.get('/', (req, res) => res.redirect('/swagger'));
-app.use('/swagger', swaggerui);
+app.get('/', (req, res) => res.redirect(`${API_PREFIX}/swagger`));
+app.use(`${API_PREFIX}/swagger`, swaggerui);
 
 export default app;
