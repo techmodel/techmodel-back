@@ -76,7 +76,7 @@ export const register = async (user: Partial<User>, userImage: string, userIdTok
       const number = e.number;
       if (Object.values(DuplicateErrorNumbers).includes(number)) {
         const duplicate = e.message.match(/\(([^)]+)\)/)?.[1] || '';
-        throw new DuplicateValueError(`Value ${duplicate} already exists`);
+        throw new DuplicateValueError(`Value ${duplicate} already exists`, `הערך ${duplicate} כבר קיים, אנא נסה אחר`);
       }
       throw e;
     } else {

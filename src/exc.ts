@@ -1,8 +1,10 @@
 export class AppError extends Error {
   public readonly status: number;
-  constructor(m: string, status: number) {
+  public readonly hebrew: string | null;
+  constructor(m: string, status: number, hebrew: string | null = null) {
     super(m);
     this.status = status;
+    this.hebrew = hebrew;
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, AppError.prototype);
   }
@@ -64,8 +66,8 @@ export class BadRequestError extends AppError {
 }
 
 export class DuplicateValueError extends AppError {
-  constructor(m: string, status = 409) {
-    super(m, status);
+  constructor(m: string, hebrew: string | null) {
+    super(m, 409, hebrew);
     Object.setPrototypeOf(this, DuplicateValueError.prototype);
   }
 }
