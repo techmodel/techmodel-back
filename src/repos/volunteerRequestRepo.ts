@@ -16,7 +16,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('stvr.skill', 'skill')
       .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
       .andWhere(`vr.status = :status`, { status: 'sent' })
-      .andWhere(`(vrtv.volunteerId != '${volunteerId}' OR vrtv.volunteerId is null)`)
+      .andWhere(`(vrtv.volunteerId != '${volunteerId}' OR vrtv.volunteerId is null)`) // narrow down the requests as much as possible
       // filter out requests that are full
       .andWhere(qb => {
         const subQuery = qb
@@ -28,6 +28,17 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
           .andHaving('COUNT(vrtv.volunteerRequestId) < vr.totalVolunteers')
           .getQuery();
         return 'vr.id IN ' + subQuery;
+      })
+      // filter out requests that the user is already assigned to
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('vrtv.volunteerRequestId')
+          .from(VolunteerRequestToVolunteer, 'vrtv')
+          .where(`vrtv.volunteerId = '${volunteerId}'`)
+          .groupBy('vrtv.volunteerRequestId')
+          .getQuery();
+        return 'vr.id NOT IN ' + subQuery;
       })
       .getMany();
   },
