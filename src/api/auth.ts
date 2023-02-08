@@ -29,6 +29,14 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
     const loginResponse = await login(userId, userImage, userIdToken);
     const returnToUrl = loginResponse.isFound ? req.cookies['return-to-login'] : req.cookies['return-to-register'];
     res.cookie('user-data', loginResponse);
+
+    res.cookie('secureCookie1', JSON.stringify({ test: 'key' }), {
+      secure: true,
+      path: '/',
+      domain: BACKEND_DOMAIN,
+      httpOnly: true,
+      expires: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000) // in 5 days
+    });
     res.redirect(returnToUrl);
   } catch (e) {
     next(e);
@@ -47,8 +55,8 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
  */
 router.get('/logout', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.setHeader('Set-Cookie', `user-data=; Max-Age=0; path=/; domain=${BACKEND_DOMAIN}`);
-    // res.clearCookie('user-data', { path: '/', domain: BACKEND_DOMAIN });
+    // res.setHeader('Set-Cookie', `user-data=; Max-Age=0; path=/; domain=${BACKEND_DOMAIN}`);
+    res.clearCookie('secureCookie1', { path: '/', domain: BACKEND_DOMAIN, secure: true, httpOnly: true });
     res.end();
   } catch (e) {
     next(e);

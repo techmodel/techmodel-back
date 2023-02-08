@@ -4,10 +4,12 @@ import routes from '../api/api.routes';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { API_PREFIX, CLIENT_URL } from '../config';
+import { blockTraceTrack } from '../api/middlewares';
 
 const app = express();
 
 app.disable('x-powered-by');
+app.use(blockTraceTrack);
 
 app.use(cors({ origin: CLIENT_URL, credentials: true }));
 
