@@ -35,16 +35,6 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
   }
 });
 
-router.get('/login2', verifyGoogleAuthTokenLogin, async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { userId, userImage, userIdToken } = req.cookies;
-    const loginResponse = await login(userId, userImage, userIdToken);
-    res.json(loginResponse);
-  } catch (e) {
-    next(e);
-  }
-});
-
 /**
  * @openapi
  * paths:
@@ -57,8 +47,7 @@ router.get('/login2', verifyGoogleAuthTokenLogin, async (req: Request, res: Resp
  */
 router.get('/logout', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // res.setHeader('Set-Cookie', `user-data=; Max-Age=0; path=/; domain=${BACKEND_DOMAIN}`);
-    res.clearCookie('secureCookie1', { path: '/', domain: BACKEND_DOMAIN, secure: true, httpOnly: true });
+    res.clearCookie('user-data', { path: '/', domain: BACKEND_DOMAIN });
     res.end();
   } catch (e) {
     next(e);
