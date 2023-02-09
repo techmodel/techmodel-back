@@ -29,15 +29,17 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
     const loginResponse = await login(userId, userImage, userIdToken);
     const returnToUrl = loginResponse.isFound ? req.cookies['return-to-login'] : req.cookies['return-to-register'];
     res.cookie('user-data', loginResponse);
-
-    res.cookie('secureCookie1', JSON.stringify({ test: 'key' }), {
-      secure: true,
-      path: '/',
-      domain: BACKEND_DOMAIN,
-      httpOnly: true,
-      expires: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000) // in 5 days
-    });
     res.redirect(returnToUrl);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/login2', verifyGoogleAuthTokenLogin, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId, userImage, userIdToken } = req.cookies;
+    const loginResponse = await login(userId, userImage, userIdToken);
+    res.json(loginResponse);
   } catch (e) {
     next(e);
   }
