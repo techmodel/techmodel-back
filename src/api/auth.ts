@@ -47,7 +47,8 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
  */
 router.get('/logout', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.clearCookie('user-data', { path: '/', domain: BACKEND_DOMAIN });
+    // res.clearCookie('user-data', { path: '/', domain: BACKEND_DOMAIN });
+    res.cookie('user-data', 'deleted', { maxAge: 1 });
     res.end();
   } catch (e) {
     next(e);
