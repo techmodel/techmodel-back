@@ -35,6 +35,16 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
   }
 });
 
+router.get('/loginjwt', verifyGoogleAuthTokenLogin, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId, userImage, userIdToken } = req.cookies;
+    const loginResponse = await login(userId, userImage, userIdToken);
+    res.json(loginResponse);
+  } catch (e) {
+    next(e);
+  }
+});
+
 /**
  * @openapi
  * paths:
