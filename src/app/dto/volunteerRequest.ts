@@ -22,6 +22,9 @@ export interface CreateVolunteerRequestDTO {
   language: Language;
   skills?: number[];
   creatorId: string;
+  dateFlexible: boolean;
+  meetingUrl: string;
+  genericUrl: string;
 }
 
 export type UpdateVolunteerRequestDTO = Partial<CreateVolunteerRequestDTO>;
@@ -50,6 +53,9 @@ export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestD
   domainVr.language = vr.language;
   domainVr.programId = vr.programId;
   domainVr.creatorId = vr.creatorId;
+  domainVr.dateFlexible = vr.dateFlexible;
+  domainVr.genericUrl = vr.genericUrl;
+  domainVr.meetingUrl = vr.meetingUrl;
   if (vr.skills) {
     const skillsToVr: SkillToVolunteerRequest[] = vr.skills.map(skillId => {
       const skillToVr = new SkillToVolunteerRequest();

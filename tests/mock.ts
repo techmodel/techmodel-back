@@ -405,7 +405,10 @@ export const volunteerRequestToCreate = {
   language: Language.HEBREW,
   skills: [skill1.id],
   creatorId: programManager1.id,
-  creator: programManager1
+  creator: programManager1,
+  dateFlexible: false,
+  meetingUrl: 'test123',
+  genericUrl: 'test321'
 } as CreateVolunteerRequestDTO;
 
 export const volutneerRequestDTO1: CreateVolunteerRequestDTO = {
@@ -425,7 +428,10 @@ export const volutneerRequestDTO1: CreateVolunteerRequestDTO = {
   programId: program1.id,
   language: Language.ARABIC,
   skills: [skill1.id, skill2.id],
-  creatorId: programCoordinator1.id
+  creatorId: programCoordinator1.id,
+  dateFlexible: false,
+  meetingUrl: 'test123',
+  genericUrl: 'test321'
 };
 
 export const program1ToInstitution1 = {
