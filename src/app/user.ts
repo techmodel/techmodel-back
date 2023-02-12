@@ -113,8 +113,9 @@ export const removePersonalInfo = async (caller: userDecoded): Promise<void> => 
   }
   const newEmail = `${uuidv4()}@delete.techmodel`;
   const newPhone = uuidv4();
+  const newId = uuidv4();
   await userRepository.update(
     { id: caller.userId },
-    { email: newEmail, phone: newPhone, firstName: 'deleted', lastName: 'deleted' }
+    { email: newEmail, phone: newPhone, firstName: 'deleted', lastName: 'deleted', id: newId, oldId: caller.userId }
   );
 };

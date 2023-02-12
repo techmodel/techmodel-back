@@ -18,11 +18,10 @@ export class VolunteerRequestToVolunteer {
 
   @ManyToOne(
     () => User,
-    user => user.volunteerRequestToVolunteer
+    user => user.volunteerRequestToVolunteer,
+    { createForeignKeyConstraints: false } // disable to be able to delete users
   )
-  @JoinColumn({
-    foreignKeyConstraintName: 'FK_volunteer_request_to_volunteer_volunteer_id'
-  })
+  @JoinColumn()
   volunteer: User;
 
   @ManyToOne(

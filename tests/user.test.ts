@@ -234,10 +234,7 @@ describe('user', function() {
         .send();
       const user = (await userRepository.findOneBy({ id: programCoordinator1.id })) as User;
       expect(res.status).to.eq(200);
-      expect(user.email).to.not.eq(programCoordinator1.email);
-      expect(user.phone).to.not.eq(programCoordinator1.phone);
-      expect(user.firstName).to.eq('deleted');
-      expect(user.lastName).to.eq('deleted');
+      expect(user).to.eq(null);
     });
     it('should perform logout at the end', async () => {
       const res = await request(app)
