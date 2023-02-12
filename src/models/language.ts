@@ -4,5 +4,6 @@ export enum Language {
   ARABIC = 'arabic',
   FRENCH = 'french',
   YIDDISH = 'yiddish',
+  RUSSIAN = 'russian',
   OTHER = 'other'
 }
