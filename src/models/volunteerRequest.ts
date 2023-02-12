@@ -32,25 +32,34 @@ export class VolunteerRequest {
   @Column()
   description: string;
 
-  @Column({ type: 'datetime' })
+  @Column({ nullable: true })
+  meetingUrl: string;
+
+  @Column({ nullable: true })
+  genericUrl: string;
+
+  @Column({ type: 'datetime', nullable: true })
   startDate: Date;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: true })
   endDate: Date;
 
-  @Column()
+  @Column({ nullable: true })
   durationTimeAmount: number;
 
-  @Column()
+  @Column({ nullable: true })
   durationTimeUnit: TimeUnit;
 
-  @Column()
+  @Column({ nullable: true })
   frequencyTimeAmount: number;
 
-  @Column()
+  @Column({ nullable: true })
   frequencyTimeUnit: TimeUnit;
 
-  @Column({ type: 'datetime' })
+  @Column({ nullable: true })
+  dateFlexible: boolean;
+
+  @Column({ type: 'datetime', nullable: true })
   startTime: Date;
 
   @Column()
@@ -112,8 +121,9 @@ export class VolunteerRequest {
 
   @ManyToOne(
     () => User,
-    user => user.createdVolunteerRequests
+    user => user.createdVolunteerRequests,
+    { createForeignKeyConstraints: false } // disable to be able to delete users
   )
-  @JoinColumn({ foreignKeyConstraintName: 'FK_volunteer_request_creator_id' })
+  @JoinColumn()
   creator: User;
 }

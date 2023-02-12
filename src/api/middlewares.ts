@@ -65,7 +65,11 @@ export const clientErrorHandler = (err: ErrorRequestHandler, req: Request, res: 
     res.status(err.status).send(err.message);
     logger.warn(err.message);
   } else if (err instanceof AppError) {
-    res.status(err.status).send(err.message);
+    if (err.hebrew) {
+      res.status(err.status).send(err.hebrew);
+    } else {
+      res.status(err.status).send(err.message);
+    }
     logger.error(err.message);
   } else {
     res.status(500).json('Internal server error, check backend logs');
@@ -109,12 +113,25 @@ export const verifyGoogleAuthTokenRegister = async (req: Request, res: Response,
     const payload = ticket.getPayload()!;
     const userId = payload['sub'];
     const userImage = payload['picture'];
+    const userEmail = payload['email'];
     req.cookies['userId'] = userId;
     req.cookies['userImage'] = userImage;
+    req.cookies['userEmail'] = userEmail;
     req.cookies['userIdToken'] = idToken; // TODO: remove id token from cookies.
   } catch (err) {
     next(err);
   } finally {
     next();
   }
+};
+
+export const blockTraceTrack = (req: Request, res: Response, next: NextFunction): void => {
+  // NOTE: Exclude TRACE and TRACK methods to avoid XST attacks.
+  const allowedMethods = ['OPTIONS', 'HEAD', 'CONNECT', 'GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+
+  if (!allowedMethods.includes(req.method)) {
+    res.status(405).send(`${req.method} not allowed.`);
+  }
+
+  next();
 };

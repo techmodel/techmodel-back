@@ -31,6 +31,16 @@ const newUserPayload = {
   programId: program1.id
 };
 
+const secondNewUserPayload = {
+  id: 'testid123143141234163456345',
+  firstName: 'test122',
+  lastName: 'test122',
+  email: 'test122@gmail.com',
+  phone: '+972524210023',
+  userType: UserType.PROGRAM_MANAGER,
+  programId: program2.id
+};
+
 const checkCreateUserFails = async (payload: unknown, expectedError: string, errorStatus: number): Promise<void> => {
   const res = await request(app)
     .post(`/api/v1/auth/register`)
@@ -78,6 +88,27 @@ describe('register', function() {
       expect(res.status).to.eq(200);
       const newCreatedUser = (await userRepository.findOneBy({ id: newUserPayload.id })) as User;
       expect(newCreatedUser.userType).to.eq(UserType.PENDING);
+    });
+
+    it('throws 409 and right message if same unique constraints are violeted', async () => {
+      let res = await request(app)
+        .post(`/api/v1/auth/register`)
+        .send({ user: newUserPayload });
+      expect(res.status).to.eq(200);
+      const newCreatedUser = (await userRepository.findOneBy({ id: newUserPayload.id })) as User;
+      expect(newCreatedUser.userType).to.eq(UserType.PENDING);
+      res = await request(app)
+        .post(`/api/v1/auth/register`)
+        .send({ user: { ...secondNewUserPayload, phone: newUserPayload.phone } });
+      expect(res.status).to.eq(409);
+      expect((res.error as HTTPError).text).to.contain(newUserPayload.phone);
+      expect(await userRepository.findOneBy({ id: secondNewUserPayload.id })).to.eq(null);
+      res = await request(app)
+        .post(`/api/v1/auth/register`)
+        .send({ user: { ...secondNewUserPayload, email: newUserPayload.email } });
+      expect(res.status).to.eq(409);
+      expect((res.error as HTTPError).text).to.contain(newUserPayload.email);
+      expect(await userRepository.findOneBy({ id: secondNewUserPayload.id })).to.eq(null);
     });
 
     it('shows the new pending user as a pending coordinator in the program', async () => {

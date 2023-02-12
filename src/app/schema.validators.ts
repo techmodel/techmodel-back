@@ -2,7 +2,7 @@ import Joi from 'joi';
 import { ObjectValidationError } from '../exc';
 import { Audience, InstitutionType, Language, PopulationType, TimeUnit } from '../models';
 import { UserType } from '../models/userType';
-import { subMinutes } from 'date-fns';
+import { startOfDay } from 'date-fns';
 import logger from '../logger';
 
 const onlyNull = Joi.valid(null);
@@ -71,16 +71,19 @@ export const updateVolunteerRequestSchema = Joi.object({
   description: Joi.string()
     .min(2)
     .max(100),
-  startDate: Joi.date().greater(new Date()),
+  startDate: Joi.date().greater(startOfDay(new Date())),
   endDate: Joi.date().min(Joi.ref('startDate')),
   durationTimeAmount: Joi.number(),
   durationTimeUnit: schemaTimeUnit,
   frequencyTimeAmount: Joi.number(),
   frequencyTimeUnit: schemaTimeUnit,
-  startTime: Joi.date().min(subMinutes(new Date(), 1)),
+  startTime: Joi.date().min(startOfDay(new Date())),
   totalVolunteers: Joi.number().min(1),
   language: Joi.string().valid(...Object.values(Language)),
-  skills: Joi.array().items(Joi.number())
+  skills: Joi.array().items(Joi.number()),
+  meetingUrl: Joi.string().max(1500),
+  genericUrl: Joi.string().max(1500),
+  dateFlexible: Joi.boolean()
 });
 
 export const createVolunteerRequestSchema = Joi.object({
@@ -91,16 +94,16 @@ export const createVolunteerRequestSchema = Joi.object({
   isPhysical: Joi.boolean().required(),
   description: Joi.string()
     .min(2)
-    .max(100)
+    .max(500)
     .required(),
-  startDate: Joi.date().greater(new Date()),
+  startDate: Joi.date().greater(startOfDay(new Date())),
   endDate: Joi.date().min(Joi.ref('startDate')),
   durationTimeAmount: Joi.number(),
   durationTimeUnit: schemaTimeUnit,
   frequencyTimeAmount: Joi.number(),
   frequencyTimeUnit: schemaTimeUnit,
   startTime: Joi.date()
-    .min(subMinutes(new Date(), 1))
+    .min(startOfDay(new Date()))
     .required(),
   totalVolunteers: Joi.number()
     .min(1)
@@ -113,11 +116,13 @@ export const createVolunteerRequestSchema = Joi.object({
   creatorId: Joi.string()
     .min(20)
     .required(),
-  skills: Joi.array().items(Joi.number())
+  skills: Joi.array().items(Joi.number()),
+  meetingUrl: Joi.string().max(1500),
+  genericUrl: Joi.string().max(1500),
+  dateFlexible: Joi.boolean()
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {
-  logger.info(objectToValidate);
   const { error } = schema.validate(objectToValidate);
 
   if (error) {

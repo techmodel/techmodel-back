@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { login, register } from '../app/user';
 import { User } from '../models';
 import { verifyGoogleAuthTokenLogin, verifyGoogleAuthTokenRegister } from './middlewares';
+import { BACKEND_DOMAIN } from '../config';
 
 const router = Router();
 // TODO: add swagger description of the inputs required
@@ -27,8 +28,37 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
     const { userId, userImage, userIdToken } = req.cookies;
     const loginResponse = await login(userId, userImage, userIdToken);
     const returnToUrl = loginResponse.isFound ? req.cookies['return-to-login'] : req.cookies['return-to-register'];
-    res.cookie('user-data', loginResponse);
+    res.cookie('user-data', loginResponse, { maxAge: 2 * 60 * 60 * 1000 });
     res.redirect(returnToUrl);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/loginjwt', verifyGoogleAuthTokenLogin, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId, userImage, userIdToken } = req.cookies;
+    const loginResponse = await login(userId, userImage, userIdToken);
+    res.json(loginResponse);
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/auth/logout:
+ *     get:
+ *       operationId: logout
+ *       responses:
+ *         '200':
+ *           description: Successfully logged out user
+ */
+router.get('/logout', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.clearCookie('user-data');
+    res.send('test');
   } catch (e) {
     next(e);
   }
@@ -59,8 +89,8 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
 router.post('/register', verifyGoogleAuthTokenRegister, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userToCreate = req.body.user as Partial<User>;
-    const { userId, userImage, userIdToken } = req.cookies;
-    const user = { id: userId, ...userToCreate };
+    const { userId, userImage, userIdToken, userEmail } = req.cookies;
+    const user = { id: userId, email: userEmail, ...userToCreate };
     const loginResponse = await register(user, userImage, userIdToken);
     res.json(loginResponse);
   } catch (e) {

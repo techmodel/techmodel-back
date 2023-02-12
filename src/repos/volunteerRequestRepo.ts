@@ -1,7 +1,7 @@
+import { volunteerRequestToVolunteerRepository } from '../../tests/seed';
 import { appDataSource } from '../dataSource';
 import { NotFoundError } from '../exc';
 import { RequestStatus, VolunteerRequest, VolunteerRequestToVolunteer } from '../models';
-
 export const volunteerRequestRepository = appDataSource.getRepository(VolunteerRequest).extend({
   async relevantAndOpen(volunteerId: string): Promise<VolunteerRequest[]> {
     return await this
@@ -10,11 +10,13 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       // populate vr.currentVolunteers
       .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
+      .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
       .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
       .andWhere(`vr.status = :status`, { status: 'sent' })
+      .andWhere(`(vrtv.volunteerId != '${volunteerId}' OR vrtv.volunteerId is null)`) // narrow down the requests as much as possible
       // filter out requests that are full
       .andWhere(qb => {
         const subQuery = qb
@@ -22,12 +24,21 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
           .select('vr.id')
           .from(VolunteerRequest, 'vr')
           .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
-          .where(`vrtv.volunteerId != '${volunteerId}'`)
-          .orWhere('vrtv.volunteerId is null')
           .groupBy('vr.id, vr.totalVolunteers')
-          .having('COUNT(*) < vr.totalVolunteers')
+          .andHaving('COUNT(vrtv.volunteerRequestId) < vr.totalVolunteers')
           .getQuery();
         return 'vr.id IN ' + subQuery;
+      })
+      // filter out requests that the user is already assigned to
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('vrtv.volunteerRequestId')
+          .from(VolunteerRequestToVolunteer, 'vrtv')
+          .where(`vrtv.volunteerId = '${volunteerId}'`)
+          .groupBy('vrtv.volunteerRequestId')
+          .getQuery();
+        return 'vr.id NOT IN ' + subQuery;
       })
       .getMany();
   },
@@ -83,6 +94,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
       .andWhere('vrtv.volunteerId = :volunteerId', { volunteerId })
+      .andWhere(`vr.status = :status`, { status: 'sent' })
       .getMany();
   },
 
@@ -101,5 +113,22 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
 
   async setVolunteerRequestAsDeleted(requestId: number): Promise<void> {
     await this.update({ id: requestId }, { status: RequestStatus.DELETED, updatedAt: new Date() });
+  },
+
+  async unassignFromOpenRequests(volunteerId: string): Promise<void> {
+    const today = new Date().toISOString();
+    const mappingsToDelete = await volunteerRequestToVolunteerRepository
+      .createQueryBuilder('vrtv')
+      .innerJoinAndSelect('vrtv.volunteerRequest', 'vr')
+      .where('vrtv.volunteerId = :volunteerId', { volunteerId })
+      .andWhere('vr.startDate >= :today', { today })
+      .select('vrtv.id')
+      .getMany();
+    const idsToDelete = mappingsToDelete.map(mapping => mapping.id);
+    await volunteerRequestToVolunteerRepository
+      .createQueryBuilder('vrtv')
+      .delete()
+      .whereInIds(idsToDelete)
+      .execute();
   }
 });

@@ -25,9 +25,7 @@ export class PendingProgramManager {
   })
   program!: Program;
 
-  @OneToOne(() => User)
-  @JoinColumn({
-    foreignKeyConstraintName: 'FK_pending_program_manager_user_id'
-  })
+  @OneToOne(() => User, { createForeignKeyConstraints: false })
+  @JoinColumn()
   user!: User;
 }

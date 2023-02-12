@@ -93,6 +93,12 @@
  *           type: number
  *         language:
  *           type: string
+ *         meetingUrl:
+ *           type: string
+ *         genericUrl:
+ *           type: string
+ *         dateFlexible:
+ *           type: boolean
  *         skills:
  *           type: array
  *           items:
@@ -135,6 +141,12 @@
  *           type: number
  *         creatorId:
  *           type: string
+ *         meetingUrl:
+ *           type: string
+ *         genericUrl:
+ *           type: string
+ *         dateFlexible:
+ *           type: boolean
  *         skills:
  *           type: array
  *           items:
@@ -252,6 +264,10 @@
  *           type: number
  *         name:
  *           type: string
+ *         description:
+ *           type: string
+ *         companyUrl:
+ *           type: string
  *     institution:
  *       type: object
  *       properties:
@@ -284,6 +300,8 @@
  *         name:
  *           type: string
  *         description:
+ *           type: string
+ *         programUrl:
  *           type: string
  *         institutionIds:
  *           type: array

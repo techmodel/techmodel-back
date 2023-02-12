@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { mapVolunteerRequestToReturnVolunteerRequestDTO } from '../app/dto/volunteerRequest';
-import { updateUserInfo, updateUserInstitutionId } from '../app/user';
+import { removePersonalInfo, updateUserInfo, updateUserInstitutionId } from '../app/user';
 import { getVolunteerRequestsByUser } from '../app/volunteerRequest';
-import { AuthorizationError } from '../exc';
+import { AuthorizationError, CannotPerformOperationError } from '../exc';
 import { UserType } from '../models';
 import { DecodedRequest } from './decodedRequest';
 import { authMiddleware } from './middlewares';
+import { BACKEND_DOMAIN } from '../config';
 
 const router = Router();
 
@@ -144,6 +145,42 @@ router.put(
       const { newInstitutionId } = req.body;
       await updateUserInstitutionId(userDecoded, targetUserId, newInstitutionId);
       res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/user:
+ *     delete:
+ *       summary: Deletes the user performing the request
+ *       security:
+ *         - bearerAuth: []
+ *       responses:
+ *         '200':
+ *           description: User has been deleted
+ *         '401':
+ *           $ref: '#/components/responses/UnauthorizedError'
+ *         '422':
+ *           $ref: '#/components/responses/OperationNotAllowedError'
+ */
+router.delete(
+  '/',
+  authMiddleware([...Object.values(UserType)]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userDecoded = (req as DecodedRequest).userDecoded;
+      if (userDecoded.userType == UserType.PROGRAM_MANAGER) {
+        throw new CannotPerformOperationError(
+          'You are a program manger, please contact site administrators to delete your user'
+        );
+      }
+      await removePersonalInfo(userDecoded);
+      res.clearCookie('user-data', { path: '/', domain: BACKEND_DOMAIN });
+      res.sendStatus(200);
     } catch (e) {
       next(e);
     }

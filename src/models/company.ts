@@ -12,9 +12,13 @@ export class Company {
   @Column()
   description: string;
 
+  @Column({ nullable: true })
+  companyUrl: string;
+
   @OneToMany(
     () => User,
-    user => user.company
+    user => user.company,
+    { createForeignKeyConstraints: false } // disable to be able to delete users
   )
   users?: User[];
 }

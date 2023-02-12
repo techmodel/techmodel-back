@@ -1,10 +1,11 @@
 import * as jwt from 'jsonwebtoken';
-import { UpdateResult } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
+import { QueryFailedError, UpdateResult } from 'typeorm';
 import { JWT_SECRET } from '../config';
 import { appDataSource } from '../dataSource';
-import { AuthorizationError, CannotPerformOperationError, NotFoundError } from '../exc';
+import { AuthorizationError, CannotPerformOperationError, DuplicateValueError, NotFoundError } from '../exc';
 import { PendingProgramCoordinator, User, UserType } from '../models';
-import { userRepository } from '../repos';
+import { DuplicateErrorNumbers, userRepository, volunteerRequestRepository } from '../repos';
 import { createUserSchema, selfUpdateUserSchema, validateSchema } from './schema.validators';
 
 type loginResponse = {
@@ -62,10 +63,25 @@ const registerCoordinator = async (user: Partial<User>): Promise<void> => {
 
 export const register = async (user: Partial<User>, userImage: string, userIdToken: string): Promise<loginResponse> => {
   const validatedUser = validateSchema(createUserSchema, user);
-  if (validatedUser.userType === UserType.PROGRAM_COORDINATOR) {
-    await registerCoordinator(validatedUser);
-  } else {
-    await userRepository.save(validatedUser);
+  try {
+    if (validatedUser.userType === UserType.PROGRAM_COORDINATOR) {
+      await registerCoordinator(validatedUser);
+    } else {
+      await userRepository.save(validatedUser);
+    }
+  } catch (e) {
+    if (e instanceof QueryFailedError) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      const number = e.number;
+      if (Object.values(DuplicateErrorNumbers).includes(number)) {
+        const duplicate = e.message.match(/\(([^)]+)\)/)?.[1] || '';
+        throw new DuplicateValueError(`Value ${duplicate} already exists`, `הערך ${duplicate} כבר קיים, אנא נסה אחר`);
+      }
+      throw e;
+    } else {
+      throw e;
+    }
   }
   const userId = user.id as string;
   return login(userId, userImage, userIdToken);
@@ -89,4 +105,17 @@ export const updateUserInstitutionId = async (
     throw new AuthorizationError('Trying to access different program coordinator');
   }
   await userRepository.update({ id: targetUserId }, { institutionId: newInstitutionId });
+};
+
+export const removePersonalInfo = async (caller: userDecoded): Promise<void> => {
+  if (caller.userType == UserType.VOLUNTEER) {
+    await volunteerRequestRepository.unassignFromOpenRequests(caller.userId);
+  }
+  const newEmail = `${uuidv4()}@delete.techmodel`;
+  const newPhone = uuidv4();
+  const newId = uuidv4();
+  await userRepository.update(
+    { id: caller.userId },
+    { email: newEmail, phone: newPhone, firstName: 'deleted', lastName: 'deleted', id: newId, oldId: caller.userId }
+  );
 };
