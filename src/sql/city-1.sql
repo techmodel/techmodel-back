@@ -1,5 +1,4 @@
-SET IDENTITY_INSERT city on;
-INSERT INTO city (id, name)
+INSERT INTO city
 VALUES
     (2, N'אבו גוש'),
     (3, N'אבו סנאן'),
