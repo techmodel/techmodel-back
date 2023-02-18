@@ -1,4 +1,5 @@
-INSERT INTO location
+SET IDENTITY_INSERT location ON
+INSERT INTO location (id, name)
 VALUES
     (2, N'דרום'),
     (3, N'חיפה'),
@@ -7,3 +8,4 @@ VALUES
     (6, N'מרכז'),
     (7, N'צפון'),
     (8, N'תל אביב')
+SET IDENTITY_INSERT location OFF

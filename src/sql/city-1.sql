@@ -1,4 +1,5 @@
-INSERT INTO city
+SET IDENTITY_INSERT city ON
+INSERT INTO city (id, name)
 VALUES
     (2, N'אבו גוש'),
     (3, N'אבו סנאן'),
@@ -572,3 +573,4 @@ VALUES
     (571, N'שומרה'),
     (572, N'שיזף'),
     (573, N'תירוש')
+SET IDENTITY_INSERT city OFF

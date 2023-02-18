@@ -154,6 +154,7 @@ describe('programs', function() {
             { ...volunteer2, company: company2 }
           ]
         ),
+        expectedVolunteerRequest(oldVolunteerRequest1, program1, 1, [], [{...volunteer1, company: company1 }]),
         expectedVolunteerRequest(fullVolunteerRequest1, program1, 1, [], [{ ...volunteer1, company: company1 }])
       ]);
     });

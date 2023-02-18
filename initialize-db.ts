@@ -87,12 +87,12 @@ InitDataSource.initialize()
         }
       })
     );
-    await Promise.all(
-      institutionSqlFileNames.map(async sqlFileName => {
-        const sqlFile = await readFile(`src/sql/institutions/${sqlFileName}`);
-        return await appDataSource.query(sqlFile.toString());
-      })
-    );
+    // await Promise.all(
+    //   institutionSqlFileNames.map(async sqlFileName => {
+    //     const sqlFile = await readFile(`src/sql/institutions/${sqlFileName}`);
+    //     return await appDataSource.query(sqlFile.toString());
+    //   })
+    // );
     console.log('preformed seeding');
     throw 'done';
   })

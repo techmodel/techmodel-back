@@ -32,10 +32,9 @@ export const getRelevantAndOpenVolunteerRequests = async (
 
 export const getVolunteerRequestsOfProgram = async (
   programId: number,
-  institutionId?: number,
-  startDate?: string
+  institutionId?: number
 ): Promise<ReturnVolunteerRequestDTO[]> => {
-  const domainVrs = await volunteerRequestRepository.requestsOfProgram(programId, institutionId, startDate);
+  const domainVrs = await volunteerRequestRepository.requestsOfProgram(programId, institutionId);
   return domainVrs.map(vr => mapVolunteerRequestToReturnVolunteerRequestDTO(vr));
 };
 

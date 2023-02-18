@@ -14,7 +14,6 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
-      .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
       .andWhere(`vr.status = :status`, { status: 'sent' })
       .andWhere(`(vrtv.volunteerId != '${volunteerId}' OR vrtv.volunteerId is null)`) // narrow down the requests as much as possible
       // filter out requests that are full
@@ -43,11 +42,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .getMany();
   },
 
-  async requestsOfProgram(
-    programId: number,
-    institutionId?: number,
-    startDate = new Date().toISOString()
-  ): Promise<VolunteerRequest[]> {
+  async requestsOfProgram(programId: number, institutionId?: number): Promise<VolunteerRequest[]> {
     let qb = this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
@@ -60,7 +55,6 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.volunteerRequestToVolunteer', 'vrtv')
       .leftJoinAndSelect('vrtv.volunteer', 'vol')
       .leftJoinAndSelect('vol.company', 'company')
-      .andWhere('vr.startDate > :startDate', { startDate })
       .andWhere(`vr.programId = :programId`, { programId })
       .andWhere(`vr.status = :status`, { status: 'sent' });
     if (institutionId) {

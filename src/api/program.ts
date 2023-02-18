@@ -84,7 +84,7 @@ router.get(
       if (pathProgramId != userProgramId) {
         throw new AuthorizationError('Trying to access another program data');
       }
-      res.json(await getVolunteerRequestsOfProgram(userProgramId, institutionId, startDate));
+      res.json(await getVolunteerRequestsOfProgram(userProgramId, institutionId));
     } catch (e) {
       next(e);
     }

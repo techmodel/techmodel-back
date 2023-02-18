@@ -129,10 +129,11 @@ describe('volunteerRequest', function() {
       let res = await request(app)
         .get(`/api/v1/volunteer-requests`)
         .set('Authorization', `Bearer ${volunteer3WithoutMappingsJwt}`);
-      expect(res.body.length).to.eq(2);
+      expect(res.body.length).to.eq(3);
       expect(res.body).to.eql([
         expectedVolunteerRequest(volunteerRequest1, program1, 2, [skill1, skill2]),
-        expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0)
+        expectedVolunteerRequest(oldVolunteerRequest1, program1, 1, [], [{...volunteer1, company: company1}]),
+        expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0, [], [{...volunteer1, company: company1 }])
       ]);
 
       res = await request(app)
