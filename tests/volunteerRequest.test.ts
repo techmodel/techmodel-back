@@ -132,8 +132,8 @@ describe('volunteerRequest', function() {
       expect(res.body.length).to.eq(3);
       expect(res.body).to.eql([
         expectedVolunteerRequest(volunteerRequest1, program1, 2, [skill1, skill2]),
-        expectedVolunteerRequest(oldVolunteerRequest1, program1, 1, [], [{...volunteer1, company: company1}]),
-        expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0, [], [{...volunteer1, company: company1 }])
+        expectedVolunteerRequest(oldVolunteerRequest1, program1, 1, []),
+        expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0, [])
       ]);
 
       res = await request(app)
