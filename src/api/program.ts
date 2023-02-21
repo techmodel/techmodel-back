@@ -6,6 +6,7 @@ import {
   denyPendingCoordinator,
   getCoordinators,
   getPendingCoordinators,
+  getProgramStats,
   getPrograms,
   programRelatedInstitutions
 } from '../app/program';
@@ -83,7 +84,7 @@ router.get(
       if (pathProgramId != userProgramId) {
         throw new AuthorizationError('Trying to access another program data');
       }
-      res.json(await getVolunteerRequestsOfProgram(userProgramId, institutionId, startDate));
+      res.json(await getVolunteerRequestsOfProgram(userProgramId, institutionId));
     } catch (e) {
       next(e);
     }
@@ -403,6 +404,58 @@ router.delete(
         throw new BadRequestError('institution id is missing');
       }
       res.json(await deleteInstitutionToProgram(callerProgramId, institutionId));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/programs/{programId}/stats:
+ *    get:
+ *     operationId: getObject
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Statistics about the program so far
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 relatedInstitutions:
+ *                   type: number
+ *                 coordinators:
+ *                   type: number
+ *                 vrOpen:
+ *                   type: number
+ *                 vrClosed:
+ *                   type: number
+ *                 volunteers:
+ *                   type: number
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: program id
+ */
+router.get(
+  '/:programId/stats',
+  authMiddleware([UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { programId: userProgramId } = (req as DecodedRequest).userDecoded;
+      if (!userProgramId) throw new AuthorizationError('No program found');
+      const pathProgramId = parseInt(req.params.programId, 10);
+      if (pathProgramId != userProgramId) {
+        throw new AuthorizationError('Trying to access another program data');
+      }
+      res.json(await getProgramStats(pathProgramId));
     } catch (e) {
       next(e);
     }

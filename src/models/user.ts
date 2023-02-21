@@ -11,6 +11,9 @@ export class User {
   @PrimaryColumn({ primaryKeyConstraintName: 'PK_users' })
   id: string;
 
+  @Column({ nullable: true, unique: false })
+  oldId: string; // populated only if the user has been deleted
+
   @CreateDateColumn()
   createdAt!: Date;
 

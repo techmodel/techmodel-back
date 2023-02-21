@@ -83,10 +83,14 @@ export const expectedVolunteerRequest = (
     institutionId: vr.institutionId,
     language: vr.language,
     creatorId: vr.creatorId,
+    dateFlexible: vr.dateFlexible,
+    meetingUrl: vr.meetingUrl,
+    genericUrl: vr.genericUrl,
     program: {
       id: program.id,
       name: program.name,
-      description: program.description
+      description: program.description,
+      programUrl: program.programUrl
     },
     creator: {
       id: vr.creator.id,
@@ -121,6 +125,7 @@ export const expectedProgram = (program: Program, linkedInstitutions: ProgramToI
     id: program.id,
     name: program.name,
     description: program.description,
+    programUrl: program.programUrl,
     institutionIds: linkedInstitutions.map(mapping => mapping.institutionId)
   };
 };

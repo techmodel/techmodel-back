@@ -17,7 +17,8 @@ export class Company {
 
   @OneToMany(
     () => User,
-    user => user.company
+    user => user.company,
+    { createForeignKeyConstraints: false } // disable to be able to delete users
   )
   users?: User[];
 }

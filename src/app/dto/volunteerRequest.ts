@@ -22,6 +22,9 @@ export interface CreateVolunteerRequestDTO {
   language: Language;
   skills?: number[];
   creatorId: string;
+  dateFlexible: boolean;
+  meetingUrl: string;
+  genericUrl: string;
 }
 
 export type UpdateVolunteerRequestDTO = Partial<CreateVolunteerRequestDTO>;
@@ -50,6 +53,9 @@ export const mapCreateVolunteerRequestDtoToDomain = (vr: CreateVolunteerRequestD
   domainVr.language = vr.language;
   domainVr.programId = vr.programId;
   domainVr.creatorId = vr.creatorId;
+  domainVr.dateFlexible = vr.dateFlexible;
+  domainVr.genericUrl = vr.genericUrl;
+  domainVr.meetingUrl = vr.meetingUrl;
   if (vr.skills) {
     const skillsToVr: SkillToVolunteerRequest[] = vr.skills.map(skillId => {
       const skillToVr = new SkillToVolunteerRequest();
@@ -90,6 +96,9 @@ export interface ReturnVolunteerRequestDTO {
   creator?: ReturnCreatorDTO;
   skills?: ReturnSkillDTO[];
   volunteers?: ReturnVolunteerDTO[];
+  dateFlexible: boolean;
+  meetingUrl: string;
+  genericUrl: string;
 }
 
 export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequest): ReturnVolunteerRequestDTO => {
@@ -115,7 +124,8 @@ export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequ
     program: {
       id: vr.program.id,
       name: vr.program.name,
-      description: vr.program.description
+      description: vr.program.description,
+      programUrl: vr.program.programUrl
     },
     language: vr.language,
     creatorId: vr.creatorId,
@@ -128,7 +138,10 @@ export const mapVolunteerRequestToReturnVolunteerRequestDTO = (vr: VolunteerRequ
       userType: vr.creator.userType,
       programId: vr.creator.programId!,
       institutionId: vr.creator.institutionId
-    }
+    },
+    dateFlexible: vr.dateFlexible,
+    genericUrl: vr.genericUrl,
+    meetingUrl: vr.meetingUrl
   };
   if (vr.skillToVolunteerRequest && vr.skillToVolunteerRequest.length > 0) {
     returnVolunteerRequestDTO.skills = vr.skillToVolunteerRequest.map(skillToRequest => ({

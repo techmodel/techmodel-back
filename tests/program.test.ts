@@ -154,6 +154,7 @@ describe('programs', function() {
             { ...volunteer2, company: company2 }
           ]
         ),
+        expectedVolunteerRequest(oldVolunteerRequest1, program1, 1, [], [{ ...volunteer1, company: company1 }]),
         expectedVolunteerRequest(fullVolunteerRequest1, program1, 1, [], [{ ...volunteer1, company: company1 }])
       ]);
     });
@@ -355,6 +356,45 @@ describe('programs', function() {
         where: { id: pendingProgramCoordinator3.id }
       });
       expect(targetUser).to.eq(null);
+    });
+  });
+
+  describe('stats', function() {
+    it('returns stats if program manger requests it', async function() {
+      const res = await request(app)
+        .get(`/api/v1/programs/${program1.id}/stats`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(200);
+      expect(res.body).to.eql({
+        relatedInstitutions: 2,
+        coordinators: 2,
+        vrOpen: 1,
+        vrClosed: 2,
+        volunteers: 2
+      });
+    });
+    it('throws 403 if the user is not program manager', async function() {
+      let res = await request(app)
+        .delete(`/api/v1/programs/${program1.id}/pending-coordinators/${programCoordinator1.id}`)
+        .set('Authorization', `Bearer ${programCoordinator1Jwt}`)
+        .send();
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`You are not authorized to perform this action`);
+      res = await request(app)
+        .delete(`/api/v1/programs/${program1.id}/pending-coordinators/${programCoordinator1.id}`)
+        .set('Authorization', `Bearer ${volunteer1Jwt}`)
+        .send();
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`You are not authorized to perform this action`);
+    });
+    it('throws 403 if the user is requesting stats on program he is not part of', async function() {
+      const res = await request(app)
+        .delete(`/api/v1/programs/${program2.id}/pending-coordinators/${programCoordinator1.id}`)
+        .set('Authorization', `Bearer ${programManager1Jwt}`)
+        .send();
+      expect(res.status).to.eq(403);
+      expect((res.error as HTTPError).text).to.eq(`Trying to access another program data`);
     });
   });
 

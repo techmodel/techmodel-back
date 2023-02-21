@@ -14,9 +14,8 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
-      .andWhere('vr.startDate > :currentDate', { currentDate: new Date().toISOString() })
       .andWhere(`vr.status = :status`, { status: 'sent' })
-      .andWhere(`(vrtv.volunteerId != '${volunteerId}' OR vrtv.volunteerId is null)`)
+      .andWhere(`(vrtv.volunteerId != '${volunteerId}' OR vrtv.volunteerId is null)`) // narrow down the requests as much as possible
       // filter out requests that are full
       .andWhere(qb => {
         const subQuery = qb
@@ -29,14 +28,21 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
           .getQuery();
         return 'vr.id IN ' + subQuery;
       })
+      // filter out requests that the user is already assigned to
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('vrtv.volunteerRequestId')
+          .from(VolunteerRequestToVolunteer, 'vrtv')
+          .where(`vrtv.volunteerId = '${volunteerId}'`)
+          .groupBy('vrtv.volunteerRequestId')
+          .getQuery();
+        return 'vr.id NOT IN ' + subQuery;
+      })
       .getMany();
   },
 
-  async requestsOfProgram(
-    programId: number,
-    institutionId?: number,
-    startDate = new Date().toISOString()
-  ): Promise<VolunteerRequest[]> {
+  async requestsOfProgram(programId: number, institutionId?: number): Promise<VolunteerRequest[]> {
     let qb = this
       // alias to VolunteerRequest
       .createQueryBuilder('vr')
@@ -49,7 +55,6 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .leftJoinAndSelect('vr.volunteerRequestToVolunteer', 'vrtv')
       .leftJoinAndSelect('vrtv.volunteer', 'vol')
       .leftJoinAndSelect('vol.company', 'company')
-      .andWhere('vr.startDate > :startDate', { startDate })
       .andWhere(`vr.programId = :programId`, { programId })
       .andWhere(`vr.status = :status`, { status: 'sent' });
     if (institutionId) {

@@ -123,7 +123,6 @@ export const createVolunteerRequestSchema = Joi.object({
 });
 
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {
-  logger.info(objectToValidate);
   const { error } = schema.validate(objectToValidate);
 
   if (error) {

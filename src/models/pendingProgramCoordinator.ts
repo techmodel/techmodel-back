@@ -38,9 +38,7 @@ export class PendingProgramCoordinator {
   })
   institution: Institution;
 
-  @OneToOne(() => User)
-  @JoinColumn({
-    foreignKeyConstraintName: 'FK_pending_program_coordinator_user_id'
-  })
+  @OneToOne(() => User, { createForeignKeyConstraints: false })
+  @JoinColumn()
   user!: User;
 }

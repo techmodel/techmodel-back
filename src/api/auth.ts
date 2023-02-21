@@ -28,8 +28,18 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
     const { userId, userImage, userIdToken } = req.cookies;
     const loginResponse = await login(userId, userImage, userIdToken);
     const returnToUrl = loginResponse.isFound ? req.cookies['return-to-login'] : req.cookies['return-to-register'];
-    res.cookie('user-data', loginResponse);
+    res.cookie('user-data', loginResponse, { maxAge: 2 * 60 * 60 * 1000 });
     res.redirect(returnToUrl);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/loginjwt', verifyGoogleAuthTokenLogin, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId, userImage, userIdToken } = req.cookies;
+    const loginResponse = await login(userId, userImage, userIdToken);
+    res.json(loginResponse);
   } catch (e) {
     next(e);
   }
@@ -47,8 +57,8 @@ router.get('/login', verifyGoogleAuthTokenLogin, async (req: Request, res: Respo
  */
 router.get('/logout', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.clearCookie('user-data', { path: '/', domain: BACKEND_DOMAIN });
-    res.end();
+    res.clearCookie('user-data');
+    res.send('test');
   } catch (e) {
     next(e);
   }

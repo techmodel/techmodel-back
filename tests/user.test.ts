@@ -70,7 +70,7 @@ describe('user', function() {
   this.beforeEach(async function() {
     sandbox = sinon.createSandbox();
     // disable logging
-    // sandbox.stub(logger);
+    sandbox.stub(logger);
     // seed db
     await seed({
       cities: [city1, city2],
@@ -234,10 +234,7 @@ describe('user', function() {
         .send();
       const user = (await userRepository.findOneBy({ id: programCoordinator1.id })) as User;
       expect(res.status).to.eq(200);
-      expect(user.email).to.not.eq(programCoordinator1.email);
-      expect(user.phone).to.not.eq(programCoordinator1.phone);
-      expect(user.firstName).to.eq('deleted');
-      expect(user.lastName).to.eq('deleted');
+      expect(user).to.eq(null);
     });
     it('should perform logout at the end', async () => {
       const res = await request(app)
@@ -248,7 +245,7 @@ describe('user', function() {
         .to.contain('user-data')
         .to.contain('Expires=Thu, 01 Jan 1970 00:00:00 GMT');
     });
-    it.only('should remove from open volunteer requests if user type is volunteer', async () => {
+    it('should remove from open volunteer requests if user type is volunteer', async () => {
       await seed({
         volunteerRequests: [volunteerRequest1, oldVolunteerRequest1, fullVolunteerRequest1, volunteerRequestToUpdate],
         volunteerRequestToVolunteers: volunteerRequestToVolunteers
