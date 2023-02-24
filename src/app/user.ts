@@ -118,4 +118,7 @@ export const removePersonalInfo = async (caller: userDecoded): Promise<void> => 
     { id: caller.userId },
     { email: newEmail, phone: newPhone, firstName: 'deleted', lastName: 'deleted', id: newId, oldId: caller.userId }
   );
+  if ([UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER].includes(caller.userType)) {
+    await volunteerRequestRepository.updateCreatorIdForOldRequests(caller.userId, newId);
+  }
 };

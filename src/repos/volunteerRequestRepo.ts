@@ -1,3 +1,4 @@
+import { In, LessThan } from 'typeorm';
 import { volunteerRequestToVolunteerRepository } from '../../tests/seed';
 import { appDataSource } from '../dataSource';
 import { NotFoundError } from '../exc';
@@ -115,7 +116,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .createQueryBuilder('vrtv')
       .innerJoinAndSelect('vrtv.volunteerRequest', 'vr')
       .where('vrtv.volunteerId = :volunteerId', { volunteerId })
-      .andWhere('vr.startDate >= :today', { today })
+      .andWhere('vr.endDate >= :today', { today })
       .select('vrtv.id')
       .getMany();
     const idsToDelete = mappingsToDelete.map(mapping => mapping.id);
@@ -124,5 +125,16 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .delete()
       .whereInIds(idsToDelete)
       .execute();
+  },
+  async updateCreatorIdForOldRequests(oldId: string, newId: string) {
+    const today = new Date();
+    const vrsToUpdate = await volunteerRequestRepository.find({
+      where: {
+        creatorId: oldId,
+        endDate: LessThan(today)
+      }
+    });
+    const idsToUpdated = vrsToUpdate.map(vr => vr.id);
+    await volunteerRequestRepository.update({ creatorId: In(idsToUpdated) }, { creatorId: newId });
   }
 });
