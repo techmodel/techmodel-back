@@ -1,4 +1,5 @@
-import { In, LessThan } from 'typeorm';
+import { In, LessThan, MoreThan } from 'typeorm';
+import { skillToVolunteerRequestRepository } from '.';
 import { volunteerRequestToVolunteerRepository } from '../../tests/seed';
 import { appDataSource } from '../dataSource';
 import { NotFoundError } from '../exc';
@@ -128,13 +129,28 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
   },
   async updateCreatorIdForOldRequests(oldId: string, newId: string) {
     const today = new Date();
-    const vrsToUpdate = await volunteerRequestRepository.find({
+    const vrsToUpdate = await this.find({
       where: {
         creatorId: oldId,
         endDate: LessThan(today)
       }
     });
-    const idsToUpdated = vrsToUpdate.map(vr => vr.id);
-    await volunteerRequestRepository.update({ creatorId: In(idsToUpdated) }, { creatorId: newId });
+    const idsToUpdate = vrsToUpdate.map(vr => vr.id);
+    await this.update({ id: In(idsToUpdate) }, { creatorId: newId });
+  },
+  async deleteFutureRequestsByCreator(creatorId: string) {
+    const today = new Date();
+    const vrsToDelete = await this.find({
+      where: {
+        creatorId,
+        endDate: MoreThan(today)
+      }
+    });
+    const ids = vrsToDelete.map(vr => vr.id);
+    await Promise.all([
+      volunteerRequestToVolunteerRepository.delete({ volunteerRequestId: In(ids) }),
+      skillToVolunteerRequestRepository.delete({ volunteerRequestId: In(ids) })
+    ]);
+    await this.remove(vrsToDelete);
   }
 });
