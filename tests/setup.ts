@@ -1,7 +1,7 @@
 require('dotenv/config');
 import chai from 'chai';
 import chaiPromised from 'chai-as-promised';
-import { userDecoded } from '../src/app/user';
+import { UserDecoded } from '../src/app/user';
 chai.use(chaiPromised);
 
 import * as jwt from 'jsonwebtoken';
@@ -51,7 +51,7 @@ export const createTestJwt = (user: User): string => {
     institutionId: user.institutionId || undefined,
     programId: user.programId || undefined,
     companyId: user.companyId || undefined
-  } as userDecoded;
+  } as UserDecoded;
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
 };
 
