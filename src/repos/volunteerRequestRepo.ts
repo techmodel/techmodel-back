@@ -12,7 +12,9 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       // populate vr.currentVolunteers
       .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
-      .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
+      .leftJoinAndSelect('vr.volunteerRequestToVolunteer', 'vrtv')
+      .leftJoinAndSelect('vrtv.volunteer', 'vol')
+      .leftJoinAndSelect('vol.company', 'company')
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
