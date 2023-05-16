@@ -97,7 +97,7 @@ export const assignVolunteerToRequest = async (userId: string, volunteerRequestI
   if (!targetVolunteerRequest) {
     throw new NotFoundError('Volunteer request not found');
   }
-  if (targetVolunteerRequest.startDate < new Date()) {
+  if (targetVolunteerRequest.endDate < new Date() && !targetVolunteerRequest.dateFlexible) {
     throw new CannotPerformOperationError('Cannot assign volunteer to old request');
   }
   if (targetVolunteerRequest.volunteerRequestToVolunteer.length >= targetVolunteerRequest.totalVolunteers) {
