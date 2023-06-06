@@ -132,7 +132,7 @@ export const deleteVolunteerFromRequest = async (
   ) {
     throw new AuthorizationError('As a program coordinator, you are not allowed to delete this volunteer');
   }
-  if (targetVolunteerRequest.startDate < new Date()) {
+  if (targetVolunteerRequest.endDate < new Date()) {
     throw new CannotPerformOperationError('Cannot delete mapped volunteers from old request');
   }
   await volunteerRequestRepository.deleteVolunteerFromRequest(volunteerRequestId, volunteerId);
@@ -156,7 +156,7 @@ export const setVolunteerRequestAsDeleted = async (caller: UserDecoded, requestI
   ) {
     throw new AuthorizationError('As a program coordinator, you are not allowed to delete this request');
   }
-  if (targetVolunteerRequest.startDate < new Date()) {
+  if (targetVolunteerRequest.endDate < new Date()) {
     throw new CannotPerformOperationError('Cannot delete old request');
   }
   await volunteerRequestRepository.setVolunteerRequestAsDeleted(requestId);

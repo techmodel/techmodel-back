@@ -123,5 +123,7 @@ export const removePersonalInfo = async (caller: UserDecoded): Promise<void> => 
   );
   if (!isVolunteer) {
     await volunteerRequestRepository.updateCreatorIdForOldRequests(caller.userId, newId);
+  } else {
+    await volunteerRequestRepository.updateVolunteerIdForOldRequests(caller.userId, newId);
   }
 };

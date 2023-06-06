@@ -154,5 +154,21 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       skillToVolunteerRequestRepository.delete({ volunteerRequestId: In(ids) })
     ]);
     await this.remove(vrsToDelete);
+  },
+  async updateVolunteerIdForOldRequests(oldId: string, newId: string) {
+    const today = new Date();
+    const vrsToUpdate = await this.find({
+      where: {
+        endDate: LessThan(today),
+        volunteerRequestToVolunteer: {
+          volunteerId: oldId
+        }
+      },
+      relations: {
+        volunteerRequestToVolunteer: true
+      }
+    });
+    const idsToUpdate = vrsToUpdate.map(vr => vr.volunteerRequestToVolunteer.map(vrtv => vrtv.id)).flat();
+    await volunteerRequestToVolunteerRepository.update({ id: In(idsToUpdate) }, { volunteerId: newId });
   }
 });
