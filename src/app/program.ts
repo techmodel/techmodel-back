@@ -14,9 +14,9 @@ import { mapPrgoramToProgramDTO, ReturnProgramDTO } from './dto/program';
 export const getPrograms = async (): Promise<ReturnProgramDTO[]> => {
   const programs = await programRepository.find({ relations: ['programToInstitution'] });
   const users = await userRepository.find({ where: { programId: Not(IsNull()) } });
-  let managedProgramLists = [...new Set(users.map(u => u.programId?.toString()))];
+  const managedProgramLists = [...new Set(users.map(u => u.programId?.toString()))];
   return programs.map(program => {
-    let canBeManaged = !managedProgramLists.includes(program.id.toString());
+    const canBeManaged = !managedProgramLists.includes(program.id.toString());
     return mapPrgoramToProgramDTO(program, canBeManaged);
   });
 };

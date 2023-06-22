@@ -143,16 +143,16 @@ describe('volunteerRequest', function() {
   //     expect(res.body.length).to.eq(1);
   //     expect(res.body).to.eql([expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0)]);
   //   });
-    //TODO: Add test to test this doesn't return requests the user is assigned to
-    // it(`returns only the relevant and open volunteer requests that user isn't assigned to`, async function() {
-    //   const res = await request(app)
-    //   .get(`/api/v1/volunteer-requests`)
-    //   .set('Authorization', `Bearer ${volunteer1Jwt}`);
-    //   expect(res.body).to.eql([
-    //     expectedVolunteerRequest(volunteerRequest1, program1, 2, [skill1, skill2]),
-    //     expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0)
-    //   ]);
-    // });
+  //TODO: Add test to test this doesn't return requests the user is assigned to
+  // it(`returns only the relevant and open volunteer requests that user isn't assigned to`, async function() {
+  //   const res = await request(app)
+  //   .get(`/api/v1/volunteer-requests`)
+  //   .set('Authorization', `Bearer ${volunteer1Jwt}`);
+  //   expect(res.body).to.eql([
+  //     expectedVolunteerRequest(volunteerRequest1, program1, 2, [skill1, skill2]),
+  //     expectedVolunteerRequest(volunteerRequestToUpdate, program1, 0)
+  //   ]);
+  // });
   // });
 
   describe('assign volunteer to volunteer request', function() {

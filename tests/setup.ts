@@ -126,7 +126,8 @@ export const expectedProgram = (program: Program, linkedInstitutions: ProgramToI
     name: program.name,
     description: program.description,
     programUrl: program.programUrl,
-    institutionIds: linkedInstitutions.map(mapping => mapping.institutionId)
+    institutionIds: linkedInstitutions.map(mapping => mapping.institutionId),
+    canBeManaged: false
   };
 };
 

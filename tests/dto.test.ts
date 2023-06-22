@@ -63,7 +63,7 @@ describe('DTOs', function() {
 
   describe('mapPrgoramToProgramDTO', function() {
     it('should return proper program DTO object', async function() {
-      const dtoProgram = mapPrgoramToProgramDTO(domainProgramWith2InstitutionsMock);
+      const dtoProgram = mapPrgoramToProgramDTO(domainProgramWith2InstitutionsMock, true);
       expect(dtoProgram.id).to.eq(domainProgramWith2InstitutionsMock.id);
       expect(dtoProgram.name).to.eq(domainProgramWith2InstitutionsMock.name);
       expect(dtoProgram.description).to.eq(domainProgramWith2InstitutionsMock.description);
@@ -73,7 +73,7 @@ describe('DTOs', function() {
     });
 
     it('should return empty list if no institutions are mapped', async function() {
-      const dtoProgram = mapPrgoramToProgramDTO(program2);
+      const dtoProgram = mapPrgoramToProgramDTO(program2, true);
       expect(dtoProgram.id).to.eq(program2.id);
       expect(dtoProgram.name).to.eq(program2.name);
       expect(dtoProgram.description).to.eq(program2.description);
