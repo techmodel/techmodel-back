@@ -170,5 +170,19 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
     });
     const idsToUpdate = vrsToUpdate.map(vr => vr.volunteerRequestToVolunteer.map(vrtv => vrtv.id)).flat();
     await volunteerRequestToVolunteerRepository.update({ id: In(idsToUpdate) }, { volunteerId: newId });
+  },
+
+  async getProgramVolunteersPerInstitution(programId: number, institutionId: number): Promise<any> {
+    console.log(programId, institutionId)
+    return await this.query(
+      `select u.firstName, u.lastName, u.phone, u.email, u.companyId, count(vrtv.id) vrCount
+      from volunteer_request vr
+          inner join volunteer_request_to_volunteer vrtv on vr.id = vrtv.volunteerRequestId
+          inner join users u on vrtv.volunteerId = u.id
+      where vr.institutionId= 1 and vr.programId = 1
+      group by u.firstName, u.lastName, u.phone, u.email, u.companyId
+    `,
+      [institutionId, programId]
+    );
   }
 });

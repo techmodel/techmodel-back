@@ -8,7 +8,8 @@ import {
   getPendingCoordinators,
   getProgramStats,
   getPrograms,
-  programRelatedInstitutions
+  programRelatedInstitutions,
+  getProgramVolunteersPerInstitution
 } from '../app/program';
 import { getVolunteerRequestsOfProgram } from '../app/volunteerRequest';
 import { AuthorizationError, BadRequestError } from '../exc';
@@ -456,6 +457,57 @@ router.get(
         throw new AuthorizationError('Trying to access another program data');
       }
       res.json(await getProgramStats(pathProgramId));
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * @openapi
+ * paths:
+ *   /api/v1/programs/{programId}/institutions/{institutionId}:
+ *    delete:
+ *     security:
+ *      - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: returns list of institution ids related to the program
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: number
+ *     parameters:
+ *       - in: path
+ *         name: programId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: program id
+ *       - in: path
+ *         name: institutionId
+ *         schema:
+ *         type: number
+ *         required: true
+ *         description: institution id to delete
+ */
+router.get(
+  '/:programId/institutions/:institutionId/volunteers',
+  authMiddleware([UserType.PROGRAM_MANAGER]),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { programId: callerProgramId } = (req as DecodedRequest).userDecoded;
+      const pathProgramId = parseInt(req.params.programId, 10);
+      const institutionId = parseInt(req.params.institutionId, 10);
+      if (pathProgramId != callerProgramId) {
+        throw new AuthorizationError('Trying to access another program data');
+      }
+      if (!institutionId) {
+        throw new BadRequestError('institution id is missing');
+      }
+      res.json(await getProgramVolunteersPerInstitution(callerProgramId, institutionId));
     } catch (e) {
       next(e);
     }
