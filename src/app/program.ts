@@ -1,3 +1,4 @@
+import { IsNull, Not } from 'typeorm';
 import { appDataSource } from '../dataSource';
 import { CannotPerformOperationError, NotFoundError } from '../exc';
 import { PendingProgramCoordinator, User, UserType } from '../models';
@@ -11,7 +12,12 @@ import { mapPrgoramToProgramDTO, ReturnProgramDTO } from './dto/program';
 
 export const getPrograms = async (): Promise<ReturnProgramDTO[]> => {
   const programs = await programRepository.find({ relations: ['programToInstitution'] });
-  return programs.map(program => mapPrgoramToProgramDTO(program));
+  const users = await userRepository.find({ where: { programId: Not(IsNull()) } });
+  let managedProgramLists = [...new Set(users.map(u => u.programId?.toString()))];
+  return programs.map(program => {
+    let canBeManaged = !(managedProgramLists.includes(program.id.toString()));
+    return mapPrgoramToProgramDTO(program, canBeManaged)
+  });
 };
 
 export const getCoordinators = (programId: number): Promise<User[]> => {
