@@ -499,14 +499,17 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { programId: callerProgramId } = (req as DecodedRequest).userDecoded;
-      const pathProgramId = parseInt(req.params.programId, 10);
+      const programId = parseInt(req.params.programId, 10);
       const institutionId = parseInt(req.params.institutionId, 10);
-      if (pathProgramId != callerProgramId) {
+
+      if (!programId) {
+        throw new BadRequestError('programId is missing');
+      }
+
+      if (programId != callerProgramId) {
         throw new AuthorizationError('Trying to access another program data');
       }
-      if (!institutionId) {
-        throw new BadRequestError('institution id is missing');
-      }
+
       res.json(await getProgramVolunteersPerInstitution(callerProgramId, institutionId));
     } catch (e) {
       next(e);
