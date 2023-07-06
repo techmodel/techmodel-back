@@ -168,20 +168,21 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
         volunteerRequestToVolunteer: true
       }
     });
-    const idsToUpdate = vrsToUpdate.map(vr => vr.volunteerRequestToVolunteer.map(vrtv => vrtv.id)).flat();
+    const idsToUpdate = vrsToUpdate.flatMap(vr => vr.volunteerRequestToVolunteer.map(vrtv => vrtv.id));
     await volunteerRequestToVolunteerRepository.update({ id: In(idsToUpdate) }, { volunteerId: newId });
   },
 
-  async getProgramVolunteersPerInstitution(programId: number, institutionId: number): Promise<any> {
+  async getProgramVolunteersPerInstitution(programId: number, institutionId?: number): Promise<any> {
     const results = await this.query(
-      `select u.firstName, u.lastName, u.phone, u.email, u.companyId, count(vrtv.id) vrCount
+      `select u.firstName, u.lastName, u.phone, u.email, u.companyId, count(vrtv.id) vrCount, count(distinct(vr.institutionId)) uniqueInstitution
       from volunteer_request vr
           inner join volunteer_request_to_volunteer vrtv on vr.id = vrtv.volunteerRequestId
           inner join users u on vrtv.volunteerId = u.id
-      where vr.programId = ${programId} and vr.institutionId = ${institutionId}
+      where vr.programId = ${programId} ${institutionId ? 'and vr.institutionId = ' + institutionId : '\n'} 
       group by u.firstName, u.lastName, u.phone, u.email, u.companyId
     `
     );
     return results;
+    //Add to get institution query, number of opened requests and past requests
   }
 });
