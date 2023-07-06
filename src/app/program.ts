@@ -1,3 +1,4 @@
+import { IsNull, Not } from 'typeorm';
 import { appDataSource } from '../dataSource';
 import { CannotPerformOperationError, NotFoundError } from '../exc';
 import { PendingProgramCoordinator, User, UserType } from '../models';
@@ -5,13 +6,19 @@ import {
   pendingProgramCoordinatorRepository,
   programRepository,
   programToInstitutionRepository,
-  userRepository
+  userRepository,
+  volunteerRequestRepository
 } from '../repos';
 import { mapPrgoramToProgramDTO, ReturnProgramDTO } from './dto/program';
 
 export const getPrograms = async (): Promise<ReturnProgramDTO[]> => {
   const programs = await programRepository.find({ relations: ['programToInstitution'] });
-  return programs.map(program => mapPrgoramToProgramDTO(program));
+  const users = await userRepository.find({ where: { programId: Not(IsNull()) } });
+  const managedProgramLists = [...new Set(users.map(u => u.programId?.toString()))];
+  return programs.map(program => {
+    const canBeManaged = !managedProgramLists.includes(program.id.toString());
+    return mapPrgoramToProgramDTO(program, canBeManaged);
+  });
 };
 
 export const getCoordinators = (programId: number): Promise<User[]> => {
@@ -79,4 +86,8 @@ export const deleteInstitutionToProgram = async (programId: number, institutionI
 
 export const getProgramStats = async (programId: number): Promise<any> => {
   return programRepository.stats(programId);
+};
+
+export const getProgramVolunteersPerInstitution = async (programId: number, institutionId?: number): Promise<any> => {
+  return volunteerRequestRepository.getProgramVolunteersPerInstitution(programId, institutionId);
 };

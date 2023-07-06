@@ -1,3 +1,5 @@
+import { In, LessThan, MoreThan } from 'typeorm';
+import { skillToVolunteerRequestRepository } from '.';
 import { volunteerRequestToVolunteerRepository } from '../../tests/seed';
 import { appDataSource } from '../dataSource';
 import { NotFoundError } from '../exc';
@@ -10,7 +12,9 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       // populate vr.currentVolunteers
       .loadRelationCountAndMap('vr.currentVolunteers', 'vr.volunteerRequestToVolunteer')
       .leftJoinAndSelect('vr.skillToVolunteerRequest', 'stvr')
-      .leftJoin('vr.volunteerRequestToVolunteer', 'vrtv')
+      .leftJoinAndSelect('vr.volunteerRequestToVolunteer', 'vrtv')
+      .leftJoinAndSelect('vrtv.volunteer', 'vol')
+      .leftJoinAndSelect('vol.company', 'company')
       .leftJoinAndSelect('vr.program', 'program')
       .leftJoinAndSelect('vr.creator', 'creator')
       .leftJoinAndSelect('stvr.skill', 'skill')
@@ -115,7 +119,7 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .createQueryBuilder('vrtv')
       .innerJoinAndSelect('vrtv.volunteerRequest', 'vr')
       .where('vrtv.volunteerId = :volunteerId', { volunteerId })
-      .andWhere('vr.startDate >= :today', { today })
+      .andWhere('vr.endDate >= :today', { today })
       .select('vrtv.id')
       .getMany();
     const idsToDelete = mappingsToDelete.map(mapping => mapping.id);
@@ -124,5 +128,61 @@ export const volunteerRequestRepository = appDataSource.getRepository(VolunteerR
       .delete()
       .whereInIds(idsToDelete)
       .execute();
+  },
+  async updateCreatorIdForOldRequests(oldId: string, newId: string) {
+    const today = new Date();
+    const vrsToUpdate = await this.find({
+      where: {
+        creatorId: oldId,
+        endDate: LessThan(today)
+      }
+    });
+    const idsToUpdate = vrsToUpdate.map(vr => vr.id);
+    await this.update({ id: In(idsToUpdate) }, { creatorId: newId });
+  },
+  async deleteFutureRequestsByCreator(creatorId: string) {
+    const today = new Date();
+    const vrsToDelete = await this.find({
+      where: {
+        creatorId,
+        endDate: MoreThan(today)
+      }
+    });
+    const ids = vrsToDelete.map(vr => vr.id);
+    await Promise.all([
+      volunteerRequestToVolunteerRepository.delete({ volunteerRequestId: In(ids) }),
+      skillToVolunteerRequestRepository.delete({ volunteerRequestId: In(ids) })
+    ]);
+    await this.remove(vrsToDelete);
+  },
+  async updateVolunteerIdForOldRequests(oldId: string, newId: string) {
+    const today = new Date();
+    const vrsToUpdate = await this.find({
+      where: {
+        endDate: LessThan(today),
+        volunteerRequestToVolunteer: {
+          volunteerId: oldId
+        }
+      },
+      relations: {
+        volunteerRequestToVolunteer: true
+      }
+    });
+    const idsToUpdate = vrsToUpdate.flatMap(vr => vr.volunteerRequestToVolunteer.map(vrtv => vrtv.id));
+    await volunteerRequestToVolunteerRepository.update({ id: In(idsToUpdate) }, { volunteerId: newId });
+  },
+
+  async getProgramVolunteersPerInstitution(programId: number, institutionId?: number): Promise<any> {
+    const results = await this.query(
+      `select u.firstName, u.lastName, u.phone, u.email, u.companyId, count(vrtv.id) vrCount, count(distinct(vr.institutionId)) uniqueInstitution
+      from volunteer_request vr
+          inner join volunteer_request_to_volunteer vrtv on vr.id = vrtv.volunteerRequestId
+          inner join users u on vrtv.volunteerId = u.id
+      where vr.programId = ${programId} ${institutionId ? 'and vr.institutionId = ' + institutionId : '\n'} 
+      group by u.firstName, u.lastName, u.phone, u.email, u.companyId
+    `
+    );
+    return results;
+    //Add to get institution query, number of opened requests and past requests
   }
 });

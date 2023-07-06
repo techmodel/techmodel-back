@@ -13,7 +13,7 @@ import {
   UpdateVolunteerRequestDTO
 } from './dto/volunteerRequest';
 import { validateSchema, updateVolunteerRequestSchema, createVolunteerRequestSchema } from './schema.validators';
-import { userDecoded } from './user';
+import { UserDecoded } from './user';
 
 const userAndPayloadSameProgram = (user: Partial<User>, payload: any): boolean => {
   return user.programId === payload.programId;
@@ -40,7 +40,7 @@ export const getVolunteerRequestsOfProgram = async (
 
 export const createVolunteerRequest = async (
   createVolunteerRequestDTO: CreateVolunteerRequestDTO,
-  caller: userDecoded
+  caller: UserDecoded
 ): Promise<VolunteerRequest> => {
   const validatedVolunteerRequestDTO = validateSchema(createVolunteerRequestSchema, createVolunteerRequestDTO);
   const volunteerRequest = mapCreateVolunteerRequestDtoToDomain(validatedVolunteerRequestDTO);
@@ -62,7 +62,7 @@ export const createVolunteerRequest = async (
 export const updateVolunteerRequest = async (
   id: number,
   volunteerRequestInfo: UpdateVolunteerRequestDTO,
-  caller: userDecoded
+  caller: UserDecoded
 ): Promise<UpdateResult> => {
   if (!id) throw new BadRequestError('Missing Id to update volunteer request by');
   const targetVolunteerRequest = (await volunteerRequestRepository.requestById(id)) as VolunteerRequest;
@@ -97,7 +97,7 @@ export const assignVolunteerToRequest = async (userId: string, volunteerRequestI
   if (!targetVolunteerRequest) {
     throw new NotFoundError('Volunteer request not found');
   }
-  if (targetVolunteerRequest.startDate < new Date()) {
+  if (targetVolunteerRequest.endDate < new Date() && !targetVolunteerRequest.dateFlexible) {
     throw new CannotPerformOperationError('Cannot assign volunteer to old request');
   }
   if (targetVolunteerRequest.volunteerRequestToVolunteer.length >= targetVolunteerRequest.totalVolunteers) {
@@ -111,7 +111,7 @@ export const getVolunteerRequestsByUser = async (userId: string): Promise<Volunt
 };
 
 export const deleteVolunteerFromRequest = async (
-  caller: userDecoded,
+  caller: UserDecoded,
   volunteerId: string,
   volunteerRequestId: number
 ): Promise<void> => {
@@ -132,13 +132,13 @@ export const deleteVolunteerFromRequest = async (
   ) {
     throw new AuthorizationError('As a program coordinator, you are not allowed to delete this volunteer');
   }
-  if (targetVolunteerRequest.startDate < new Date()) {
+  if (targetVolunteerRequest.endDate < new Date()) {
     throw new CannotPerformOperationError('Cannot delete mapped volunteers from old request');
   }
   await volunteerRequestRepository.deleteVolunteerFromRequest(volunteerRequestId, volunteerId);
 };
 
-export const setVolunteerRequestAsDeleted = async (caller: userDecoded, requestId: number): Promise<void> => {
+export const setVolunteerRequestAsDeleted = async (caller: UserDecoded, requestId: number): Promise<void> => {
   if (caller.userType === UserType.VOLUNTEER) {
     throw new AuthorizationError('As a volunteer, you are not allowed to perform this operation');
   }
@@ -156,7 +156,7 @@ export const setVolunteerRequestAsDeleted = async (caller: userDecoded, requestI
   ) {
     throw new AuthorizationError('As a program coordinator, you are not allowed to delete this request');
   }
-  if (targetVolunteerRequest.startDate < new Date()) {
+  if (targetVolunteerRequest.endDate < new Date()) {
     throw new CannotPerformOperationError('Cannot delete old request');
   }
   await volunteerRequestRepository.setVolunteerRequestAsDeleted(requestId);

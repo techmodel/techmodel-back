@@ -1,7 +1,7 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { serializeError } from 'serialize-error';
-import { userDecoded } from '../app/user';
+import { UserDecoded } from '../app/user';
 import { JWT_SECRET, AUTH_CLIENT_ID, AUTH_CLIENT_SECRET, CLIENT_URL } from '../config';
 import { AppError, AuthenticationError, AuthorizationError } from '../exc';
 import logger from '../logger';
@@ -11,9 +11,9 @@ import { OAuth2Client } from 'google-auth-library';
 
 const client = new OAuth2Client(AUTH_CLIENT_ID, AUTH_CLIENT_SECRET, CLIENT_URL);
 
-const tokenValidation = (token: string): userDecoded | null => {
+const tokenValidation = (token: string): UserDecoded | null => {
   try {
-    return jwt.verify(token, JWT_SECRET) as userDecoded;
+    return jwt.verify(token, JWT_SECRET) as UserDecoded;
   } catch (e) {
     return null;
   }

@@ -117,8 +117,8 @@ export const createVolunteerRequestSchema = Joi.object({
     .min(20)
     .required(),
   skills: Joi.array().items(Joi.number()),
-  meetingUrl: Joi.string().max(1500),
-  genericUrl: Joi.string().max(1500),
+  meetingUrl: Joi.string().max(255),
+  genericUrl: Joi.string().max(255),
   dateFlexible: Joi.boolean()
 });
 

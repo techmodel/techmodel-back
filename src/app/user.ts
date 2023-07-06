@@ -8,16 +8,18 @@ import { PendingProgramCoordinator, User, UserType } from '../models';
 import { DuplicateErrorNumbers, userRepository, volunteerRequestRepository } from '../repos';
 import { createUserSchema, selfUpdateUserSchema, validateSchema } from './schema.validators';
 
-type loginResponse = {
+type LoginResponse = {
   userDetails: User | null;
   isFound: boolean;
   userToken: string;
   userType: UserType | null;
   userImage: string | null;
   userIdToken: string;
+  tokenExp: Date | null;
+  
 };
 
-export type userDecoded = {
+export type UserDecoded = {
   userId: string;
   userType: UserType;
   institutionId?: number;
@@ -27,12 +29,12 @@ export type userDecoded = {
   exp: number;
 };
 
-export const login = async (userId: string, userImage: string, userIdToken: string): Promise<loginResponse> => {
+export const login = async (userId: string, userImage: string, userIdToken: string): Promise<LoginResponse> => {
   const user = await userRepository.findOneBy({ id: userId });
   if (!userId || !user) {
-    return { userDetails: null, isFound: false, userToken: '', userType: null, userImage, userIdToken };
+    return { userDetails: null, isFound: false, userToken: '', userType: null, userImage, userIdToken, tokenExp: null };
   }
-  const tokenData: Partial<userDecoded> = {
+  const tokenData: Partial<UserDecoded> = {
     userType: user.userType,
     userId,
     // institutionId, programId and companyId might be null when returned from the database
@@ -41,7 +43,19 @@ export const login = async (userId: string, userImage: string, userIdToken: stri
     companyId: user.companyId || undefined
   };
   const token = jwt.sign(tokenData, JWT_SECRET, { expiresIn: '1d' });
-  return { userDetails: user, isFound: true, userToken: token, userType: user.userType, userImage, userIdToken };
+  const today = new Date();
+  let tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+  // tomorrow.setSeconds(today.getSeconds() + 10);
+  return {
+    userDetails: user,
+    isFound: true,
+    userToken: token,
+    userType: user.userType,
+    userImage,
+    userIdToken,
+    tokenExp: tomorrow
+  };
 };
 
 const registerCoordinator = async (user: Partial<User>): Promise<void> => {
@@ -61,7 +75,7 @@ const registerCoordinator = async (user: Partial<User>): Promise<void> => {
   });
 };
 
-export const register = async (user: Partial<User>, userImage: string, userIdToken: string): Promise<loginResponse> => {
+export const register = async (user: Partial<User>, userImage: string, userIdToken: string): Promise<LoginResponse> => {
   const validatedUser = validateSchema(createUserSchema, user);
   try {
     if (validatedUser.userType === UserType.PROGRAM_COORDINATOR) {
@@ -92,7 +106,7 @@ export const updateUserInfo = (id: string, userInfo: Partial<User>): Promise<Upd
 };
 
 export const updateUserInstitutionId = async (
-  caller: userDecoded,
+  caller: UserDecoded,
   targetUserId: string,
   newInstitutionId: number
 ): Promise<void> => {
@@ -107,9 +121,12 @@ export const updateUserInstitutionId = async (
   await userRepository.update({ id: targetUserId }, { institutionId: newInstitutionId });
 };
 
-export const removePersonalInfo = async (caller: userDecoded): Promise<void> => {
-  if (caller.userType == UserType.VOLUNTEER) {
+export const removePersonalInfo = async (caller: UserDecoded): Promise<void> => {
+  const isVolunteer = ![UserType.PROGRAM_COORDINATOR, UserType.PROGRAM_MANAGER].includes(caller.userType);
+  if (isVolunteer) {
     await volunteerRequestRepository.unassignFromOpenRequests(caller.userId);
+  } else {
+    await volunteerRequestRepository.deleteFutureRequestsByCreator(caller.userId);
   }
   const newEmail = `${uuidv4()}@delete.techmodel`;
   const newPhone = uuidv4();
@@ -118,4 +135,9 @@ export const removePersonalInfo = async (caller: userDecoded): Promise<void> => 
     { id: caller.userId },
     { email: newEmail, phone: newPhone, firstName: 'deleted', lastName: 'deleted', id: newId, oldId: caller.userId }
   );
+  if (!isVolunteer) {
+    await volunteerRequestRepository.updateCreatorIdForOldRequests(caller.userId, newId);
+  } else {
+    await volunteerRequestRepository.updateVolunteerIdForOldRequests(caller.userId, newId);
+  }
 };
