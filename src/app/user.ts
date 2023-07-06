@@ -15,6 +15,8 @@ type LoginResponse = {
   userType: UserType | null;
   userImage: string | null;
   userIdToken: string;
+  tokenExp: Date | null;
+  
 };
 
 export type UserDecoded = {
@@ -30,7 +32,7 @@ export type UserDecoded = {
 export const login = async (userId: string, userImage: string, userIdToken: string): Promise<LoginResponse> => {
   const user = await userRepository.findOneBy({ id: userId });
   if (!userId || !user) {
-    return { userDetails: null, isFound: false, userToken: '', userType: null, userImage, userIdToken };
+    return { userDetails: null, isFound: false, userToken: '', userType: null, userImage, userIdToken, tokenExp: null };
   }
   const tokenData: Partial<UserDecoded> = {
     userType: user.userType,
@@ -41,7 +43,19 @@ export const login = async (userId: string, userImage: string, userIdToken: stri
     companyId: user.companyId || undefined
   };
   const token = jwt.sign(tokenData, JWT_SECRET, { expiresIn: '1d' });
-  return { userDetails: user, isFound: true, userToken: token, userType: user.userType, userImage, userIdToken };
+  const today = new Date();
+  let tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+  // tomorrow.setSeconds(today.getSeconds() + 10);
+  return {
+    userDetails: user,
+    isFound: true,
+    userToken: token,
+    userType: user.userType,
+    userImage,
+    userIdToken,
+    tokenExp: tomorrow
+  };
 };
 
 const registerCoordinator = async (user: Partial<User>): Promise<void> => {
