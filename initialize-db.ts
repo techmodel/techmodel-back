@@ -15,6 +15,7 @@ import {
   company2,
   institution1,
   location1,
+  feedback1,
   program1,
   program1ToInstitution1,
   program1ToInstitution2,
@@ -77,7 +78,8 @@ InitDataSource.initialize()
       volunteerRequestToVolunteers: [volunteerRequest1ToVolunteer1, volunteerRequest1ToVolunteer2],
       skills: [skill1, skill2],
       skillToVolunteerRequests: [skill1ToVolunteerRequest1, skill2ToVolunteerRequest1],
-      programToInstitutions: [program1ToInstitution1]
+      programToInstitutions: [program1ToInstitution1],
+      feedback: [feedback1]
     });
     await Promise.all(
       sqlFileNames.map(async sqlFileName => {

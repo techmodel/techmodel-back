@@ -7,6 +7,7 @@ import cityRouter from './city';
 import locationRouter from './location';
 import authRouter from './auth';
 import userRouter from './user';
+import feedbackRouter from './feedback';
 import { Router } from 'express';
 import { clientErrorHandler, preLogApi } from './middlewares';
 
@@ -22,6 +23,7 @@ router.use('/cities', cityRouter);
 router.use('/locations', locationRouter);
 router.use('/auth', authRouter);
 router.use('/user', userRouter);
+router.use('/feedback', feedbackRouter);
 
 router.use(clientErrorHandler);
 
