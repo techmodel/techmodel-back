@@ -8,7 +8,7 @@ const router = Router();
  * paths:
  *   /api/v1/feedback:
  *     get:
- *       operationId: getObject
+ *       operationId: getFeedback
  *       responses:
  *         '200':
  *           description: Feedback lists

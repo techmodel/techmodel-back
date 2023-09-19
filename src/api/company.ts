@@ -8,7 +8,7 @@ const router = Router();
  * paths:
  *   /api/v1/companies:
  *     get:
- *       operationId: getObject
+ *       operationId: getCompanies
  *       responses:
  *         '200':
  *           description: Respresentation of companies

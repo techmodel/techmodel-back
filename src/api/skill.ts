@@ -8,7 +8,7 @@ const router = Router();
  * paths:
  *   /api/v1/skills:
  *     get:
- *       operationId: getObject
+ *       operationId: getSkills
  *       responses:
  *         '200':
  *           description: Respresentation of skills
