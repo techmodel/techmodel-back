@@ -5,6 +5,7 @@ import { Program } from './program';
 import { UserType } from './userType';
 import { VolunteerRequest } from './volunteerRequest';
 import { VolunteerRequestToVolunteer } from './volunteerRequestToVolunteer';
+import { Feedback } from './feedback';
 
 @Entity({ name: 'users' })
 export class User {
@@ -79,4 +80,10 @@ export class User {
     volunteerRequest => volunteerRequest.creator
   )
   createdVolunteerRequests: VolunteerRequest[];
+
+  @OneToMany(
+    () => Feedback,
+    feedback => feedback.userId
+  )
+  feedback: Feedback[];
 }

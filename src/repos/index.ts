@@ -20,6 +20,7 @@ export enum DuplicateErrorNumbers {
 
 export { volunteerRequestRepository } from './volunteerRequestRepo';
 export { programRepository } from './programRepo';
+export { feedbackRepository } from './feedbackRepo';
 export const userRepository = appDataSource.getRepository(User);
 export const companyRepository = appDataSource.getRepository(Company);
 export const cityRepository = appDataSource.getRepository(City);
@@ -30,4 +31,3 @@ export const skillToVolunteerRequestRepository = appDataSource.getRepository(Ski
 export const pendingProgramCoordinatorRepository = appDataSource.getRepository(PendingProgramCoordinator);
 export const pendingProgramManagerRepository = appDataSource.getRepository(PendingProgramManager);
 export const programToInstitutionRepository = appDataSource.getRepository(ProgramToInstitution);
-export const feedbackRepository = appDataSource.getRepository(Feedback);
