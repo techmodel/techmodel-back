@@ -51,7 +51,7 @@ export const location1 = {
 export const feedback1 = {
   id: 1,
   userId: ''.padEnd(20, 'a'),
-  volunteerRequestId: 1,
+  volunteerRequestId: '1',
   createdAt: TEST_DATE_20_06_2022,
   review: 5,
   notes: 'TESTING THE NOTES'
