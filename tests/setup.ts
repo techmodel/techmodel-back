@@ -140,8 +140,8 @@ export const expectedFeedback = (feedback: Feedback, user?: User) => {
     rating: feedback.rating,
     notes: feedback.notes,
     user: { ...user, createdAt: user?.createdAt.toISOString() }
-  }
-}
+  };
+};
 
 export const volunteer1Jwt = createTestJwt(volunteer1);
 export const volunteer3WithoutMappingsJwt = createTestJwt(volunteer3WithoutMappings);
