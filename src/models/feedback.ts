@@ -16,7 +16,7 @@ export class Feedback {
   volunteerRequestId?: number;
 
   @Column()
-  review?: number;
+  rating: number;
 
   @Column()
   notes: string;

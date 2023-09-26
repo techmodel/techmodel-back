@@ -125,7 +125,7 @@ export const createVolunteerRequestSchema = Joi.object({
 export const createFeedbackSchema = Joi.object({
   userId: Joi.string().required(),
   volunteerRequestId: Joi.string().required(),
-  review: Joi.number()
+  rating: Joi.number()
     .min(1)
     .max(5)
     .required(),

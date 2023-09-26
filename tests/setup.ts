@@ -137,7 +137,7 @@ export const expectedFeedback = (feedback: Feedback, user?: User) => {
     createdAt: feedback.createdAt.toISOString(),
     userId: feedback.userId,
     volunteerRequestId: feedback.volunteerRequestId,
-    review: feedback.review,
+    rating: feedback.rating,
     notes: feedback.notes,
     user: { ...user, createdAt: user?.createdAt.toISOString() }
   }

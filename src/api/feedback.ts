@@ -40,7 +40,7 @@ const router = Router();
  *           type: number
  *         createdAt:
  *           type: date
- *         review:
+ *         rating:
  *           type: number
  *         notes:
  *           type: string
@@ -88,7 +88,7 @@ router.get(
  *           type: number
  *         createdAt:
  *           type: date
- *         review:
+ *         rating:
  *           type: number
  *         notes:
  *           type: string

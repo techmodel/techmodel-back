@@ -458,6 +458,6 @@ export const feedback1 = {
   userId: volunteer1.id,
   volunteerRequestId: 1,
   createdAt: TEST_DATE_20_06_2022,
-  review: 5,
+  rating: 5,
   notes: 'TESTING THE NOTES'
 } as Feedback;
