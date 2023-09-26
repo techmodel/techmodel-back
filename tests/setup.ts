@@ -6,7 +6,7 @@ chai.use(chaiPromised);
 
 import * as jwt from 'jsonwebtoken';
 import { appDataSource } from '../src/dataSource';
-import { Program, ProgramToInstitution, Skill, User, VolunteerRequest } from '../src/models';
+import { Feedback, Program, ProgramToInstitution, Skill, User, VolunteerRequest } from '../src/models';
 import { removeSeed } from './seed';
 import { JWT_SECRET } from '../src/config';
 import {
@@ -130,6 +130,18 @@ export const expectedProgram = (program: Program, linkedInstitutions: ProgramToI
     canBeManaged: false
   };
 };
+
+export const expectedFeedback = (feedback: Feedback, user?: User) => {
+  return {
+    id: feedback.id,
+    createdAt: feedback.createdAt.toISOString(),
+    userId: feedback.userId,
+    volunteerRequestId: feedback.volunteerRequestId,
+    review: feedback.review,
+    notes: feedback.notes,
+    user: { ...user, createdAt: user?.createdAt.toISOString() }
+  }
+}
 
 export const volunteer1Jwt = createTestJwt(volunteer1);
 export const volunteer3WithoutMappingsJwt = createTestJwt(volunteer3WithoutMappings);

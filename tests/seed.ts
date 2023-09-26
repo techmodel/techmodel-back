@@ -110,7 +110,7 @@ export const seed = async (options: seedOptions): Promise<void> => {
   }
   if (options.feedback) {
     for (const feedback of options.feedback) {
-      await programToInstitutionRepository.save(feedback);
+      await feedbackRepository.save(feedback);
     }
   }
 };

@@ -1,6 +1,6 @@
 export interface CreateFeedbackDTO {
   userId: string;
-  volunteerRequestId: string;
+  volunteerRequestId: number;
   review: number;
   notes: string;
 }

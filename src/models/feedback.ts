@@ -13,7 +13,7 @@ export class Feedback {
   userId?: string;
 
   @Column()
-  volunteerRequestId?: string;
+  volunteerRequestId?: number;
 
   @Column()
   review?: number;
@@ -26,5 +26,5 @@ export class Feedback {
     user => user.feedback,
     { createForeignKeyConstraints: false } // disable to be able to delete users
   )
-  user?: User
+  user?: User;
 }
