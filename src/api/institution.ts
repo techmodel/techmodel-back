@@ -10,7 +10,7 @@ const router = Router();
  * paths:
  *   /api/v1/institutions:
  *     get:
- *       operationId: getObject
+ *       operationId: getInstitutions
  *       responses:
  *         '200':
  *           description: Respresentation of institutions

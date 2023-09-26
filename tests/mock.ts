@@ -12,6 +12,7 @@ import {
   Program,
   ProgramToInstitution,
   RequestStatus,
+  Feedback,
   Skill,
   SkillToVolunteerRequest,
   TimeUnit,
@@ -39,19 +40,28 @@ export const city1 = {
 
 export const city2 = {
   id: 2,
-  name: 'tel-aviv'
+  name: 'תל אביב'
 } as City;
 
 export const location1 = {
   id: 1,
-  name: 'north'
+  name: 'צפון'
 } as Location;
+
+export const feedback1 = {
+  id: 1,
+  userId: ''.padEnd(20, 'a'),
+  volunteerRequestId: 1,
+  createdAt: TEST_DATE_20_06_2022,
+  review: 5,
+  notes: 'TESTING THE NOTES'
+}
 
 export const institution1 = {
   id: 1,
   createdAt: TEST_DATE_20_06_2022,
-  name: 'institution1',
-  address: 'address1',
+  name: 'אורט אבין',
+  address: 'שלם 1',
   locationId: location1.id,
   cityId: city1.id,
   populationType: PopulationType.SECULAR,
@@ -61,8 +71,8 @@ export const institution1 = {
 export const institution2 = {
   id: 2,
   createdAt: TEST_DATE_20_06_2022,
-  name: 'institution2',
-  address: 'address2',
+  name: 'יובלים',
+  address: 'אליהו סעדון 79',
   locationId: location1.id,
   cityId: city2.id,
   populationType: PopulationType.SECULAR,
@@ -71,46 +81,46 @@ export const institution2 = {
 
 export const program1 = {
   id: 1,
-  name: 'program1',
-  description: 'program description 1'
+  name: 'גשרים',
+  description: 'הסבר על תוכנית גשרים'
 } as Program;
 
 export const program2 = {
   id: 2,
-  name: 'program2',
-  description: 'program description 2'
+  name: 'לוחמים להייטק',
+  description: 'הסבר על תוכנית לוחמים להייטק'
 } as Program;
 
 export const company1 = {
   id: 1,
-  name: 'company1',
-  description: 'company description 1'
+  name: 'Facebook',
+  description: 'הסבר על פייסבוק'
 } as Company;
 
 export const company2 = {
   id: 2,
-  name: 'company2',
-  description: 'company description 2'
+  name: 'Microsoft',
+  description: 'הסבר על מייקרוסופט'
 } as Company;
 
 export const volunteer1 = {
   id: ''.padEnd(20, 'a'),
-  firstName: 'volunteer1',
-  lastName: 'volunteer1',
+  firstName: 'שמוליק.',
+  lastName: 'שגב',
   createdAt: TEST_DATE_20_06_2022,
-  email: 'volunteer1@gmail.com',
-  phone: '111111111',
+  email: 'smhuliksegev@gmail.com',
+  phone: '0542345678',
   userType: UserType.VOLUNTEER,
   companyId: company1.id
 } as User;
 
 export const volunteer2 = {
   id: ''.padEnd(20, 'b'),
-  firstName: 'volunteer2',
-  lastName: 'volunteer2',
+  firstName: 'ישראל',
+  lastName: 'ישראלי',
   createdAt: TEST_DATE_20_06_2022,
-  email: 'volunteer2@gmail.com',
-  phone: '213213',
+  email: 'israelisraeli@gmail.com',
+  phone: '0589876544',
   userType: UserType.VOLUNTEER,
   companyId: company2.id
 } as User;

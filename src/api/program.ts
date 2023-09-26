@@ -24,7 +24,7 @@ const router = Router();
  * paths:
  *   /api/v1/programs:
  *     get:
- *       operationId: getObject
+ *       operationId: getPrograms
  *       responses:
  *         '200':
  *           description: Respresentation of programs
@@ -48,7 +48,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
  * paths:
  *   /api/v1/programs/{programId}/volunteer-requests:
  *    get:
- *     operationId: getObject
+ *     operationId: getProgramsRequests
  *     security:
  *      - bearerAuth: []
  *     responses:
@@ -416,7 +416,7 @@ router.delete(
  * paths:
  *   /api/v1/programs/{programId}/stats:
  *    get:
- *     operationId: getObject
+ *     operationId: getProgramStats
  *     security:
  *      - bearerAuth: []
  *     responses:

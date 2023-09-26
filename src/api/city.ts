@@ -8,7 +8,7 @@ const router = Router();
  * paths:
  *   /api/v1/cities:
  *     get:
- *       operationId: getObject
+ *       operationId: getCities
  *       responses:
  *         '200':
  *           description: Respresentation of cities
