@@ -48,15 +48,6 @@ export const location1 = {
   name: 'צפון'
 } as Location;
 
-export const feedback1 = {
-  id: 1,
-  userId: ''.padEnd(20, 'a'),
-  volunteerRequestId: '1',
-  createdAt: TEST_DATE_20_06_2022,
-  review: 5,
-  notes: 'TESTING THE NOTES'
-}
-
 export const institution1 = {
   id: 1,
   createdAt: TEST_DATE_20_06_2022,
@@ -462,3 +453,11 @@ export const createInstitutionDTO1: CreateInstitutionDTO = {
   populationType: PopulationType.RELIGIOUS,
   institutionType: InstitutionType.ELEMENTARY_SCHOOL
 };
+
+export const feedback1 = {
+  userId: volunteer1.id,
+  volunteerRequestId: 1,
+  createdAt: TEST_DATE_20_06_2022,
+  rating: 5,
+  notes: 'TESTING THE NOTES'
+} as Feedback;

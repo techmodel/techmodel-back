@@ -45,7 +45,7 @@ Then, to run the application do:
 
 1. change the models the way you want
 2. install globaly `dotenv-cli` if you still didnt - `npm install -g dotenv-cli`
-3. run `docker-compose down` then `docker-compose up -d`.
+3. run `npm run dc-up-clean`.
    we do this because we want our database to be clean
 4. run `npm run typeorm-dev migration:run` to get the local database up to date with the current migrations
 5. run `npm run typeorm-dev migration:generate ./src/migrations/**migration name**` to create a new migration that contains the diff

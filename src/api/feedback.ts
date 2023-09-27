@@ -2,8 +2,6 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { UserType } from '../models';
 import { createFeedback } from '../app/feedback';
 import { feedbackRepository } from '../repos';
-import { DecodedRequest } from './decodedRequest';
-import { AuthorizationError } from '../exc';
 import { authMiddleware } from './middlewares';
 
 const router = Router();
@@ -32,7 +30,7 @@ const router = Router();
  *           name: volunteerRequestId
  *           required: true
  *           description: volunteer request id
- * 
+ *
  * components:
  *   schemas:
  *     location:
@@ -42,7 +40,7 @@ const router = Router();
  *           type: number
  *         createdAt:
  *           type: date
- *         review:
+ *         rating:
  *           type: number
  *         notes:
  *           type: string
@@ -53,7 +51,7 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId, volunteerRequestId } = req.params;
-      res.json(await feedbackRepository.getFeedback(userId, volunteerRequestId));
+      res.json(await feedbackRepository.getFeedback(+volunteerRequestId, userId));
     } catch (e) {
       next(e);
     }
@@ -80,7 +78,7 @@ router.get(
  *           name: volunteerRequestId
  *           required: true
  *           description: volunteer request id
- * 
+ *
  * components:
  *   schemas:
  *     location:
@@ -90,7 +88,7 @@ router.get(
  *           type: number
  *         createdAt:
  *           type: date
- *         review:
+ *         rating:
  *           type: number
  *         notes:
  *           type: string
@@ -101,7 +99,7 @@ router.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { volunteerRequestId } = req.params;
-      res.json(await feedbackRepository.getFeedback(null, volunteerRequestId));
+      res.json(await feedbackRepository.getFeedback(+volunteerRequestId));
     } catch (e) {
       next(e);
     }
