@@ -122,6 +122,19 @@ export const createVolunteerRequestSchema = Joi.object({
   dateFlexible: Joi.boolean()
 });
 
+export const createFeedbackSchema = Joi.object({
+  userId: Joi.string().required(),
+  volunteerRequestId: Joi.string().required(),
+  rating: Joi.number()
+    .min(1)
+    .max(5)
+    .required(),
+  notes: Joi.string()
+    .min(2)
+    .max(500)
+    .required()
+});
+
 export const validateSchema = <T>(schema: Joi.ObjectSchema, objectToValidate: T): T => {
   const { error } = schema.validate(objectToValidate);
 

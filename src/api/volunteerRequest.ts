@@ -18,7 +18,7 @@ const router = Router();
  * paths:
  *   /api/v1/volunteer-requests:
  *     get:
- *       operationId: getObject
+ *       operationId: getVolunteerRequests
  *       responses:
  *         '200':
  *           description: Respresentation of volunteer requests

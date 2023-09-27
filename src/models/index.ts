@@ -18,3 +18,4 @@ export { PendingProgramCoordinator } from './pendingProgramCoordinator';
 export { TimeUnit } from './timeUnit';
 export { Audience } from './audience';
 export { ProgramToInstitution } from './programToInstitution';
+export { Feedback } from './feedback';

@@ -11,7 +11,8 @@ import {
   SkillToVolunteerRequest,
   User,
   VolunteerRequest,
-  VolunteerRequestToVolunteer
+  VolunteerRequestToVolunteer,
+  Feedback
 } from '../src/models';
 import {
   cityRepository,
@@ -23,7 +24,8 @@ import {
   programToInstitutionRepository,
   skillRepository,
   userRepository,
-  volunteerRequestRepository
+  volunteerRequestRepository,
+  feedbackRepository
 } from '../src/repos';
 
 type seedOptions = {
@@ -39,6 +41,7 @@ type seedOptions = {
   skillToVolunteerRequests?: SkillToVolunteerRequest[];
   pendingProgramCoordinators?: PendingProgramCoordinator[];
   programToInstitutions?: ProgramToInstitution[];
+  feedback?: Feedback[];
 };
 
 export const volunteerRequestToVolunteerRepository = appDataSource.getRepository(VolunteerRequestToVolunteer);
@@ -105,6 +108,11 @@ export const seed = async (options: seedOptions): Promise<void> => {
       await programToInstitutionRepository.save(programToInstitutions);
     }
   }
+  if (options.feedback) {
+    for (const feedback of options.feedback) {
+      await feedbackRepository.save(feedback);
+    }
+  }
 };
 
 export const removeSeed = async (): Promise<void> => {
@@ -120,4 +128,5 @@ export const removeSeed = async (): Promise<void> => {
   await institutionRepository.delete({});
   await locationRepository.delete({});
   await cityRepository.delete({});
+  await feedbackRepository.delete({});
 };

@@ -9,7 +9,8 @@ import {
   Skill,
   User,
   ProgramToInstitution,
-  SkillToVolunteerRequest
+  SkillToVolunteerRequest,
+  Feedback
 } from '../models';
 
 export enum DuplicateErrorNumbers {
@@ -19,6 +20,7 @@ export enum DuplicateErrorNumbers {
 
 export { volunteerRequestRepository } from './volunteerRequestRepo';
 export { programRepository } from './programRepo';
+export { feedbackRepository } from './feedbackRepo';
 export const userRepository = appDataSource.getRepository(User);
 export const companyRepository = appDataSource.getRepository(Company);
 export const cityRepository = appDataSource.getRepository(City);

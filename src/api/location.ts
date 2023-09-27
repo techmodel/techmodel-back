@@ -8,7 +8,7 @@ const router = Router();
  * paths:
  *   /api/v1/locations:
  *     get:
- *       operationId: getObject
+ *       operationId: getLocation
  *       responses:
  *         '200':
  *           description: Respresentation of locations
